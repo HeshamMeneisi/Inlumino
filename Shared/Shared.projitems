@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>2daced7d-17d7-444e-b59f-b4accfcd33e9</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Block.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Camera.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Crystal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Game.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ILightSource.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IObstructingObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LevelData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LevelSelector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LightBeam.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LightSourceObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Manager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Padding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Prism.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SaveMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Screen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Splitter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Stage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StageContainer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StateManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StaticObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)StaticObjectCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextureID.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Tile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TileMap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UICell.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIHud.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIMenu.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UITextField.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIVisibleObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VirtualKeyboard.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WorldEvent.cs" />
+  </ItemGroup>
+</Project>
