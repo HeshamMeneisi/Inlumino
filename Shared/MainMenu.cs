@@ -11,10 +11,6 @@ namespace Inlumino_SHARED
 
         public MainMenu()
         {
-
-            string s = null;
-            s.EndsWith("");
-
             mainmenu = new UIMenu();
 
             playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn], 1);
