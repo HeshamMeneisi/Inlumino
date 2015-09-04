@@ -18,6 +18,11 @@ namespace Inlumino_SHARED
         //public static int Height { get { return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height; } }
         public static float Width { get { return isVirtual ? virtualbounds.X : window.ClientBounds.Width; } }
         public static float Height { get { return isVirtual ? virtualbounds.Y : window.ClientBounds.Height; } }
+        // window.CurrentOrientation also works, but this is more literal representation of the concept.
+        public static Orientation Mode { get { return Width > Height ? Orientation.Landscape : Orientation.Portrait; } }
+
+        public static float BigDim { get { return MathHelper.Max(Width, Height); } }
+        public static float SmallDim { get { return MathHelper.Min(Width, Height); } }
 
         public static void SetUp(GameWindow gamewindow, GraphicsDeviceManager devicemanager)
         {

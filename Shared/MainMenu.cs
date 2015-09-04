@@ -11,24 +11,25 @@ namespace Inlumino_SHARED
 
         public MainMenu()
         {
-            mainmenu = new UIMenu();          
+            mainmenu = new UIMenu();
 
-            playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn],1);
+            playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn], 1);
             editorButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.EditModeBtn], 1);
+
+            playButton.Pressed += playpressed;
+            editorButton.Pressed += editpressed;
+
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
-
-            SetupMenu();            
         }
 
         private void SetupMenu()
-        {            
-            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, Screen.Height * 0.2f);            
-            playButton.Pressed += playpressed;
+        {
+            playButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            editorButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
 
-
-            editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom + Screen.Height * 0.05f);         
-            editorButton.Pressed += editpressed;
+            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, Screen.Height * 0.2f);
+            editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom + Screen.Height * 0.05f);
         }
 
         private void editpressed(UIButton sender)
@@ -56,7 +57,7 @@ namespace Inlumino_SHARED
             mainmenu.Clear();
         }
 
-        public void HandleEvent(WorldEvent e, bool forcehandle=false)
+        public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             if (e is DisplaySizeChangedEvent || e is OrientationChangedEvent)
                 SetupMenu();

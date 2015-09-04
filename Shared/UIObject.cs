@@ -120,5 +120,6 @@ enum UIObjectType
     UpButton,
     DownButton,
     BackButton,
-    MainUser
+    MainUser,
+    DeleteBtn
 }

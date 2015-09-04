@@ -29,10 +29,8 @@ namespace Inlumino_SHARED
             menu.Add(savebtn);
             menu.Add(backbtn);
             menu.Add(nametext);
-            
-            VirtualKeyboard.KeyPressed += keypressed;
 
-            SetupMenu();
+            VirtualKeyboard.KeyPressed += keypressed;
         }
 
         private void backpressed(UIButton sender)
@@ -50,7 +48,7 @@ namespace Inlumino_SHARED
             if (DataHandler.LevelExists(nametext.Text))
             {
                 int? r = await MessageBox.Show("Warning", "Level \"" + nametext.Text + "\" already exists.", new string[] { "Cancel", "Overwrite", });
-                if (r == 0)
+                if (r == 0 || r == null)
                     return;
             }
             DataHandler.SaveStage((Manager.StateManager.GetGameState(GameState.EditMode) as StageContainer).getCurrentStage(), nametext.Text, icon);
@@ -59,10 +57,13 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            nametext.Position = new Vector2((Screen.Width - nametext.Size.X) / 2, Screen.Height * 0.3f);
+            nametext.setSizeRelative(0.2f, Screen.Mode);
+            savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            backbtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            VirtualKeyboard.Show(Orientation.Landscape, 0.1f * Screen.BigDim, Screen.Width, Screen.Height, k => ((int)k >= 65 && (int)k <= 90) || k == Keys.Back || k == Keys.LeftShift);
+            nametext.Position = new Vector2((Screen.Width - nametext.Size.X) / 2, VirtualKeyboard.BoundingBox.Bottom);
             savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, nametext.BoundingBox.Bottom);
             backbtn.Position = new Vector2((Screen.Width - backbtn.Size.X) / 2, savebtn.BoundingBox.Bottom);
-            VirtualKeyboard.Show(Orientation.Landscape, 32, Screen.Width, Screen.Height, k => ((int)k >= 65 && (int)k <= 90) || k == Keys.Back || k == Keys.LeftShift);
         }
 
         private void keypressed(Keys key)

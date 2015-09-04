@@ -6,7 +6,7 @@ using Inlumino_SHARED;
 
 namespace Inlumino_ANDROID
 {
-    [Activity(Label = "Inlumino_ANDROID"
+    [Activity(Label = "Inlumino"
         , MainLauncher = true
         , Icon = "@drawable/icon"
         , Theme = "@style/Theme.Splash"

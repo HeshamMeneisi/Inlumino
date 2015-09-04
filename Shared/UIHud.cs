@@ -25,7 +25,7 @@ namespace Inlumino_SHARED
                 return new RectangleF(GlobalPosition, new Vector2(TotalWidth, TotalHeight));
             }
         }
-        public UIHud(UIButton[] content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
+        public UIHud(IEnumerable<UIButton> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
         {
             buttons.AddRange(content);
             foreach (UIButton b in content) b.Parent = this;

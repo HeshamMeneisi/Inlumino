@@ -32,7 +32,7 @@ namespace Inlumino_SHARED
         {
             if (!visible || sprite == null)
                 return;
-            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, new Rectangle(GlobalPosition.ToPoint(), Size.ToPoint())/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, BoundingBox.getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
         }
 
         public Vector2 Center
@@ -61,6 +61,27 @@ namespace Inlumino_SHARED
                 float top = (int)(GlobalPosition.Y - origin.Y);
                 return new RectangleF(new Vector2(left, top), size);
             }
+        }
+
+        public void setSizeRelativeToWidth(float perc)
+        {
+            float w = Screen.Width * perc;
+            float h = size.Y / size.X * w;
+            size = new Vector2(w, h);
+        }
+        public void setSizeRelativeToHeight(float perc)
+        {
+            float h = Screen.Height * perc;
+            float w = size.X / size.Y * h;
+            size = new Vector2(w, h);
+        }
+
+        public void setSizeRelative(float perc, Orientation mode)
+        {
+            if (mode == Orientation.Landscape)
+                setSizeRelativeToHeight(perc);
+            else
+                setSizeRelativeToWidth(perc);
         }
     }
 }

@@ -63,6 +63,7 @@ namespace Inlumino_SHARED
     public enum GameState { MainMenu,OnStage,
         EditMode,
         SaveLevel,
-        SelectLevel
+        SelectLevel,
+        DeleteLevel
     }
 }

@@ -22,6 +22,7 @@ namespace Inlumino_SHARED
 #if ANDROID
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;            
 #else
+            IsMouseVisible = true;
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;
 #endif
             Window.ClientSizeChanged += sizechanged;

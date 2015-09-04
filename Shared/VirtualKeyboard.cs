@@ -12,12 +12,12 @@ namespace Inlumino_SHARED
         public static event KeyPressedEventHandler KeyPressed;
         static UIHud hud;
         static Func<Keys, bool> filterfunc;
-        public static void Show(Orientation mode, float minkeydim, float width, float height,Func<Keys,bool> filter=null ,float x = 0, float y = 0)
+        public static void Show(Orientation mode, float minkeydim, float width, float height, Func<Keys, bool> filter = null, float x = 0, float y = 0)
         {
             filterfunc = filter;
             hud = new UIHud(getcontent(), mode, minkeydim, minkeydim, width, height);
             hud.Position = new Vector2(x, y);
-            hud.Setup();            
+            hud.Setup();
         }
         static UIButton[] allkeys = null;
         private static UIButton[] getcontent()
@@ -35,6 +35,12 @@ namespace Inlumino_SHARED
             return allkeys = keys.ToArray();
         }
         public static bool Low = true;
+
+        public static RectangleF BoundingBox
+        {
+            get { return hud.BoundingBox; }
+        }
+
         private static void keypressed(UIButton sender)
         {
             Keys k = (Keys)(sender as UICell).Tag;
@@ -53,6 +59,11 @@ namespace Inlumino_SHARED
         public static void HandleEvent(WorldEvent e)
         {
             hud.HandleEvent(e);
+        }
+
+        internal static void Show(Orientation landscape, object p1, float width, float height, Func<Keys, bool> p2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

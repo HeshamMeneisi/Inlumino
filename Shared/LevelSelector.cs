@@ -10,13 +10,13 @@ namespace Inlumino_SHARED
 {
     class LevelSelector : IState
     {
-        UIHud mainlevels;
-        UIHud userlevels;
-        UIHud genhud;
-        UIButton menubtn;
-        UIButton switchbtn;
-        List<UICell> mlcells = new List<UICell>();
-        UIButton[] genbuttons;
+        protected UIHud mainlevels;
+        protected UIHud userlevels;
+        protected UIHud genhud;
+        protected UIButton menubtn;
+        protected UIButton switchbtn;
+        protected List<UICell> mlcells = new List<UICell>();
+        protected UIButton[] genbuttons;
 
         public LevelSelector()
         {
@@ -33,18 +33,18 @@ namespace Inlumino_SHARED
             }
         }
 
-        private void switchpressed(UIButton sender)
+        protected void switchpressed(UIButton sender)
         {
             mainlevels.Visible = !mainlevels.Visible;
             userlevels.Visible = !userlevels.Visible;
         }
 
-        private void menupressed(UIButton sender)
+        protected void menupressed(UIButton sender)
         {
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
 
-        private void mlcellpressed(UIButton sender)
+        protected virtual void mlcellpressed(UIButton sender)
         {
             Manager.Play((string)(sender as UICell).Tag, true);
         }
@@ -61,6 +61,8 @@ namespace Inlumino_SHARED
             genhud.HandleEvent(e);
             mainlevels.HandleEvent(e);
             userlevels.HandleEvent(e);
+            if (e is OrientationChangedEvent || e is DisplaySizeChangedEvent)
+                SetupHud();
         }
 
         public void Update(GameTime time)
@@ -75,11 +77,11 @@ namespace Inlumino_SHARED
             SetupHud();
         }
 
-        private void SetupHud()
+        protected virtual void SetupHud()
         {
-            if (Screen.Width > Screen.Height) // Landscape
+            if (Screen.Mode == Orientation.Landscape) // Landscape
             {
-                genhud = new UIHud(genbuttons, Orientation.Portrait, 64, 32, 256, 256);
+                genhud = new UIHud(genbuttons, Orientation.Portrait, Screen.Height * 0.4f, Screen.Height * 0.2f, 0, Screen.Height * 0.4f);
                 genhud.Setup();
                 List<UICell> ulcells = new List<UICell>();
                 foreach (string name in DataHandler.getSavedLevelNames())
@@ -97,7 +99,7 @@ namespace Inlumino_SHARED
             }
             else
             {
-                genhud = new UIHud(genbuttons, Orientation.Landscape, 64, 32, 256, 256);
+                genhud = new UIHud(genbuttons, Orientation.Landscape, Screen.Width * 0.4f, Screen.Width * 0.2f, Screen.Width * 0.8f, 0);
                 genhud.Setup();
                 List<UICell> ulcells = new List<UICell>();
                 foreach (string name in DataHandler.getSavedLevelNames())
@@ -115,7 +117,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        private void ulcellpressed(UIButton sender)
+        protected virtual void ulcellpressed(UIButton sender)
         {
             Manager.Play((string)(sender as UICell).Tag, false);
         }

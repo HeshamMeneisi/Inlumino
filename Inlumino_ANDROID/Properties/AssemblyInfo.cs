@@ -6,8 +6,8 @@ using Android.App;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Inlumino_ANDROID")]
-[assembly: AssemblyProduct("Inlumino_ANDROID")]
+[assembly: AssemblyTitle("Inlumino")]
+[assembly: AssemblyProduct("Inlumino")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("")]

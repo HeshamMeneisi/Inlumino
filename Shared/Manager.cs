@@ -15,6 +15,7 @@ namespace Inlumino_SHARED
         static StageContainer stagecont;
         static StageContainer editablecont;
         static ContentManager contentManager;
+        static DeleteMenu delmenu;
         static Game parentGame;
         static bool initd = false;
 
@@ -31,12 +32,14 @@ namespace Inlumino_SHARED
             stagecont = new StageContainer(false);
             editablecont = new StageContainer(true);
             selector = new LevelSelector();
+            delmenu = new DeleteMenu();
 
             stateManager.AddGameState(GameState.MainMenu, menu);
             stateManager.AddGameState(GameState.SelectLevel, selector);
             stateManager.AddGameState(GameState.SaveLevel, savemenu);
             stateManager.AddGameState(GameState.OnStage, stagecont);
             StateManager.AddGameState(GameState.EditMode, editablecont);
+            stateManager.AddGameState(GameState.DeleteLevel, delmenu);
 
             stateManager.SwitchTo(GameState.MainMenu);
 

@@ -24,8 +24,7 @@ namespace Inlumino_SHARED
 
         internal static bool isValid(TextureID tid)
         {
-            if (tid.GroupIndex < TextureFiles.Count) return true;// TODO: Needs more code
-            return false;
+            return tid != default(TextureID) && tid.GroupIndex >= 0 && tid.GroupIndex < TextureFiles.Count;
         }
 
         private static string[] FontFiles = new string[] { "Fonts\\MainFont" };
@@ -65,7 +64,7 @@ namespace Inlumino_SHARED
 
         internal static IEnumerable<string> getSavedLevelNames()
         {
-            foreach(string s in savegameStorage.GetFileNames())
+            foreach (string s in savegameStorage.GetFileNames())
             {
                 if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
             }
@@ -86,7 +85,8 @@ namespace Inlumino_SHARED
             {UIObjectType.ToggleButton,new TextureID[] {new TextureID(1,14, 1, 0.5f) } },
             {UIObjectType.SaveButton,new TextureID[] {new TextureID(1,15, 1, 0.5f)} },
             {UIObjectType.BackButton,new TextureID[] {new TextureID (1,11, 1, 0.5f) } },
-            {UIObjectType.MainUser,new TextureID[] {new TextureID(1,7,1,0.5f)} },
+            {UIObjectType.MainUser,new TextureID[] {new TextureID(1,7, 1, 0.5f)} },
+            {UIObjectType.DeleteBtn,new TextureID[] {new TextureID(1,16, 1, 0.5f)} },
             {UIObjectType.LeftButton,new TextureID[] {new TextureID(1,5, 0.5f,0.5f)} },
             {UIObjectType.RightButton,new TextureID[] {new TextureID(1, 6, 0.5f, 0.5f) } },
             {UIObjectType.UpButton,new TextureID[] {new TextureID(1, 9, 0.5f, 0.5f) } },
@@ -94,17 +94,33 @@ namespace Inlumino_SHARED
         };
         #endregion
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
+
+        static string getDataFileName(string stagename)
+        {
+            return "S_" + stagename + ".xml";
+        }
+        static string getThumbFileName(string stagename)
+        {
+            return "T_" + stagename + ".png";
+        }
         internal static void SaveStage(Stage currentLevel, string name, Texture2D img)
-        {            
+        {
             LevelData data = new LevelData(currentLevel.getTileMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
-            SaveData<string>(data.Data, "S_" + name + ".xml");
-            Stream s = savegameStorage.CreateFile("T_" + name + ".png");
+            SaveData<string>(data.Data, getDataFileName(name));
+            Stream s = savegameStorage.CreateFile(getThumbFileName(name));
             img.SaveAsPng(s, img.Width, img.Width);
             s.Dispose();
         }
+        internal static void DeleteStage(string name)
+        {
+            string data = getDataFileName(name);
+            string thumb = getThumbFileName(name);
+            if (savegameStorage.FileExists(data)) savegameStorage.DeleteFile(data);
+            if (savegameStorage.FileExists(thumb)) savegameStorage.DeleteFile(thumb);
+        }
         internal static bool LevelExists(string name)
         {
-            return savegameStorage.FileExists("S_" + name + ".xml");
+            return savegameStorage.FileExists(getDataFileName(name));
         }
         internal static Stage LoadStage(string name, bool mainlevel)
         {
@@ -115,7 +131,7 @@ namespace Inlumino_SHARED
                 data = Manager.ContentManager.Load<string>("MainLevels\\MLS_" + name);
             }
             else
-                data = LoadData<string>("S_" + name + ".xml");
+                data = LoadData<string>(getDataFileName(name));
             temp = LevelData.CreateNew(data);
             if (temp == null)
                 return null;
@@ -129,8 +145,8 @@ namespace Inlumino_SHARED
             }
             else
             {
-                if (!savegameStorage.FileExists("T_" + name + ".png")) return null;
-                Stream s = savegameStorage.OpenFile("T_" + name + ".png", FileMode.Open);
+                if (!savegameStorage.FileExists(getThumbFileName(name))) return null;
+                Stream s = savegameStorage.OpenFile(getThumbFileName(name), FileMode.Open);
                 Texture2D ret = Texture2D.FromStream(Manager.Parent.GraphicsDevice, s);
                 s.Dispose();
                 return ret;
@@ -162,11 +178,15 @@ namespace Inlumino_SHARED
 
         public static void SaveData<T>(T data, string file)
         {
-            Stream str = savegameStorage.CreateFile(file);
-
-            string path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();
+            IsolatedStorageFileStream str = savegameStorage.CreateFile(file);
+            string path = "Unkown.";
+#if ANDROID
+            
+#endif
+#if WINDOWS
+            string path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();            
+#endif
             Debug.WriteLine("______ALERT______SavedFileTo: " + path);
-
             XmlSerializer serializer = new XmlSerializer(typeof(T));
 
             serializer.Serialize(str, data);

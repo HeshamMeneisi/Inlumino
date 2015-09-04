@@ -42,7 +42,7 @@ namespace Inlumino_SHARED
             base.Draw(batch);
             if (!visible) return;
             // Draw overlay
-            if (overlay != null)
+            if (DataHandler.isValid(overlay))
             {
                 Rectangle rect = BoundingBox.getRectangle();
                 rect.Inflate(-this.Size.X * border, -this.Size.Y * border);
