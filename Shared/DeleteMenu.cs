@@ -10,13 +10,14 @@ namespace Inlumino_SHARED
         public DeleteMenu() : base()
         {
             switchbtn.Visible = false;
+            menubtn.Texture = DataHandler.UIObjectsTextureMap[UIObjectType.BackButton];
         }
 
         protected override void SetupHud()
         {
             base.SetupHud();
             mainlevels.Visible = false;
-            userlevels.Visible = true;
+            userlevels.Visible = true;            
         }
         protected override async void ulcellpressed(UIButton sender)
         {
@@ -27,6 +28,10 @@ namespace Inlumino_SHARED
                 DataHandler.DeleteStage(name);
                 SetupHud();
             }
+        }
+        protected override void menupressed(UIButton sender)
+        {
+            Manager.StateManager.SwitchTo(GameState.EditMode);
         }
     }
 }

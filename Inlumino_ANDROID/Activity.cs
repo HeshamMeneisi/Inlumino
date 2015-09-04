@@ -1,6 +1,8 @@
+using System;
 using Android.App;
 using Android.Content.PM;
 using Android.OS;
+using Android.Runtime;
 using Android.Views;
 using Inlumino_SHARED;
 
@@ -19,9 +21,21 @@ namespace Inlumino_ANDROID
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
+            AndroidEnvironment.UnhandledExceptionRaiser += HandleAndroidException;            
             var g = new Game();
             SetContentView((View)g.Services.GetService(typeof(View)));
             g.Run();
+        }
+
+        private void HandleAndroidException(object sender, RaiseThrowableEventArgs e)
+        {
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                throw new Exception(e.Exception.Message + "\n" + e.Exception.StackTrace);
+            }else
+            {
+                DataHandler.SaveData<string>(e.Exception.Message + "\n" + e.Exception.StackTrace, "log_" + this.Handle);
+            }
         }
     }
 }

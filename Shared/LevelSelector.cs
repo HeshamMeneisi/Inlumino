@@ -16,7 +16,6 @@ namespace Inlumino_SHARED
         protected UIButton menubtn;
         protected UIButton switchbtn;
         protected List<UICell> mlcells = new List<UICell>();
-        protected UIButton[] genbuttons;
 
         public LevelSelector()
         {
@@ -24,7 +23,6 @@ namespace Inlumino_SHARED
             switchbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MainUser]);
             menubtn.Pressed += menupressed;
             switchbtn.Pressed += switchpressed;
-            genbuttons = new UIButton[] { menubtn, switchbtn };
             foreach (string name in Common.MainLevelNames)
             {
                 UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, true), name, 0), 0.1f);
@@ -39,7 +37,7 @@ namespace Inlumino_SHARED
             userlevels.Visible = !userlevels.Visible;
         }
 
-        protected void menupressed(UIButton sender)
+        protected virtual void menupressed(UIButton sender)
         {
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
@@ -81,7 +79,7 @@ namespace Inlumino_SHARED
         {
             if (Screen.Mode == Orientation.Landscape) // Landscape
             {
-                genhud = new UIHud(genbuttons, Orientation.Portrait, Screen.Height * 0.4f, Screen.Height * 0.2f, 0, Screen.Height * 0.4f);
+                genhud = new UIHud(new UIButton[] { menubtn, switchbtn }, Orientation.Portrait, Screen.Height * 0.4f, Screen.Height * 0.2f, 0, Screen.Height * 0.4f);
                 genhud.Setup();
                 List<UICell> ulcells = new List<UICell>();
                 foreach (string name in DataHandler.getSavedLevelNames())
@@ -99,7 +97,7 @@ namespace Inlumino_SHARED
             }
             else
             {
-                genhud = new UIHud(genbuttons, Orientation.Landscape, Screen.Width * 0.4f, Screen.Width * 0.2f, Screen.Width * 0.8f, 0);
+                genhud = new UIHud(new UIButton[] { menubtn, switchbtn }, Orientation.Landscape, Screen.Width * 0.4f, Screen.Width * 0.2f, Screen.Width * 0.8f, 0);
                 genhud.Setup();
                 List<UICell> ulcells = new List<UICell>();
                 foreach (string name in DataHandler.getSavedLevelNames())

@@ -108,7 +108,10 @@ namespace Inlumino_SHARED
             LevelData data = new LevelData(currentLevel.getTileMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
             SaveData<string>(data.Data, getDataFileName(name));
             Stream s = savegameStorage.CreateFile(getThumbFileName(name));
-            img.SaveAsPng(s, img.Width, img.Width);
+            img.SaveAsPng(s, img.Width, img.Width);            
+#if ANDROID
+            saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
+#endif
             s.Dispose();
         }
         internal static void DeleteStage(string name)
@@ -179,19 +182,33 @@ namespace Inlumino_SHARED
         public static void SaveData<T>(T data, string file)
         {
             IsolatedStorageFileStream str = savegameStorage.CreateFile(file);
-            string path = "Unkown.";
+            string path = "Unkown";
+            XmlSerializer serializer = new XmlSerializer(typeof(T));
+            serializer.Serialize(str, data);
 #if ANDROID
-            
+            path = "temp/Inlumino/"+file;
+            saveExternal(str, path);
 #endif
 #if WINDOWS
             string path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();            
 #endif
             Debug.WriteLine("______ALERT______SavedFileTo: " + path);
-            XmlSerializer serializer = new XmlSerializer(typeof(T));
-
-            serializer.Serialize(str, data);
 
             str.Dispose();
+        }
+
+        private static void saveExternal(Stream str, string file)
+        {
+            str.Seek(0, SeekOrigin.Begin);
+            string pathToFile = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, file);
+            if (!Directory.Exists(Path.GetDirectoryName(pathToFile))) Directory.CreateDirectory(Path.GetDirectoryName(pathToFile));
+            using (var fileStream = new FileStream(pathToFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
+            {
+                int read;
+                byte[] buffer = new byte[1024];
+                while ((read = str.Read(buffer, 0, buffer.Length)) > 0)
+                    fileStream.Write(buffer, 0, read);
+            }
         }
 
         /// <summary>

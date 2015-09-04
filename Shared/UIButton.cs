@@ -5,6 +5,10 @@ namespace Inlumino_SHARED
 {
     class UIButton : UIVisibleObject
     {
+        public TextureID[] Texture {
+            get { return sprite; }
+            set { sprite = value; } }
+
         public delegate void ButtonPressedEventHandler(UIButton sender);
         public event ButtonPressedEventHandler Pressed;
 
