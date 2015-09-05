@@ -86,11 +86,6 @@ namespace Inlumino_SHARED
             menu.Draw(batch);
         }
 
-        public void Clear()
-        {
-            menu.Clear();
-        }
-
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             if (e is DisplaySizeChangedEvent || e is OrientationChangedEvent)

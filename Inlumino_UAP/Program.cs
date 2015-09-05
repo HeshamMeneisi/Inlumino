@@ -1,6 +1,6 @@
 using System;
 
-namespace Inlumino_SHARED
+namespace Inlumino_UAP
 {
 #if WINDOWS || XBOX
     static class Program

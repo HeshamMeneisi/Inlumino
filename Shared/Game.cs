@@ -19,11 +19,11 @@ namespace Inlumino_SHARED
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
             Screen.SetFullScreen(true);
-#if ANDROID
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;            
-#else
+#if WINDOWS_UAP
             IsMouseVisible = true;
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;            
+#else
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
@@ -61,8 +61,6 @@ namespace Inlumino_SHARED
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            DataHandler.LoadTextures(Content);
-            DataHandler.LoadFonts(Content);
             Manager.init(this);
             graphics.ApplyChanges();
         }

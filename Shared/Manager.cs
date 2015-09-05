@@ -15,19 +15,37 @@ namespace Inlumino_SHARED
         static StageContainer stagecont;
         static StageContainer editablecont;
         static ContentManager contentManager;
+        static OptionsMenu optionsmenu;
         static DeleteMenu delmenu;
         static Game parentGame;
+        static Settings settings;
         static bool initd = false;
-
+        const string settingsfile = "GameSettings.xml";
+        public static void SaveSettings()
+        {
+            DataHandler.SaveData<Settings>(settings, settingsfile);
+        }
+        public static void LoadSettings()
+        {
+            Settings temp = DataHandler.LoadData<Settings>(settingsfile);
+            if (temp != null) GameSettings = temp;
+            else settings = new Settings();
+        }
         public static StateManager StateManager { get { return stateManager; } }
         public static ContentManager ContentManager { get { return contentManager; } }
+        public static Settings GameSettings { get { return settings; } set { settings = value; } }
         public static Game Parent { get { return parentGame; } }
         public static void init(Game parent)
         {
             parentGame = parent;
             contentManager = parent.Content;
+            DataHandler.LoadTextures();
+            DataHandler.LoadFonts();
+            DataHandler.LoadSounds();
+            LoadSettings();
             stateManager = new StateManager();
             menu = new MainMenu();
+            optionsmenu = new OptionsMenu();
             savemenu = new SaveMenu();
             stagecont = new StageContainer(false);
             editablecont = new StageContainer(true);
@@ -40,10 +58,11 @@ namespace Inlumino_SHARED
             stateManager.AddGameState(GameState.OnStage, stagecont);
             StateManager.AddGameState(GameState.EditMode, editablecont);
             stateManager.AddGameState(GameState.DeleteLevel, delmenu);
-
-            stateManager.SwitchTo(GameState.MainMenu);
+            stateManager.AddGameState(GameState.Options, optionsmenu);
 
             initInput();
+
+            stateManager.SwitchTo(GameState.MainMenu);
 
             initd = true;
         }
@@ -75,6 +94,7 @@ namespace Inlumino_SHARED
         {
             if (!initd) return;
             stateManager.Update(time);
+            SoundManager.Update(time);
         }
 
         private static void initInput()

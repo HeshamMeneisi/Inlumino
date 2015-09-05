@@ -1,16 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace Inlumino_SHARED
@@ -22,16 +17,22 @@ namespace Inlumino_SHARED
         // The index in this array represents the groupindex used in TextureID
         private static List<string> TextureFiles = new List<string> { "Textures\\background"/*group=0*/, "Textures\\ui", "Textures\\objects"/*,add more files here*/};
 
-        internal static bool isValid(TextureID tid)
-        {
-            return tid != default(TextureID) && tid.GroupIndex >= 0 && tid.GroupIndex < TextureFiles.Count;
-        }
-
         private static string[] FontFiles = new string[] { "Fonts\\MainFont" };
+
+        private static Dictionary<SoundType, string> SoundFiles = new Dictionary<SoundType, string>
+        {
+            {SoundType.TapSound, "Sounds\\TapSound" },
+            { SoundType.RotateSound, "Sounds\\RotateSound" },
+            { SoundType.CrystalLit, "Sounds\\CrystalLit" },
+            {SoundType.AllCrystalsLit, "Sounds\\AllCrystalsLit" },
+            {SoundType.Background, "Sounds\\Background" }
+        };
 
         private static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static List<SpriteFont> Fonts = new List<SpriteFont>();
+
+        public static Dictionary<SoundType, SoundEffect> Sounds = new Dictionary<SoundType, SoundEffect>();
 
         /// <summary>
         /// We should define new tiles here.
@@ -76,7 +77,7 @@ namespace Inlumino_SHARED
         #region UI Items
         public static Dictionary<UIObjectType, TextureID[]> UIObjectsTextureMap = new Dictionary<UIObjectType, TextureID[]>()
         {
-            {UIObjectType.PlayBtn, new TextureID[] {new TextureID(1,0,1,0.5f) } },
+            {UIObjectType.PlayBtn, new TextureID[] {new TextureID(1,17, 1, 0.5f) } },
             {UIObjectType.EditModeBtn, new TextureID[] {new TextureID(1,4, 1, 0.5f) } },
             {UIObjectType.OptionsBtn,new TextureID[] {new TextureID(1,8, 1, 0.5f) } },
             {UIObjectType.Cell, new TextureID[] {new TextureID(1,1)} },
@@ -108,7 +109,7 @@ namespace Inlumino_SHARED
             LevelData data = new LevelData(currentLevel.getTileMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
             SaveData<string>(data.Data, getDataFileName(name));
             Stream s = savegameStorage.CreateFile(getThumbFileName(name));
-            img.SaveAsPng(s, img.Width, img.Width);            
+            img.SaveAsPng(s, img.Width, img.Width);
 #if ANDROID
             saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
 #endif
@@ -155,16 +156,22 @@ namespace Inlumino_SHARED
                 return ret;
             }
         }
-        public static void LoadTextures(ContentManager content)
+        public static void LoadTextures()
         {
             foreach (string t in TextureFiles)
-                Textures.Add(t, content.Load<Texture2D>(t));
+                Textures.Add(t, Manager.ContentManager.Load<Texture2D>(t));
         }
-        public static void LoadFonts(ContentManager content)
+        public static void LoadFonts()
         {
             foreach (string f in FontFiles)
-                Fonts.Add(content.Load<SpriteFont>(f));
+                Fonts.Add(Manager.ContentManager.Load<SpriteFont>(f));
         }
+        public static void LoadSounds()
+        {
+            foreach (KeyValuePair<SoundType,string> p in SoundFiles)
+                Sounds.Add(p.Key,Manager.ContentManager.Load<SoundEffect>(p.Value));
+        }
+
         public static Rectangle getTextureSource(TextureID id)
         {
             // Textures are expected to be square
@@ -186,7 +193,7 @@ namespace Inlumino_SHARED
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             serializer.Serialize(str, data);
 #if ANDROID
-            path = "temp/Inlumino/"+file;
+            path = "temp/Inlumino/" + file;
             saveExternal(str, path);
 #endif
 #if WINDOWS
@@ -199,6 +206,7 @@ namespace Inlumino_SHARED
 
         private static void saveExternal(Stream str, string file)
         {
+#if ANDROID
             str.Seek(0, SeekOrigin.Begin);
             string pathToFile = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, file);
             if (!Directory.Exists(Path.GetDirectoryName(pathToFile))) Directory.CreateDirectory(Path.GetDirectoryName(pathToFile));
@@ -209,6 +217,7 @@ namespace Inlumino_SHARED
                 while ((read = str.Read(buffer, 0, buffer.Length)) > 0)
                     fileStream.Write(buffer, 0, read);
             }
+#endif
         }
 
         /// <summary>
@@ -265,6 +274,10 @@ namespace Inlumino_SHARED
                 return -1;
             }
         }
+        internal static bool isValid(TextureID tid)
+        {
+            return tid != default(TextureID) && tid.GroupIndex >= 0 && tid.GroupIndex < TextureFiles.Count;
+        }
     }
-
+    public enum SoundType { TapSound = 0, RotateSound = 1, CrystalLit = 2, AllCrystalsLit = 3, Background = 4 }
 }

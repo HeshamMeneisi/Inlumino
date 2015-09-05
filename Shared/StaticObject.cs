@@ -59,12 +59,14 @@ namespace Inlumino_SHARED
         {
             targetrotation = Common.NextDirCW(rotation, clicks);
             if (instant) rotation = targetrotation;
+            else SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
         }
 
         public virtual void RotateCCW(bool instant, int clicks = 1)
         {
             targetrotation = Common.NextDirCCW(rotation, clicks);
             if (instant) rotation = targetrotation;
+            else SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
         }
     }
 }

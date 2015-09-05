@@ -6,35 +6,47 @@ namespace Inlumino_SHARED
 {
     class MainMenu : IState
     {
-        protected UIButton playButton, editorButton, OptionsButton;
+        protected UIButton playButton, editorButton, optionsButton;
         protected UIMenu mainmenu;
 
         public MainMenu()
         {
             mainmenu = new UIMenu();
 
-            playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn], 1);
-            editorButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.EditModeBtn], 1);
+            playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn]);
+            editorButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.EditModeBtn]);
+            optionsButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.OptionsBtn]);
 
             playButton.Pressed += playpressed;
             editorButton.Pressed += editpressed;
+            optionsButton.Pressed += optionspressed;
 
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
+            mainmenu.Add(optionsButton);
+
+            SoundManager.PlaySound(DataHandler.Sounds[SoundType.Background], SoundCategory.Music, true);
         }
 
         private void SetupMenu()
         {
             playButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             editorButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            optionsButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
 
-            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, Screen.Height * 0.2f);
-            editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom + Screen.Height * 0.05f);
+            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, Screen.Height * 0.1f);
+            editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom);
+            optionsButton.Position = new Vector2((Screen.Width - optionsButton.Size.X) / 2, editorButton.BoundingBox.Bottom);
         }
 
         private void editpressed(UIButton sender)
         {
             Manager.StartEditor();
+        }
+
+        private void optionspressed(UIButton sender)
+        {
+            Manager.StateManager.SwitchTo(GameState.Options);
         }
 
         private void playpressed(UIButton sender)

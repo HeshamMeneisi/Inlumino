@@ -34,7 +34,10 @@ namespace Inlumino_SHARED
                     pos = (e as TouchTapEvent).Position;
                 else return;
                 if (pos.X > GlobalPosition.X && pos.Y > GlobalPosition.Y && pos.X < BoundingBox.Right && pos.Y < BoundingBox.Bottom)
+                {
                     if (Pressed != null) { Pressed(this); e.Handled = true; }
+                    SoundManager.PlaySound(DataHandler.Sounds[SoundType.TapSound], SoundCategory.SFX); ;
+                }
             }
             base.HandleEvent(e);
         }

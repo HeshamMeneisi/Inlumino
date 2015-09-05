@@ -64,6 +64,7 @@ namespace Inlumino_SHARED
         EditMode,
         SaveLevel,
         SelectLevel,
-        DeleteLevel
+        DeleteLevel,
+        Options
     }
 }

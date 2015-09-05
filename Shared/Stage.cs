@@ -35,6 +35,8 @@ namespace Inlumino_SHARED
             foreach (Crystal c in crystals)
                 if (c != default(Crystal))
                     if (!c.IsLit()) return;
+            // Level Won
+            SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
             MessageBox.Show("TEST MESSAGE", "Level Won!", new string[] { "OK" });
         }
 

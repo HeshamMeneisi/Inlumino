@@ -28,6 +28,7 @@ namespace Inlumino_SHARED
             if (dir == Common.ReverseDir(rotation))
             {
                 state = 1;
+                SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);
                 parenttile.Parent.CheckWin();
             }
         }

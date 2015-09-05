@@ -84,3 +84,33 @@
 /processorParam:TextureFormat=Color
 /build:MainLevels/T_FirstHand.png
 
+#begin Sounds/RotateSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/RotateSound.wav
+
+#begin Sounds/TapSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/TapSound.wav
+
+#begin Sounds/AllCrystalsLit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/AllCrystalsLit.wav
+
+#begin Sounds/CrystalLit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/CrystalLit.wav
+
+#begin Sounds/Background.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Background.wav
+
