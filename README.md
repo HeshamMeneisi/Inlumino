@@ -1,9 +1,10 @@
-Known Issues:
+##Known Issues:
 
 Touch coordinates in landscpae WP10
 
-TODO:
-Fix textures
-Add level designer
+##TODO:
+Polish textures
+
 Add more objects
-Add levels
+
+Design levels

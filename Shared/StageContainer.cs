@@ -148,6 +148,7 @@ namespace Inlumino_SHARED
         private void SaveLevel()
         {
             if (CurrentLevel == null) return;
+            if (!editing) ToggleMode();
             Screen.MakeVirtual(new Vector2(256, 256));
             genhud.Visible = edithud.Visible = borderhud.Visible = false;
             CurrentLevel.SetMinScreenPadding(new Padding(0, 0, 0, 0));
