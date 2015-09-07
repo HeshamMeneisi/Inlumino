@@ -50,6 +50,24 @@ namespace Inlumino_SHARED
                 beam.Activate();
             }
         }
+
+        internal static bool isSameAngle(double a, double b, double tolerance = 1e-9)
+        {
+            a = NormalizeAngle(a);
+            b = NormalizeAngle(b);
+            if (Math.Abs(a - b) <= tolerance) return true;
+            return false;
+        }
+
+        private static double NormalizeAngle(double a)
+        {
+            while (a >= Math.PI * 2)
+                a -= Math.PI * 2;
+            while (a < 0)
+                a += Math.PI * 2;
+            return a;
+        }
+
         public static void PowerOffTile(Tile target, Direction dir, ILightSource source)
         {
             if (target == default(Tile)) return;

@@ -88,8 +88,8 @@ namespace Inlumino_SHARED
                     cell.Pressed += ulcellpressed;
                     ulcells.Add(cell);
                 }
-                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Portrait, 64, 64, Screen.Width - genhud.TotalWidth, Screen.Height);
-                userlevels = new UIHud(ulcells.ToArray(), Orientation.Portrait, 64, 64, Screen.Width - genhud.TotalWidth, Screen.Height);
+                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Landscape, Screen.SmallDim * 0.1f, Screen.SmallDim * 0.1f, Screen.Width - genhud.TotalWidth, Screen.Height);
+                userlevels = new UIHud(ulcells.ToArray(), Orientation.Landscape, Screen.SmallDim * 0.1f, Screen.SmallDim * 0.1f, Screen.Width - genhud.TotalWidth, Screen.Height);
                 mainlevels.Position = userlevels.Position = new Vector2(genhud.TotalWidth, 0);
                 mainlevels.Setup(); userlevels.Setup();
                 mainlevels.Visible = true;
@@ -106,8 +106,8 @@ namespace Inlumino_SHARED
                     cell.Pressed += ulcellpressed;
                     ulcells.Add(cell);
                 }
-                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Landscape, 64, 64, Screen.Width, Screen.Height - genhud.TotalHeight);
-                userlevels = new UIHud(ulcells.ToArray(), Orientation.Landscape, 64, 64, Screen.Width, Screen.Height - genhud.TotalHeight);
+                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Landscape, Screen.SmallDim * 0.1f, Screen.SmallDim * 0.1f, Screen.Width, Screen.Height - genhud.TotalHeight);
+                userlevels = new UIHud(ulcells.ToArray(), Orientation.Landscape, Screen.SmallDim * 0.1f, Screen.SmallDim * 0.1f, Screen.Width, Screen.Height - genhud.TotalHeight);
                 mainlevels.Position = userlevels.Position = new Vector2(0, genhud.TotalHeight);
                 mainlevels.Setup(); userlevels.Setup();
                 mainlevels.Visible = true;

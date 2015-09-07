@@ -14,6 +14,8 @@ namespace Inlumino_SHARED
 
         protected Tile parenttile;
 
+        float smoothrotation = 0;
+
         protected int state = 0; // To be mapped in an enum in every child        
 
         protected Direction rotation { get; private set; }
@@ -39,10 +41,15 @@ namespace Inlumino_SHARED
         {
             batch.Draw(DataHandler.getTexture(tID[state].GroupIndex), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(tID[state]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), tID[state].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
         }
-
+        float sfactor = 0;
         private float getRotationAngle()
         {
-            return (float)rotation * MathHelper.PiOver2;
+            float proper = (float)rotation * MathHelper.PiOver2;
+            if (!Common.isSameAngle(proper, smoothrotation, Math.Abs(sfactor)) && sfactor != 0)
+                smoothrotation += sfactor;
+            else
+            { smoothrotation = proper; rotating = false; }
+            return smoothrotation;
         }
 
         public virtual void Update(GameTime time)
@@ -53,20 +60,28 @@ namespace Inlumino_SHARED
 
         // This is for the datahandler, we could just use instanceof when the type is needed
         public abstract ObjectType getType();
-
+        bool rotating = false;
         // To be handled by childeren on update
         public virtual void RotateCW(bool instant, int clicks = 1)
         {
+            rotating = true;
             targetrotation = Common.NextDirCW(rotation, clicks);
             if (instant) rotation = targetrotation;
-            else SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
+            else
+            {
+                sfactor = 0.2f; SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
+            }
         }
 
         public virtual void RotateCCW(bool instant, int clicks = 1)
         {
+            rotating = true;
             targetrotation = Common.NextDirCCW(rotation, clicks);
             if (instant) rotation = targetrotation;
-            else SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
+            else
+            {
+                sfactor = -0.2f; SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
+            }
         }
     }
 }
