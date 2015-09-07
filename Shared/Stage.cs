@@ -164,9 +164,9 @@ namespace Inlumino_SHARED
             return map.getObjectMap();
         }
 
-        public int[,] getTileMap()
+        public TileMap getTileMap()
         {
-            return map.getIntMap();
+            return map;
         }
 
         internal void HighlightTileAt(Vector2 vector2)
@@ -209,6 +209,7 @@ namespace Inlumino_SHARED
             {
                 Pause();
                 SetSourceStatus(false);
+                ClearAllObjects(typeof(LightBeam));
             }
             else
             {
@@ -262,10 +263,10 @@ namespace Inlumino_SHARED
             }
         }
 
-        private void ClearAllObjects()
+        private void ClearAllObjects(Type type = null)
         {
             foreach (Tile t in map.AllTiles)
-                t.RemoveObject();
+                if (type == null || t.hasObject(type)) t.RemoveObject();
         }
     }
 }

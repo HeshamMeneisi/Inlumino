@@ -132,7 +132,7 @@ namespace Inlumino_SHARED
                 for (int col = 0; col < Width; col++)
                 {
                     StaticObject obj = getTileAt(row, col).getObject();
-                    intmap[row, col] = (int)(obj == default(StaticObject) ? 0: obj.Rotation);
+                    intmap[row, col] = (int)(obj == default(StaticObject) ? 0 : obj.Rotation);
                 }
             return intmap;
         }
@@ -156,11 +156,21 @@ namespace Inlumino_SHARED
 
         internal void RemoveLastCol()
         {
-            if(Width > 0)
+            if (Width > 0)
             {
                 foreach (List<Tile> row in map)
                     row.RemoveAt(row.Count - 1);
             }
+        }
+
+        public IEnumerable<Tile> getRow(int row)
+        {
+            return row < map.Count ? map[row] : null;
+        }
+        public IEnumerable<Tile> getColumn(int col)
+        {
+            foreach (List<Tile> row in map)
+                yield return col < row.Count ? row[col] : null;
         }
     }
 }

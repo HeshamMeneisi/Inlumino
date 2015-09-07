@@ -11,8 +11,8 @@ namespace Inlumino_SHARED
     // Common gampelay code affecting multiple classes is kept here
     static class Common
     {
-        public static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter };
-        public static string[] MainLevelNames = new string[] {"FirstHand" }; // For the selector
+        public static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
+        public static string[] MainLevelNames = new string[] { "FirstHand" }; // For the selector
         public static void PowerUpTile(Tile target, Direction dir, ILightSource source)
         {
             if (target == default(Tile)) return;

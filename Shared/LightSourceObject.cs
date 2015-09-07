@@ -24,7 +24,10 @@ namespace Inlumino_SHARED
             return ObjectType.LightSource;
         }
 
-        public void HandleOff(ILightSource source, Direction dir) {/*don't care*/}
+        public void HandleOff(ILightSource source, Direction dir) {
+            // Handle rogue sequence by turning back on
+            TurnOn();
+        }
 
         public void HandleOn(ILightSource source, Direction dir) { /*already obstructed*/}
 

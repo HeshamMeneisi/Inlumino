@@ -53,14 +53,15 @@ namespace Inlumino_SHARED
             // Virtual
             {ObjectType.None, new TextureID[] { new TextureID(1,2)} },
             {ObjectType.Delete, new TextureID[] {new TextureID(1,3)} },
-            {ObjectType.Invisible, new TextureID[] {new TextureID(2,5)} },
+            {ObjectType.Invisible, new TextureID[] {new TextureID(1,0)} },
             // Real
             {ObjectType.LightSource, new TextureID[] { new TextureID(2,12),new TextureID(2,13)} },
             {ObjectType.Block, new TextureID[] { new TextureID(2,4)} },
             {ObjectType.Prism, new TextureID[] { new TextureID(2,8), new TextureID(2,9)} },
             {ObjectType.LightBeam, new TextureID[] { new TextureID(2,7),new TextureID(2,6)} },
             {ObjectType.Crystal, new TextureID[] { new TextureID(2, 3), new TextureID(2, 2) } },
-            {ObjectType.Splitter, new TextureID[] {new TextureID(2,11),new TextureID(2,10)} }
+            {ObjectType.Splitter, new TextureID[] {new TextureID(2,11),new TextureID(2,10)} },
+            {ObjectType.Portal, new TextureID[] {new TextureID(2,14),new TextureID(2,5)} }
         };
 
         internal static IEnumerable<string> getSavedLevelNames()
@@ -106,7 +107,7 @@ namespace Inlumino_SHARED
         }
         internal static void SaveStage(Stage currentLevel, string name, Texture2D img)
         {
-            LevelData data = new LevelData(currentLevel.getTileMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
+            LevelData data = new LevelData(currentLevel.getTileMap().getIntMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
             SaveData<string>(data.Data, getDataFileName(name));
             Stream s = savegameStorage.CreateFile(getThumbFileName(name));
             img.SaveAsPng(s, img.Width, img.Width);
@@ -168,8 +169,8 @@ namespace Inlumino_SHARED
         }
         public static void LoadSounds()
         {
-            foreach (KeyValuePair<SoundType,string> p in SoundFiles)
-                Sounds.Add(p.Key,Manager.ContentManager.Load<SoundEffect>(p.Value));
+            foreach (KeyValuePair<SoundType, string> p in SoundFiles)
+                Sounds.Add(p.Key, Manager.ContentManager.Load<SoundEffect>(p.Value));
         }
 
         public static Rectangle getTextureSource(TextureID id)

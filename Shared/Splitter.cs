@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Inlumino_SHARED
 {
-    class Splitter: StaticObject, IObstructingObject, ILightSource
+    class Splitter : StaticObject, IObstructingObject, ILightSource
     {
         ILightSource currentsource = null;
         Dictionary<ILightSource, Direction> allsources = new Dictionary<ILightSource, Direction>();
@@ -20,7 +20,7 @@ namespace Inlumino_SHARED
             if (rotation != targetrotation)
             {
                 // Simulate current source off
-                if (IsOn)
+                if (currentsource != null)
                 {
                     ILightSource temp = currentsource;
                     HandleOff(currentsource, input);
@@ -28,8 +28,12 @@ namespace Inlumino_SHARED
                 }
                 Rotation = targetrotation;
                 // Rehandle everything currently on
-                foreach (KeyValuePair<ILightSource, Direction> pair in allsources)
-                    HandleOn(pair.Key, pair.Value);                
+                try
+                {
+                    foreach (KeyValuePair<ILightSource, Direction> pair in allsources)
+                        HandleOn(pair.Key, pair.Value);
+                }
+                catch { /* Avoid portal paradox*/}
             }
             base.Update(time);
         }
@@ -52,12 +56,12 @@ namespace Inlumino_SHARED
                 allsources.Add(source, dir);
             Tile target = default(Tile);
             if (dir == rotation)
-            {             
+            {
                 output1 = Common.NextDirCCW(rotation);
-                output2 = Common.NextDirCW(rotation);                
+                output2 = Common.NextDirCW(rotation);
             }
-            else if(dir == Common.NextDirCW(rotation))
-            {                
+            else if (dir == Common.NextDirCW(rotation))
+            {
                 output1 = Common.NextDirCCW(rotation);
                 output2 = rotation;
             }

@@ -103,8 +103,8 @@ namespace Inlumino_SHARED
             obj = null;
         }
 
-        internal bool hasObject()
-        { return obj != null; }
+        internal bool hasObject(Type type = null)
+        { return obj != null && (type==null || obj.GetType() == type); }
 
         internal StaticObject getObject()
         {

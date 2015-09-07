@@ -19,7 +19,7 @@ namespace Inlumino_SHARED
             if (rotation != targetrotation)
             {
                 // Simulate current source off
-                if (IsOn)
+                if (currentsource != null)
                 {
                     ILightSource temp = currentsource;
                     HandleOff(currentsource, input);
