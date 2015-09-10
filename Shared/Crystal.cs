@@ -9,29 +9,28 @@ namespace Inlumino_SHARED
     class Crystal : StaticObject, IObstructingObject
     {
         public Crystal(TextureID[] tid, Tile parent) : base(tid, parent) { }
+        public List<ILightSource> allsources = new List<ILightSource>();
         public override ObjectType getType()
         {
             return ObjectType.Crystal;
         }
 
-        public void HandleOff(ILightSource source, Direction dir)
+        public void HandlePulse(bool charge, Direction dir, ILightSource source)
         {
-            if (dir == Common.ReverseDir(rotation))
-            {
-                state = 0;
-                parenttile.Parent.CheckWin();
-            }
+            if (dir != Common.ReverseDir(rotation)) return;
+
+            if (charge)
+            { if (!allsources.Contains(source)) allsources.Add(source); }
+            else if (allsources.Contains(source)) allsources.Remove(source);
+            if(allsources.Count>0)
+                if(state == 0)
+                {
+                    SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);
+                    parenttile.Parent.CheckWin();
+                }
+            state = Math.Min(1, allsources.Count);
         }
 
-        public void HandleOn(ILightSource source, Direction dir)
-        {
-            if (dir == Common.ReverseDir(rotation))
-            {
-                state = 1;
-                SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);
-                parenttile.Parent.CheckWin();
-            }
-        }
 
         public override void RotateCW(bool instant, int clicks = 1)
         {
@@ -45,6 +44,12 @@ namespace Inlumino_SHARED
         internal bool IsLit()
         {
             return state == 1;
+        }
+
+        public void Reset()
+        {
+            state = 0;
+            allsources.Clear();
         }
     }
 }

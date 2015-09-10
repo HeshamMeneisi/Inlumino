@@ -15,15 +15,13 @@ namespace Inlumino_SHARED
             return ObjectType.Block;
         }
 
-        // Maybe have the texture affected with light??
-        public void HandleOff(ILightSource source, Direction dir)
+        public void HandlePulse(bool charge, Direction dir, ILightSource source)
         {
-            // Just a block here nothing to do
+            //
         }
 
-        public void HandleOn(ILightSource source, Direction dir)
-        {
-            // Just a block here nothing to do
+        public void Reset()
+        {            
         }
     }
 }

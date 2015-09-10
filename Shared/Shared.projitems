@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)OptionsMenu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Padding.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Portal.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PowerableSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Prism.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveMenu.cs" />

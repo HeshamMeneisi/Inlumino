@@ -10,6 +10,5 @@ namespace Inlumino_SHARED
     {
         Tile ParentTile { get; }
         bool IsOn { get; }
-        bool IsFeedingDirection(Direction dir);
     }
 }

@@ -97,4 +97,4 @@ public enum ObjectType
     Invisible = 6,
     Portal = 7
 }
-enum Direction { North = 0, East = 1, South = 2, West = 3, None = -1 }
+enum Direction { North = 0, East = 1, South = 2, West = 3 }

@@ -210,11 +210,21 @@ namespace Inlumino_SHARED
                 Pause();
                 SetSourceStatus(false);
                 ClearAllObjects(typeof(LightBeam));
+                ResetAll();
             }
             else
             {
                 Resume();
                 SetSourceStatus(true);
+            }
+        }
+
+        private void ResetAll()
+        {
+            foreach (Tile t in map.AllTiles)
+            {
+                IObstructingObject obj = t.getObject() as IObstructingObject;
+                if (obj != default(IObstructingObject)) obj.Reset();
             }
         }
 

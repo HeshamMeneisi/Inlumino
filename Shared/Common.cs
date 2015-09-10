@@ -13,41 +13,14 @@ namespace Inlumino_SHARED
     {
         public static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
         public static string[] MainLevelNames = new string[] { "FirstHand" }; // For the selector
-        public static void PowerUpTile(Tile target, Direction dir, ILightSource source)
+        public static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
         {
             if (target == default(Tile)) return;
-            if (target.hasObject())
-            {
-                StaticObject obj = target.getObject();
-                if (obj is IObstructingObject) (obj as IObstructingObject).HandleOn(source, dir);
-                else if (obj is LightBeam)
-                {
-                    LightBeam beam = obj as LightBeam;
-                    if ((int)dir % 2 == 0) // Vertical
-                    {
-                        if (beam.BeamState == BeamType.Horizontal)
-                        {
-                            beam.BeamState = BeamType.Cross;
-                            beam.VerticalDirection = ReverseDir(dir);
-                            beam.Activate();
-                        }
-                    }
-                    else // Horizontal
-                    {
-                        if (beam.BeamState == BeamType.Vertical)
-                        {
-                            beam.BeamState = BeamType.Cross;
-                            beam.HorzDirection = ReverseDir(dir);
-                            beam.Activate();
-                        }
-                    }
-                }
-            }
+            if (target.hasObject<IObstructingObject>()) (target.getObject() as IObstructingObject).HandlePulse(charge, side, source);
             else
             {
-                LightBeam beam = new LightBeam(DataHandler.ObjectTextureMap[ObjectType.LightBeam], target, (int)dir % 2 == 0 ? BeamType.Vertical : BeamType.Horizontal, ReverseDir(dir), ReverseDir(dir));
-                target.SetObject(beam);
-                beam.Activate();
+                if (!target.hasObject()) target.SetObject(new LightBeam(DataHandler.ObjectTextureMap[ObjectType.LightBeam], target, side == Direction.East || side == Direction.West ? BeamType.Horizontal : BeamType.Vertical));
+                (target.getObject() as LightBeam).CarryPulse(charge, Common.ReverseDir(side), source);
             }
         }
 
@@ -68,23 +41,6 @@ namespace Inlumino_SHARED
             return a;
         }
 
-        public static void PowerOffTile(Tile target, Direction dir, ILightSource source)
-        {
-            if (target == default(Tile)) return;
-            if (target.hasObject())
-            {
-                StaticObject obj = target.getObject();
-                if (obj is IObstructingObject) (obj as IObstructingObject).HandleOff(source, dir);
-                else if (obj is LightBeam)
-                {
-                    if ((int)dir % 2 == 0) (obj as LightBeam).DeleteVertical();
-                    else (obj as LightBeam).DeleteHorizontal();
-                }
-            }
-            else
-                target.SetObject(new LightBeam(DataHandler.ObjectTextureMap[ObjectType.LightBeam], target, (int)dir % 2 == 0 ? BeamType.Vertical : BeamType.Horizontal, dir, dir));
-        }
-
         internal static Stage CreateLevel(string name, bool ismain)
         {
             Stage level = DataHandler.LoadStage(name, ismain);
@@ -98,8 +54,15 @@ namespace Inlumino_SHARED
         public static Direction ReverseDir(Direction dir)
         { return (Direction)((int)(dir + 2) % 4); }
         public static Direction NextDirCW(Direction dir, int count = 1)
-        { return (Direction)((int)(dir + count) % 4); }
+        { return count >= 0 ? (Direction)((int)(dir + count) % 4) : NextDirCCW(dir, -count); }
         public static Direction NextDirCCW(Direction dir, int count = 1)
-        { return (Direction)((int)(dir + 3 * count) % 4); }
+        { return count >= 0 ? (Direction)((int)(dir + 3 * count) % 4) : NextDirCW(dir, -count); }
+        public static Direction RelativeDir(Direction dir, Direction neworigin, Direction origin = Direction.North)
+        { return NextDirCW(dir, origin - neworigin); }
+
+        public static bool isDirVertical(Direction dir)
+        { return dir == Direction.North || dir == Direction.South; }
+        public static bool isDirHorizontal(Direction dir)
+        { return dir == Direction.East || dir == Direction.West; }
     }
 }

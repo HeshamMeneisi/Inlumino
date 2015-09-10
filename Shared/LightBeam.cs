@@ -6,33 +6,43 @@ using System.Threading.Tasks;
 
 namespace Inlumino_SHARED
 {
-    class LightBeam : StaticObject, ILightSource
+    class LightBeam : StaticObject
     {
         private BeamType type;
-        public Direction HorzDirection { get; set; }
-        public Direction VerticalDirection { get; set; }
+
+        private List<ILightSource> horzsources = new List<ILightSource>();
+        private List<ILightSource> vertsources = new List<ILightSource>();
         public BeamType BeamState
         {
             get { return type; }
             set { type = value; if (value == BeamType.Cross) state = 1; else { state = 0; Rotation = value == BeamType.Horizontal ? Direction.North : Direction.East; } }
         }
-        bool on = true;
-        public bool IsOn
+
+        public void CarryPulse(bool charge, Direction dir, ILightSource source)
         {
-            get
+            // Logic            
+            if (charge)
             {
-                return on;
+                if (Common.isDirVertical(dir) && !vertsources.Contains(source))
+                    vertsources.Add(source);
+                else if (Common.isDirHorizontal(dir) && !horzsources.Contains(source))
+                    horzsources.Add(source);
             }
-        }
-
-        internal bool isHorizontal()
-        {
-            return type == BeamType.Horizontal || type == BeamType.Cross;
-        }
-
-        internal bool isVertical()
-        {
-            return type == BeamType.Vertical || type == BeamType.Cross;
+            else
+            {
+                if (Common.isDirVertical(dir) && vertsources.Contains(source))
+                    vertsources.Remove(source);
+                else if (Common.isDirHorizontal(dir) && horzsources.Contains(source))
+                    horzsources.Remove(source);
+            }
+            if (horzsources.Count > 0 && vertsources.Count > 0) BeamState = BeamType.Cross;
+            else if (vertsources.Count > 0) BeamState = BeamType.Vertical;
+            else if (horzsources.Count > 0) BeamState = BeamType.Horizontal;
+            else
+                parenttile.RemoveObject();
+            // Pass on
+            Tile target = parenttile.getAdjacentTile(dir);
+            Common.PulseTile(target, charge, Common.ReverseDir(dir), source);
         }
 
         public override ObjectType getType()
@@ -40,77 +50,11 @@ namespace Inlumino_SHARED
             return ObjectType.LightBeam;
         }
 
-        public LightBeam(TextureID[] tid, Tile parent, BeamType type, Direction hd, Direction vd) : base(tid, parent)
+        public LightBeam(TextureID[] tid, Tile parent, BeamType type) : base(tid, parent)
         {
             BeamState = type;
-            HorzDirection = hd;
-            VerticalDirection = vd;
         }
 
-        public void Activate()
-        {
-            // Horizontal
-            if (isHorizontal())
-            {
-                Tile target;
-                if (HorzDirection == Direction.East)
-                    target = parenttile.RightAdj;
-                else
-                    target = parenttile.LeftAdj;
-
-                Common.PowerUpTile(target, Common.ReverseDir(HorzDirection), this);
-            }
-            // Vertical
-            if (isVertical())
-            {
-                Tile target;
-                if (VerticalDirection == Direction.South)
-                    target = parenttile.BottomAdj;
-                else
-                    target = parenttile.TopAdj;
-                Common.PowerUpTile(target, Common.ReverseDir(VerticalDirection), this);
-            }
-        }
-
-        public void DeleteVertical()
-        {
-            if (BeamState == BeamType.Cross)
-                BeamState = BeamType.Horizontal;
-            else if (this.type == BeamType.Vertical)
-            { parenttile.RemoveObject(); on = false; }
-            Tile target;
-            if (VerticalDirection == Direction.South)
-                target = parenttile.BottomAdj;
-            else
-                target = parenttile.TopAdj;
-            Common.PowerOffTile(target, Common.ReverseDir(VerticalDirection), this);
-        }
-
-        public void DeleteHorizontal()
-        {
-            if (BeamState == BeamType.Cross)
-                BeamState = BeamType.Vertical;
-            else if (this.type == BeamType.Horizontal)
-            { parenttile.RemoveObject(); on = false; }
-            Tile target;
-            if (HorzDirection == Direction.East)
-                target = parenttile.RightAdj;
-            else
-                target = parenttile.LeftAdj;
-            Common.PowerOffTile(target, Common.ReverseDir(HorzDirection), this);
-        }
-
-        public bool IsFeedingDirection(Direction dir)
-        {
-            switch (dir)
-            {
-                case Direction.North: return isVertical() && VerticalDirection == Direction.North;
-                case Direction.East: return isHorizontal() && HorzDirection == Direction.East;
-                case Direction.South: return isVertical() && VerticalDirection == Direction.South;
-                case Direction.West: return isHorizontal() && HorzDirection == Direction.West;
-                default: return false; //unreachable
-            }
-        }
     }
     // state should be set to this and textures linked
     enum BeamType { Horizontal = 0, Vertical = 1, Cross = 2 }

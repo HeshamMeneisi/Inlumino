@@ -21,15 +21,15 @@ namespace Inlumino_SHARED
         public Tile[] getAdjacentTiles(bool includediagonals)
         {
             // DP caching because the function is used alot per frame.            
-            return adj!=null && (adjdi==includediagonals)?adj:adj=parentstage.getAdjacentTiles(this, adjdi=includediagonals);
+            return adj != null && (adjdi == includediagonals) ? adj : adj = parentstage.getAdjacentTiles(this, adjdi = includediagonals);
         }
-        
-        private StaticObject obj=null;
+
+        private StaticObject obj = null;
         public Color HighlightColor = Color.Cyan;
 
         int columncount = 0;
 
-        public TextureID[] TextureID;        
+        public TextureID[] TextureID;
 
         public Point MapPos { get { return mappos; } }
 
@@ -39,13 +39,13 @@ namespace Inlumino_SHARED
 
         internal Tile getAdjacentTile(Direction direction)
         {
-            switch(direction)
+            switch (direction)
             {
-                case Direction.North:return TopAdj;
-                case Direction.East:return RightAdj;
-                case Direction.South:return BottomAdj;
-                case Direction.West:return LeftAdj;
-                default:return default(Tile);
+                case Direction.North: return TopAdj;
+                case Direction.East: return RightAdj;
+                case Direction.South: return BottomAdj;
+                case Direction.West: return LeftAdj;
+                default: return default(Tile);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Inlumino_SHARED
             get { return parentstage; }
         }
 
-        public Tile(TileType type,RectangleF bounds,Stage parent,Point mappos)
+        public Tile(TileType type, RectangleF bounds, Stage parent, Point mappos)
         {
             TileType[] valid = TileType.GetValues(typeof(TileType)).Cast<TileType>().ToArray();
             Type = valid.Contains(type) ? (TileType)type : TileType.Unknown;
@@ -73,8 +73,8 @@ namespace Inlumino_SHARED
         }
 
         internal bool isPointOnSurface(Vector2 p)
-        {            
-            return p.X < Bounds2D.Right && p.X > Bounds2D.Left && p.Y < Bounds2D.Bottom && p.Y > Bounds2D.Top;         
+        {
+            return p.X < Bounds2D.Right && p.X > Bounds2D.Left && p.Y < Bounds2D.Bottom && p.Y > Bounds2D.Top;
         }
 
         internal void Highlight()
@@ -85,7 +85,7 @@ namespace Inlumino_SHARED
 
         internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
-            batch.Draw(DataHandler.getTexture(TextureID[(int)CurrentState].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz()/2 /*on both sides*/), DataHandler.getTextureSource(TextureID[(int)CurrentState]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
+            batch.Draw(DataHandler.getTexture(TextureID[(int)CurrentState].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[(int)CurrentState]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
             if (hasObject())
                 obj.Draw(batch, cam, coordOrigin);
         }
@@ -99,12 +99,13 @@ namespace Inlumino_SHARED
             this.obj = obj;
         }
         internal void RemoveObject()
-        {            
+        {
             obj = null;
         }
-
-        internal bool hasObject(Type type = null)
-        { return obj != null && (type==null || obj.GetType() == type); }
+        public bool hasObject(Type type = null)
+        { return obj != null && (type == null || type == obj.GetType()); }
+        internal bool hasObject<T>()
+        { return hasObject() && obj is T; }
 
         internal StaticObject getObject()
         {
@@ -112,8 +113,8 @@ namespace Inlumino_SHARED
         }
     }
 
-    enum OverlayEffect { None,Highlighted }
-    enum TileState { Default = 0, Glowing = 1}
+    enum OverlayEffect { None, Highlighted }
+    enum TileState { Default = 0, Glowing = 1 }
 
     public enum TileType { Unknown = 0, Default = 1 }
 }

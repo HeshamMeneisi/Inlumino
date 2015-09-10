@@ -8,7 +8,7 @@ namespace Inlumino_SHARED
 {
     interface IObstructingObject
     {
-        void HandleOn(ILightSource source, Direction dir);
-        void HandleOff(ILightSource source, Direction dir);
+        void HandlePulse(bool charge, Direction side, ILightSource source);
+        void Reset();
     }
 }

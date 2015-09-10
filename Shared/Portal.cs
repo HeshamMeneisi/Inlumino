@@ -6,7 +6,7 @@ namespace Inlumino_SHARED
 {
     class Portal : StaticObject, IObstructingObject, ILightSource
     {
-        ILightSource currentnearbysource = null;
+        List<ILightSource> currentnearbysources = new List<ILightSource>();
         List<ILightSource> currentdistantsources = new List<ILightSource>();
         Dictionary<ILightSource, Direction> allsources = new Dictionary<ILightSource, Direction>();
 
@@ -14,16 +14,16 @@ namespace Inlumino_SHARED
         {
             if (rotation != targetrotation)
             {
-                if (ison)
+                if (IsOn)
                 {
                     Tile target = parenttile.getAdjacentTile(Common.NextDirCW(rotation));
-                    if (target != default(Tile)) Common.PowerOffTile(target, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+                    if (target != default(Tile)) Common.PulseTile(target, false, Common.ReverseDir(Common.NextDirCW(rotation)), this);
                 }
                 // Simulate current source off
-                if (currentnearbysource != null)
+                foreach (ILightSource currentnearbysource in currentnearbysources)
                 {
                     ILightSource temp = currentnearbysource;
-                    HandleOff(currentnearbysource, Common.NextDirCW(rotation));
+                    HandlePulse(false, Common.NextDirCW(rotation), currentnearbysource);
                     allsources.Add(temp, Common.NextDirCW(rotation));
                 }
                 Rotation = targetrotation;
@@ -31,43 +31,28 @@ namespace Inlumino_SHARED
                 try
                 {
                     foreach (KeyValuePair<ILightSource, Direction> pair in allsources)
-                        HandleOn(pair.Key, pair.Value);
+                        HandlePulse(true, pair.Value, pair.Key);
                 }
                 catch { /* Already found our working source.*/}
-                if (ison)
+                if (IsOn)
                 {
                     Tile target = parenttile.getAdjacentTile(Common.NextDirCW(rotation));
-                    if (target != default(Tile)) Common.PowerUpTile(target, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+                    if (target != default(Tile)) Common.PulseTile(target, true, Common.ReverseDir(Common.NextDirCW(rotation)), this);
                 }
             }
             base.Update(time);
         }
-        bool ison = false;
         public bool IsOn
         {
             get
             {
-                return ison;
+                return currentdistantsources.Count == 0;
             }
         }
 
         public override ObjectType getType()
         {
             return ObjectType.Portal;
-        }
-
-        public void HandleOn(ILightSource source, Direction dir)
-        {
-            if (!allsources.ContainsKey(source))
-                allsources.Add(source, dir);
-            if (dir == Common.NextDirCW(rotation))
-            {
-                currentnearbysource = source;
-                state = 1;
-                foreach (Tile t in getCrossTiles())
-                    if (t.hasObject(typeof(Portal)))
-                        (t.getObject() as Portal).PowerUp(this);
-            }
         }
 
         private IEnumerable<Tile> getCrossTiles()
@@ -79,45 +64,74 @@ namespace Inlumino_SHARED
             foreach (Tile t in coltiles)
                 yield return t;
         }
-        public void HandleOff(ILightSource source, Direction dir)
-        {
-            if (allsources.ContainsKey(source))
-                allsources.Remove(source);
-            if (source == currentnearbysource)
-            {
-                currentnearbysource = null;
-                state = 0;
-                foreach (Tile t in getCrossTiles())
-                    if (t.hasObject(typeof(Portal)))
-                        (t.getObject() as Portal).PowerOff(this);
-            }
-        }
         private void PowerUp(Portal source)
         {
             if (source == this) return;
-            ison = true;
             state = 1;
             if (!currentdistantsources.Contains(source))
                 currentdistantsources.Add(source);
             Tile target = parenttile.getAdjacentTile(Common.NextDirCW(rotation));
-            if (target != default(Tile)) Common.PowerUpTile(target, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+            if (target != default(Tile)) Common.PulseTile(target, true, Common.ReverseDir(Common.NextDirCW(rotation)), this);
         }
         private void PowerOff(Portal source)
         {
             if (source == this) return;
             if (currentdistantsources.Contains(source))
                 currentdistantsources.Remove(source);
-            if (currentnearbysource == null && currentdistantsources.Count == 0)
+            if (currentdistantsources.Count == 0)
             {
-                ison = false; state = 0;
                 Tile target = parenttile.getAdjacentTile(Common.NextDirCW(rotation));
-                if (target != default(Tile)) Common.PowerOffTile(target, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+                if (target != default(Tile)) Common.PulseTile(target, false, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+                if (currentnearbysources.Count == 0)
+                    state = 0;
             }
         }
 
         public bool IsFeedingDirection(Direction dir)
         {
             return IsOn && dir == Common.NextDirCW(rotation);
+        }
+
+        public void HandlePulse(bool charge, Direction dir, ILightSource source)
+        {
+            if (charge)
+            {
+                if (!allsources.ContainsKey(source))
+                    allsources.Add(source, dir);
+                if (dir == Common.NextDirCW(rotation))
+                {
+                    if (!currentnearbysources.Contains(source)) currentnearbysources.Add(source);
+                    state = 1;
+                    foreach (Tile t in getCrossTiles())
+                        if (t.hasObject<Portal>())
+                            (t.getObject() as Portal).PowerUp(this);
+                }
+            }
+            else
+            {
+                if (allsources.ContainsKey(source))
+                    allsources.Remove(source);
+                if (currentnearbysources.Contains(source))
+                {
+                    currentnearbysources.Remove(source);
+                    if (currentnearbysources.Count == 0)
+                    {
+                        foreach (Tile t in getCrossTiles())
+                            if (t.hasObject<Portal>())
+                                (t.getObject() as Portal).PowerOff(this);
+                        if (currentdistantsources.Count == 0)
+                            state = 0;
+                    }
+                }
+            }
+        }
+
+        public void Reset()
+        {
+            state = 0;
+            currentdistantsources.Clear();
+            currentnearbysources.Clear();
+            allsources.Clear();
         }
 
         public Portal(TextureID[] tid, Tile parent) : base(tid, parent)

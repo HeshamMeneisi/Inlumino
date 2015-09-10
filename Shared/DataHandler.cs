@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.IsolatedStorage;
+using System.Reflection;
 using System.Xml.Serialization;
 
 namespace Inlumino_SHARED
@@ -197,8 +198,8 @@ namespace Inlumino_SHARED
             path = "temp/Inlumino/" + file;
             saveExternal(str, path);
 #endif
-#if WINDOWS
-            string path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();            
+#if WINDOWS_UAP
+            path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();            
 #endif
             Debug.WriteLine("______ALERT______SavedFileTo: " + path);
 
