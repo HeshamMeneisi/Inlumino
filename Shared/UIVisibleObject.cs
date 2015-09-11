@@ -28,11 +28,11 @@ namespace Inlumino_SHARED
             }
         }
 
-        public override void Draw(SpriteBatch batch) // You don't need a camera, draw ontop of the stage
+        public override void Draw(SpriteBatch batch, Camera cam = null) // You don't need a camera, draw ontop of the stage
         {
             if (!visible || sprite == null)
                 return;
-            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, BoundingBox.getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, cam==null?BoundingBox.getRectangle():cam.Transform(BoundingBox).getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
         }
 
         public Vector2 Center

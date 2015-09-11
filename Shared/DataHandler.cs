@@ -41,7 +41,7 @@ namespace Inlumino_SHARED
         #region Tile Definition        
         public static Dictionary<TileType, TextureID[]> TileTextureMap = new Dictionary<TileType, TextureID[]>()
         {
-            {TileType.Default,new TextureID[] {new TextureID(2,0) /*Normal*/, new TextureID(2,1) /*Glowing*/ } },
+            {TileType.Default,new TextureID[] {new TextureID(2,0) /*Normal*/, new TextureID(2,1) /*Highlight overlay*/, new TextureID(2,15) /*Object Board*/} },
         };
         #endregion
 
@@ -87,13 +87,16 @@ namespace Inlumino_SHARED
             {UIObjectType.RestartButton,new TextureID[] {new TextureID(1,13, 1, 0.5f) } },
             {UIObjectType.ToggleButton,new TextureID[] {new TextureID(1,14, 1, 0.5f) } },
             {UIObjectType.SaveButton,new TextureID[] {new TextureID(1,15, 1, 0.5f)} },
+            {UIObjectType.Next,new TextureID[] {new TextureID(1,18, 1, 0.5f)} },
             {UIObjectType.BackButton,new TextureID[] {new TextureID (1,11, 1, 0.5f) } },
             {UIObjectType.MainUser,new TextureID[] {new TextureID(1,7, 1, 0.5f)} },
             {UIObjectType.DeleteBtn,new TextureID[] {new TextureID(1,16, 1, 0.5f)} },
             {UIObjectType.LeftButton,new TextureID[] {new TextureID(1,5, 0.5f,0.5f)} },
             {UIObjectType.RightButton,new TextureID[] {new TextureID(1, 6, 0.5f, 0.5f) } },
             {UIObjectType.UpButton,new TextureID[] {new TextureID(1, 9, 0.5f, 0.5f) } },
-            {UIObjectType.DownButton,new TextureID[] {new TextureID(1, 10, 0.5f, 0.5f) } }
+            {UIObjectType.DownButton,new TextureID[] {new TextureID(1, 10, 0.5f, 0.5f) } },
+            {UIObjectType.Star,new TextureID[] {new TextureID(1, 20, 0.5f, 0.5f), new TextureID(1, 21, 0.5f, 0.5f) } },
+            {UIObjectType.Log,new TextureID[] {new TextureID(1,22,2,1)} }
         };
         #endregion
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();

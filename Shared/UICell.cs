@@ -37,7 +37,7 @@ namespace Inlumino_SHARED
             this.border = border;
             this.text = text;
         }
-        public override void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch, Camera cam = null)
         {
             base.Draw(batch);
             if (!visible) return;
@@ -46,7 +46,7 @@ namespace Inlumino_SHARED
             {
                 Rectangle rect = BoundingBox.getRectangle();
                 rect.Inflate(-this.Size.X * border, -this.Size.Y * border);
-                batch.Draw(DataHandler.getTexture(overlay.GroupIndex)/*Texture2D from file*/, rect/*on-screen box*/, DataHandler.getTextureSource(overlay)/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+                batch.Draw(DataHandler.getTexture(overlay.GroupIndex)/*Texture2D from file*/, cam == null ? rect : cam.Transform(rect)/*on-screen box*/, DataHandler.getTextureSource(overlay)/*Rectange on the sheet*/, Color.White/*white=no tint*/);
             }
             // Draw text
             Vector2 tsize = font.MeasureString(text);

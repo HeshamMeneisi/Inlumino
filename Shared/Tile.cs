@@ -80,14 +80,18 @@ namespace Inlumino_SHARED
         internal void Highlight()
         {
             ActiveEffect = OverlayEffect.Highlighted;
-            CurrentState = TileState.Glowing;// For testing
         }
-
+        internal void UnHighlight()
+        {
+            ActiveEffect = OverlayEffect.None;
+        }
         internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
-            batch.Draw(DataHandler.getTexture(TextureID[(int)CurrentState].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[(int)CurrentState]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
+            batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
             if (hasObject())
-                obj.Draw(batch, cam, coordOrigin);
+                obj.Draw(batch, cam, coordOrigin);            
+            if (ActiveEffect == OverlayEffect.Highlighted)
+                batch.Draw(DataHandler.getTexture(TextureID[1].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
         }
 
         internal void Update(GameTime time)

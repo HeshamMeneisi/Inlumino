@@ -28,10 +28,13 @@ namespace Inlumino_SHARED
         {
             editing = true;
             if (einitd) { SetupHud(); return; }
-            CurrentLevel = new Stage();
-            CurrentLevel.ToggleEditMode();
-            CurrentLevel.SetSize(defaultstagewidth, defaultstagewidth);
-            CurrentLevel.setBackground(DataHandler.getTexture(0));
+            if (CurrentLevel == null)
+            {
+                CurrentLevel = new Stage();
+                CurrentLevel.ToggleEditMode();
+                CurrentLevel.SetSize(defaultstagewidth, defaultstagewidth);
+                CurrentLevel.setBackground(DataHandler.getTexture(0));
+            }
             einitd = true;
         }
 
@@ -54,9 +57,17 @@ namespace Inlumino_SHARED
             UIButton vertexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], 0, "ve");
             UIButton vertshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.UpButton], 0, "vs");
             borderbuttons = new UIButton[] { horzshrink, vertshrink, horzexp, vertexp };
+            UICell s1 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
+            UICell s2 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
+            UICell s3 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
+            stars = new UIButton[] { s1, s2, s3 };
+            UIButton backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], 0, "back");
+            UIButton nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], 0, "next");
+            overlaybuttons = new UIButton[] { backbtn, nextbtn, menubtn };
             foreach (UIButton b in mainbuttons) b.Pressed += hudbtnpressed;
             foreach (UIButton b in editbuttons) b.Pressed += hudbtnpressed;
             foreach (UIButton b in borderbuttons) b.Pressed += hudbtnpressed;
+            backbtn.Pressed += hudbtnpressed;nextbtn.Pressed += hudbtnpressed;
             foreach (ObjectType t in Common.EditorObjects)
             {
                 UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], t, DataHandler.ObjectTextureMap[t][0], 0.1f);
@@ -64,7 +75,19 @@ namespace Inlumino_SHARED
                 cells.Add(cell);
             }
         }
-
+        // Transition
+        UIHud starshud;
+        UIHud trhud;
+        UIButton[] stars = null;
+        UIButton[] overlaybuttons = null;
+        private void levelwon()
+        {
+            if (ism)
+            {
+                CurrentLevel.Pause();
+            }
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////////////
         private void SetupHud()
         {
             IEnumerable<UIButton> allbuttons = getAllButtons();
@@ -235,12 +258,21 @@ namespace Inlumino_SHARED
             cln = levelname; ism = ismainlevel;
             CurrentLevel = Common.CreateLevel(levelname, ismainlevel);
             if (CurrentLevel != null)
+            {
                 CurrentLevel.SetSourceStatus(true);
+                if (!ismainlevel)
+                {
+                    InitEditing();
+                    editing = false;
+                    editmode = true;
+                }
+                else { editmode = editing = false; }
+                CurrentLevel.LevelWon += levelwon;
+                SetupHud();
+            }
             else
                 MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
-            SetupHud();
         }
-
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             genhud.HandleEvent(e);
@@ -287,7 +319,7 @@ namespace Inlumino_SHARED
 
             if (e is MouseMovedEvent)
             {
-                if (InputManager.isMouseVisible()) CurrentLevel.HighlightTileAt(CurrentLevel.Camera.DeTransform(InputManager.getMousePos().ToVector2()));
+                if (editing && InputManager.isMouseVisible()) CurrentLevel.HighlightTileAt(CurrentLevel.Camera.DeTransform(InputManager.getMousePos().ToVector2()));
                 if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                 {
                     Point offset = (e as MouseMovedEvent).Offset;

@@ -25,7 +25,7 @@ namespace Inlumino_SHARED
 
         }
 
-        public virtual void Draw(SpriteBatch batch) // No need for camera, gui is always visible. Draw ontop.
+        public virtual void Draw(SpriteBatch batch, Camera cam = null) // No need for camera, gui is always visible. Draw ontop.
         {
         }
 
@@ -121,5 +121,7 @@ enum UIObjectType
     DownButton,
     BackButton,
     MainUser,
-    DeleteBtn
+    DeleteBtn,
+    Star,
+    Log
 }

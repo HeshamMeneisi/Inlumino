@@ -36,10 +36,10 @@ namespace Inlumino_SHARED
                 if (c != default(Crystal))
                     if (!c.IsLit()) return;
             // Level Won
-            SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
-            MessageBox.Show("TEST MESSAGE", "Level Won!", new string[] { "OK" });
+            if (LevelWon != null) LevelWon();
         }
-
+        public delegate void LevelWonEventHandler();
+        public event LevelWonEventHandler LevelWon;
         public Stage(Padding minpad = null, int[,] map = null)
         {
             this.map = new TileMap(map, this);
@@ -172,7 +172,7 @@ namespace Inlumino_SHARED
         internal void HighlightTileAt(Vector2 vector2)
         {
             foreach (Tile t in map.AllTiles)
-            { t.ActiveEffect = OverlayEffect.None; /*For testing*/ t.CurrentState = TileState.Default; }
+            { t.UnHighlight(); }
             Tile temp = getTileAt(vector2);
             if (temp != null) temp.Highlight();
         }

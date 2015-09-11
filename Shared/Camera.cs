@@ -18,7 +18,7 @@ namespace Inlumino_SHARED
         private float stgxlim;
         private float stgylim;
 
-       public float MaxX
+        public float MaxX
         { get { return stgxlim + stagepadding.Right; } }
 
         public float MaxY
@@ -44,12 +44,13 @@ namespace Inlumino_SHARED
             TargetView = CurrentView.Clone();
             stgxlim = totalw;
             stgylim = totalh;
-            stagepadding = stpad;
+            stagepadding = stpad != null ? stpad : new Padding(0, 0, 0, 0);
             maxzoom = maxz;
             smoothness = smoothfactor;
         }
-        private float xScale { get { return Screen.Width / CurrentView.Width; } }
-        private float yScale { get { return Screen.Height / CurrentView.Height; } }
+        public bool FitToScreen = true;
+        private float xScale { get { return FitToScreen ? Screen.Width / CurrentView.Width : 1; } }
+        private float yScale { get { return FitToScreen ? Screen.Height / CurrentView.Height : 1; } }
         public bool isInsideView(RectangleF r)
         {
             return (r.X < CurrentView.X + CurrentView.Width && r.X + r.Width > CurrentView.X) || (r.Y < CurrentView.Y + CurrentView.Height && r.Y + r.Height > CurrentView.Y);
@@ -65,6 +66,10 @@ namespace Inlumino_SHARED
         public RectangleF Transform(RectangleF r)
         {
             return new RectangleF(xScale * (r.X - CurrentView.X), yScale * (r.Y - CurrentView.Y), xScale * r.Width, yScale * r.Height);
+        }
+        public Rectangle Transform(Rectangle r)
+        {
+            return new RectangleF(xScale * (r.X - CurrentView.X), yScale * (r.Y - CurrentView.Y), xScale * r.Width, yScale * r.Height).getRectangle();
         }
         internal Vector2 DeTransform(Vector2 v)
         {

@@ -69,7 +69,7 @@ namespace Inlumino_SHARED
                 obj.Update(time);
         }
 
-        public override void Draw(SpriteBatch batch)
+        public override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible)
                 return;
