@@ -97,7 +97,7 @@ namespace Inlumino_SHARED
             foreach (Tile t in currentLevel.getTileMap().AllTiles)
             {
                 if (ran.NextDouble() < v)
-                    t.SetAuxiliary(Auxiliaries[ran.Next(Auxiliaries.Length - 1)]);
+                    t.SetAuxiliary(Auxiliaries[ran.Next(Auxiliaries.Length)]);
             }
         }
 

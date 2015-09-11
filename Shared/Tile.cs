@@ -92,7 +92,7 @@ namespace Inlumino_SHARED
         {
             batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
             if (Auxiliary != null)
-                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
+                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//, auxrot, AuxRect.Center, SpriteEffects.None, 0);//White for no tinting            
             if (hasObject())
                 obj.Draw(batch, cam, coordOrigin);
             if (ActiveEffect == OverlayEffect.Highlighted)
@@ -121,14 +121,16 @@ namespace Inlumino_SHARED
             return obj;
         }
         static Random ran = new Random();
+        float auxrot = 0;
         public void SetAuxiliary(TextureID tid, RectangleF bounds = null)
         {
             Auxiliary = tid;
             if (bounds != null) AuxRect = bounds;
             else
             {
-                float v = (float)Math.Max(0.5f, ran.NextDouble()) * Bounds2D.Width / 2;
-                AuxRect = new RectangleF((float)ran.NextDouble() * Bounds2D.Width / 2, (float)ran.NextDouble() * Bounds2D.Height / 2, v, v);
+                float v = (float)MathHelper.Clamp((float)ran.NextDouble(), 0.2f, 0.8f) * Bounds2D.Width;
+                AuxRect = new RectangleF((float)ran.NextDouble() * Bounds2D.Width / 3, (float)ran.NextDouble() * Bounds2D.Height / 3, v, v);
+                auxrot = (float)ran.NextDouble();
             }
         }
     }
