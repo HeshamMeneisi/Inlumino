@@ -16,6 +16,9 @@ namespace Inlumino_SHARED
         public OverlayEffect ActiveEffect;
         private Stage parentstage;
 
+        RectangleF AuxRect;
+        TextureID Auxiliary = null;
+
         bool adjdi = false;
         Tile[] adj = null;
         public Tile[] getAdjacentTiles(bool includediagonals)
@@ -88,8 +91,10 @@ namespace Inlumino_SHARED
         internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
             batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
+            if (Auxiliary != null)
+                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
             if (hasObject())
-                obj.Draw(batch, cam, coordOrigin);            
+                obj.Draw(batch, cam, coordOrigin);
             if (ActiveEffect == OverlayEffect.Highlighted)
                 batch.Draw(DataHandler.getTexture(TextureID[1].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
         }
@@ -114,6 +119,17 @@ namespace Inlumino_SHARED
         internal StaticObject getObject()
         {
             return obj;
+        }
+        static Random ran = new Random();
+        public void SetAuxiliary(TextureID tid, RectangleF bounds = null)
+        {
+            Auxiliary = tid;
+            if (bounds != null) AuxRect = bounds;
+            else
+            {
+                float v = (float)Math.Max(0.5f, ran.NextDouble()) * Bounds2D.Width / 2;
+                AuxRect = new RectangleF((float)ran.NextDouble() * Bounds2D.Width / 2, (float)ran.NextDouble() * Bounds2D.Height / 2, v, v);
+            }
         }
     }
 

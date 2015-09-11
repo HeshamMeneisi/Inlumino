@@ -14,7 +14,7 @@ namespace Inlumino_ANDROID
         , Theme = "@style/Theme.Splash"
         , AlwaysRetainTaskState = true
         , LaunchMode = Android.Content.PM.LaunchMode.SingleInstance
-        , ScreenOrientation = ScreenOrientation.SensorLandscape
+        , ScreenOrientation = ScreenOrientation.SensorPortrait
         , ConfigurationChanges = ConfigChanges.Orientation | ConfigChanges.Keyboard | ConfigChanges.KeyboardHidden | ConfigChanges.ScreenSize)]
     public class Activity : Microsoft.Xna.Framework.AndroidGameActivity
     {

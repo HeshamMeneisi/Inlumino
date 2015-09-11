@@ -29,13 +29,15 @@ namespace Inlumino_SHARED
         public Camera Camera { get { return maincam; } set { maincam = value; } }
         public Vector2 Origin { get { return new Vector2(0, 0); } }
 
+        public bool IsPaused { get { return paused; } }
+
         internal void CheckWin()
         {
             Crystal[] crystals = map.AllTiles.Select(t => t.getObject() as Crystal).ToArray();
             foreach (Crystal c in crystals)
                 if (c != default(Crystal))
                     if (!c.IsLit()) return;
-            // Level Won
+            // Level Won            
             if (LevelWon != null) LevelWon();
         }
         public delegate void LevelWonEventHandler();

@@ -21,10 +21,8 @@ namespace Inlumino_SHARED
             Screen.SetFullScreen(true);
 #if WINDOWS_UAP
             IsMouseVisible = true;
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;            
-#else
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;            
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
         }

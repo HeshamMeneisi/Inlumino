@@ -20,10 +20,10 @@ namespace Inlumino_SHARED
                     if (target != default(Tile)) Common.PulseTile(target, false, Common.ReverseDir(Common.NextDirCW(rotation)), this);
                 }
                 // Simulate current source off
-                foreach (ILightSource currentnearbysource in currentnearbysources)
+                while (currentnearbysources.Count > 0)
                 {
-                    ILightSource temp = currentnearbysource;
-                    HandlePulse(false, Common.NextDirCW(rotation), currentnearbysource);
+                    ILightSource temp = currentnearbysources[0];
+                    HandlePulse(false, Common.NextDirCW(rotation), currentnearbysources[0]);
                     allsources.Add(temp, Common.NextDirCW(rotation));
                 }
                 Rotation = targetrotation;
@@ -46,7 +46,7 @@ namespace Inlumino_SHARED
         {
             get
             {
-                return currentdistantsources.Count == 0;
+                return currentdistantsources.Count > 0;
             }
         }
 

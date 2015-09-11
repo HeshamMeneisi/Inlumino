@@ -123,5 +123,6 @@ enum UIObjectType
     MainUser,
     DeleteBtn,
     Star,
-    Log
+    Log,
+    Next
 }

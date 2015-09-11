@@ -24,11 +24,11 @@ namespace Inlumino_SHARED
             else if (allsources.Contains(source)) allsources.Remove(source);
             if(allsources.Count>0)
                 if(state == 0)
-                {
-                    SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);
-                    parenttile.Parent.CheckWin();
+                {                    
+                    SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);                    
                 }
             state = Math.Min(1, allsources.Count);
+            parenttile.Parent.CheckWin();
         }
 
 

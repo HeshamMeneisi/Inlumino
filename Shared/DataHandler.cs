@@ -16,7 +16,7 @@ namespace Inlumino_SHARED
         public const int TextureUnitDim = 256;
 
         // The index in this array represents the groupindex used in TextureID
-        private static List<string> TextureFiles = new List<string> { "Textures\\background"/*group=0*/, "Textures\\ui", "Textures\\objects"/*,add more files here*/};
+        private static List<string> TextureFiles = new List<string> { "Textures\\background"/*group=0*/, "Textures\\ui", "Textures\\objects","Textures\\mmbackground","Textures\\auxiliary"/*,add more files here*/};
 
         private static string[] FontFiles = new string[] { "Fonts\\MainFont" };
 
@@ -96,7 +96,7 @@ namespace Inlumino_SHARED
             {UIObjectType.UpButton,new TextureID[] {new TextureID(1, 9, 0.5f, 0.5f) } },
             {UIObjectType.DownButton,new TextureID[] {new TextureID(1, 10, 0.5f, 0.5f) } },
             {UIObjectType.Star,new TextureID[] {new TextureID(1, 20, 0.5f, 0.5f), new TextureID(1, 21, 0.5f, 0.5f) } },
-            {UIObjectType.Log,new TextureID[] {new TextureID(1,22,2,1)} }
+            {UIObjectType.Log,new TextureID[] {new TextureID(1,22,2,2)} }
         };
         #endregion
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();

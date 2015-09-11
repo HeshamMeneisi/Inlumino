@@ -12,6 +12,8 @@ namespace Inlumino_SHARED
         protected Vector2 origin = Vector2.Zero;
 
         protected int state = 0;
+
+        public int State { get { return state; } set { state = value; } }
         public UIVisibleObject(TextureID[] tid, int layer = 0, string id = "")
         : base(layer, id)
         {
@@ -32,7 +34,7 @@ namespace Inlumino_SHARED
         {
             if (!visible || sprite == null)
                 return;
-            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, cam==null?BoundingBox.getRectangle():cam.Transform(BoundingBox).getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, cam == null ? BoundingBox.getRectangle() : cam.Transform(BoundingBox).getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
         }
 
         public Vector2 Center

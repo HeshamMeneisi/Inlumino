@@ -13,7 +13,7 @@ namespace ConvertToXNAContent
 {
     class Program
     {
-        static string dir = @"D:\Tech\WorkArea\Inlumino\Inlumino_UAP\Inlumino_UAP\Content\MainLevels\";
+        static string dir = @"D:\Tech\WorkArea\Inlumino\Content\MainLevels\";
         static void Main(string[] args)
         {        
             Console.WriteLine("Run the script: (y/n)");
@@ -32,6 +32,9 @@ namespace ConvertToXNAContent
                             IntermediateSerializer.Serialize<string>(writer, temp, null);
                         }
                         Console.WriteLine("File converted: " + filename);
+                        if (!Directory.Exists(dir + "old")) Directory.CreateDirectory(dir + "old");
+                        if (File.Exists(dir + "old\\" + Path.GetFileName(filename))) File.Delete(dir + "old\\" + Path.GetFileName(filename));
+                        File.Move(filename, dir + "old\\" + Path.GetFileName(filename));
                     }
                     else
                         Console.WriteLine("File skipped: " + Path.GetFileName(filename));

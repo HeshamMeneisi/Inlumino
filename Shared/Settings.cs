@@ -8,5 +8,6 @@ namespace Inlumino_SHARED
     {
         public float SFXVolume = 1;
         public float MusicVolume = 1;
+        public int[] stars = new int[Common.MainLevelNames.Length];
     }
 }

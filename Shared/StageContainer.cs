@@ -23,6 +23,8 @@ namespace Inlumino_SHARED
         UIHud genhud;
         UIHud edithud;
         UIHud borderhud;
+        UIButton nextbtn;
+        UIVisibleObject log;
         bool einitd = false;
         public void InitEditing()
         {
@@ -62,12 +64,11 @@ namespace Inlumino_SHARED
             UICell s3 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
             stars = new UIButton[] { s1, s2, s3 };
             UIButton backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], 0, "back");
-            UIButton nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], 0, "next");
-            overlaybuttons = new UIButton[] { backbtn, nextbtn, menubtn };
+            nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], 0, "next");
             foreach (UIButton b in mainbuttons) b.Pressed += hudbtnpressed;
             foreach (UIButton b in editbuttons) b.Pressed += hudbtnpressed;
             foreach (UIButton b in borderbuttons) b.Pressed += hudbtnpressed;
-            backbtn.Pressed += hudbtnpressed;nextbtn.Pressed += hudbtnpressed;
+            backbtn.Pressed += hudbtnpressed; nextbtn.Pressed += hudbtnpressed;
             foreach (ObjectType t in Common.EditorObjects)
             {
                 UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], t, DataHandler.ObjectTextureMap[t][0], 0.1f);
@@ -77,14 +78,16 @@ namespace Inlumino_SHARED
         }
         // Transition
         UIHud starshud;
-        UIHud trhud;
         UIButton[] stars = null;
-        UIButton[] overlaybuttons = null;
+        bool trans = false;
         private void levelwon()
         {
             if (ism)
             {
+                trans = true;
+                SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
                 CurrentLevel.Pause();
+                SetupHud();
             }
         }
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,6 +133,29 @@ namespace Inlumino_SHARED
                     minpad = new Padding(0, 0, genhud.TotalHeight, 0);
                 if (CurrentLevel != null) CurrentLevel.SetMinScreenPadding(minpad);
             }
+            if (trans)
+            {
+                SetStars();
+                log = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Log]);
+                log.setSizeRelative(0.7f, Screen.Mode);
+                starshud = new UIHud(stars, Orientation.Landscape, log.BoundingBox.Width * 0.2f, log.BoundingBox.Width * 0.2f, log.BoundingBox.Width * 0.8f, 0);
+                nextbtn.setSizeRelative(0.2f, Screen.Mode);
+                starshud.Setup();
+                log.Position = new Vector2((Screen.Width - log.BoundingBox.Width) / 2, 0);
+                starshud.Position = new Vector2((Screen.Width - starshud.TotalWidth) / 2, log.BoundingBox.Height * 0.5f);
+                nextbtn.Position = new Vector2((Screen.Width - nextbtn.BoundingBox.Width) / 2, starshud.BoundingBox.Bottom);
+            }
+        }
+        int moves = 0;
+        private void SetStars()
+        {
+            // For now
+            int perfmoves = Common.GetMoves(cln);
+            stars[0].State = moves <= perfmoves + 10 ? 1 : 0;
+            stars[1].State = moves <= perfmoves + 5 ? 1 : 0;
+            stars[2].State = moves <= perfmoves + 2 ? 1 : 0;
+            int score = stars[0].State + stars[1].State + stars[2].State;
+            Common.SetScore(cln, score);
         }
 
         private IEnumerable<UIButton> getAllButtons()
@@ -165,7 +191,14 @@ namespace Inlumino_SHARED
                     CurrentLevel.SetSize(CurrentLevel.Width, CurrentLevel.Height + 1); break;
                 case "vs":
                     CurrentLevel.SetSize(CurrentLevel.Width, CurrentLevel.Height - 1); break;
+                case "back": Reset(); break;
+                case "next": NextLevel(); break;
             }
+        }
+
+        private void NextLevel()
+        {
+            Common.NextLevel(cln);
         }
 
         private void SaveLevel()
@@ -217,6 +250,12 @@ namespace Inlumino_SHARED
             if (CurrentLevel != null)
                 CurrentLevel.Draw(batch);
             genhud.Draw(batch);
+            if (trans)
+            {
+                log.Draw(batch);
+                starshud.Draw(batch);
+                nextbtn.Draw(batch);                
+            }
             if (editing)
             {
                 edithud.Draw(batch);
@@ -243,6 +282,11 @@ namespace Inlumino_SHARED
                 CurrentLevel.Update(time);
             }
             genhud.Update(time);
+            if (trans)
+            {
+                starshud.Update(time);
+                nextbtn.Update(time);
+            }
             if (editing)
             {
                 edithud.Update(time);
@@ -255,6 +299,7 @@ namespace Inlumino_SHARED
         bool ism;
         public void loadLevel(string levelname, bool ismainlevel)
         {
+            trans = false; moves = 0;
             cln = levelname; ism = ismainlevel;
             CurrentLevel = Common.CreateLevel(levelname, ismainlevel);
             if (CurrentLevel != null)
@@ -269,6 +314,7 @@ namespace Inlumino_SHARED
                 else { editmode = editing = false; }
                 CurrentLevel.LevelWon += levelwon;
                 SetupHud();
+                Common.SpreadAuxiliaries(CurrentLevel, 0.1f);
             }
             else
                 MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
@@ -276,12 +322,18 @@ namespace Inlumino_SHARED
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             genhud.HandleEvent(e);
+            if (trans)
+            {
+                starshud.HandleEvent(e);
+                nextbtn.HandleEvent(e);
+            }
             if (editing)
             {
                 edithud.HandleEvent(e);
                 borderhud.HandleEvent(e);
             }
             if (CurrentLevel == null) return;
+            if (trans) return;
             if (e is DisplaySizeChangedEvent || e is OrientationChangedEvent)
                 SetupHud();
             if (e.Handled && !forcehandle) return;
@@ -306,7 +358,7 @@ namespace Inlumino_SHARED
                 else
                 {
                     if (obj != null && !(obj is LightBeam))
-                        obj.RotateCW(editing);
+                    { obj.RotateCW(editing); moves++; }
                 }
             }
 
@@ -353,6 +405,7 @@ namespace Inlumino_SHARED
                     {
                         if (ev.Key == InputManager.MouseKey.LeftKey) obj.RotateCCW(editing);
                         else if (ev.Key == InputManager.MouseKey.RightKey) obj.RotateCW(editing);
+                        moves++;
                     }
                 }
             }

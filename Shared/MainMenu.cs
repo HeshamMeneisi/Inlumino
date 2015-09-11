@@ -8,9 +8,10 @@ namespace Inlumino_SHARED
     {
         protected UIButton playButton, editorButton, optionsButton;
         protected UIMenu mainmenu;
-
+        Texture2D background;
         public MainMenu()
         {
+            background = DataHandler.getTexture(3);
             mainmenu = new UIMenu();
 
             playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn]);
@@ -23,18 +24,19 @@ namespace Inlumino_SHARED
 
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
-            mainmenu.Add(optionsButton);
+            //mainmenu.Add(optionsButton);
 
             SoundManager.PlaySound(DataHandler.Sounds[SoundType.Background], SoundCategory.Music, true);
         }
 
         private void SetupMenu()
         {
+            float logo = Screen.Height * 0.3f;
             playButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             editorButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             optionsButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
 
-            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, Screen.Height * 0.1f);
+            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, logo + Screen.Height * 0.1f);
             editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom);
             optionsButton.Position = new Vector2((Screen.Width - optionsButton.Size.X) / 2, editorButton.BoundingBox.Bottom);
         }
@@ -61,6 +63,8 @@ namespace Inlumino_SHARED
 
         public void Draw(SpriteBatch batch)
         {
+            float w = Screen.Height * background.Width / background.Height;
+            batch.Draw(background, new Rectangle((int)(Screen.Width - w) / 2, 0, (int)(w), (int)Screen.Height), Color.White);
             mainmenu.Draw(batch);
         }
 
