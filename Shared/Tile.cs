@@ -58,7 +58,7 @@ namespace Inlumino_SHARED
 
         public Vector2 LocalCenter { get { return Center - Bounds2D.Location; } }
 
-        public Vector2 Center { get { return Bounds2D.getRectangle().Center.ToVector2(); } }
+        public Vector2 Center { get { return Bounds2D.ToRectangle().Center.ToVector2(); } }
 
         public Stage Parent
         {

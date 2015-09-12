@@ -25,11 +25,18 @@ namespace Inlumino_SHARED
         public static event MouseMovedEventHandler MouseMoved;
         public delegate void TouchTapEventHandler(Vector2 position);
         public static event TouchTapEventHandler Tapped;
-        public delegate void DragEventHandler(Vector2 delta);
+        public delegate void DragEventHandler(Vector2 delta, Vector2 position);
         public static event DragEventHandler Dragged;
         public delegate void PinchEventHandler(float delta);
         public static event PinchEventHandler Pinched;
-        
+        public delegate void DragCompleteHandler(Vector2 position);
+        public static event DragCompleteHandler DragComplete;
+        public delegate void FingerDownHandler(Vector2 position);
+        public static event  FingerDownHandler FingerDown;
+        public delegate void FingerOffHandler(Vector2 position);
+        public static event FingerOffHandler FingerOff;
+        public delegate void AllFingersOffHandler();
+        public static event AllFingersOffHandler AllFingersOff;
         internal static void init()
         {
             lmx = Mouse.GetState().X;
@@ -47,30 +54,41 @@ namespace Inlumino_SHARED
         static bool pinching = false;
         static MouseState ms;
         static KeyboardState ks;
-        static TouchCollection ts;
-
+        static bool fo = false;     
         static public void Update(GameTime time)
         {
             ms = Mouse.GetState();
-            ks = Keyboard.GetState();
-            ts = TouchPanel.GetState();
+
+            TouchCollection ts = TouchPanel.GetState();
 
             var gesture = default(GestureSample);
 
+            foreach (TouchLocation tl in ts)
+            {
+                fo = true;
+                if (tl.State == TouchLocationState.Pressed && FingerDown != null) FingerDown(tl.Position);
+                if (tl.State == TouchLocationState.Released && FingerOff != null) FingerOff(tl.Position);               
+            }
+            if(fo && ts.Count==0 && AllFingersOff!=null)
+            {
+                fo = false;
+                AllFingersOff();
+            }
             while (TouchPanel.IsGestureAvailable)
             {
                 gesture = TouchPanel.ReadGesture();
                 if (gesture.GestureType == GestureType.Tap)
                     Tapped(gesture.Position);
                 else if (gesture.GestureType == GestureType.FreeDrag)
-                    Dragged(gesture.Delta);
+                    Dragged(gesture.Delta, gesture.Position);
                 else if (gesture.GestureType == GestureType.Pinch)
                 {
                     if (!pinching) { pinching = true; lpg = gesture; }
-                    else {
+                    else
+                    {
                         float ld = (lpg.Position - lpg.Position2).Length();
                         float cd = (gesture.Position - gesture.Position2).Length();
-                        Pinched(1-cd/ld);
+                        Pinched(1 - cd / ld);
                         lpg = gesture;
                     }
                 }

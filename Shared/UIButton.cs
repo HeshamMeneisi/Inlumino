@@ -12,9 +12,10 @@ namespace Inlumino_SHARED
         public delegate void ButtonPressedEventHandler(UIButton sender);
         public event ButtonPressedEventHandler Pressed;
 
-        public UIButton(TextureID[] tid, int layer = 0, string id = "")
+        public UIButton(TextureID[] tid,ButtonPressedEventHandler pressed=null, int layer = 0, string id = "")
             : base(tid, layer, id)
         {
+            Pressed += pressed;
         }
 
         public override void Clear()
@@ -28,12 +29,14 @@ namespace Inlumino_SHARED
             if (visible)
             {
                 Vector2 pos;
-                if (e is MouseDownEvent)
-                    pos = (e as MouseDownEvent).Position.ToVector2();
+                if (e is MouseUpEvent)
+                    pos = (e as MouseUpEvent).Position.ToVector2();
                 else if (e is TouchTapEvent)
                     pos = (e as TouchTapEvent).Position;
                 else return;
-                if (pos.X > GlobalPosition.X && pos.Y > GlobalPosition.Y && pos.X < BoundingBox.Right && pos.Y < BoundingBox.Bottom)
+                UIHud p = parent as UIHud;
+                if (p != null) pos = p.Camera.DeTransform(pos);
+                if (BoundingBox.ContainsPoint(pos))
                 {
                     if (Pressed != null) { Pressed(this); e.Handled = true; }
                     SoundManager.PlaySound(DataHandler.Sounds[SoundType.TapSound], SoundCategory.SFX); ;

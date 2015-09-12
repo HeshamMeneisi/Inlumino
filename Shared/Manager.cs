@@ -109,6 +109,18 @@ namespace Inlumino_SHARED
             InputManager.Dragged += dragged;
             InputManager.Tapped += tapped;
             InputManager.Pinched += pinched;
+            InputManager.DragComplete += drcomplete;
+            InputManager.AllFingersOff += afo;
+        }
+
+        private static void afo()
+        {
+            stateManager.CurrentGameState.HandleEvent(new TouchAllFingersOffEvent());
+        }
+
+        private static void drcomplete(Vector2 position)
+        {
+            stateManager.CurrentGameState.HandleEvent(new TouchDragCompleteEvent(position));
         }
 
         private static void keyup(Keys k)
@@ -131,9 +143,9 @@ namespace Inlumino_SHARED
             StateManager.CurrentGameState.HandleEvent(new TouchTapEvent(position));
         }
 
-        private static void dragged(Vector2 delta)
+        private static void dragged(Vector2 delta, Vector2 pos)
         {
-            StateManager.CurrentGameState.HandleEvent(new TouchFreeDragEvent(delta));
+            StateManager.CurrentGameState.HandleEvent(new TouchFreeDragEvent(delta, pos));
         }
 
         private static void mmoved(Point position, Point offset)

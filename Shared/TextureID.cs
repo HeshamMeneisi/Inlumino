@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Inlumino_SHARED
 {
-    class TextureID
+    public class TextureID
     {        
         public int GroupIndex;
         public int Index;

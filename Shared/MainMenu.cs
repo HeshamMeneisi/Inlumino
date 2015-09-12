@@ -31,14 +31,10 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            float logo = Screen.Height * 0.3f;
-            playButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            editorButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            optionsButton.setSizeRelative(0.3f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-
-            playButton.Position = new Vector2((Screen.Width - playButton.Size.X) / 2, logo + Screen.Height * 0.1f);
-            editorButton.Position = new Vector2((Screen.Width - editorButton.Size.X) / 2, playButton.BoundingBox.Bottom);
-            optionsButton.Position = new Vector2((Screen.Width - optionsButton.Size.X) / 2, editorButton.BoundingBox.Bottom);
+            float logo = Screen.Height * 0.25f;
+            mainmenu.setAllSizeRelative(0.25f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            mainmenu.ArrangeInForm(Orientation.Portrait);
+            mainmenu.Position = new Vector2((Screen.Width - mainmenu.Size.X) / 2, logo + Screen.Height * 0.1f);
         }
 
         private void editpressed(UIButton sender)

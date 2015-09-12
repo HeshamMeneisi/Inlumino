@@ -17,14 +17,17 @@ namespace Inlumino_SHARED
         const int defaultstagewidth = 4;
         /// GUI //////////////////////////////////////////////////////////////////////////////////////////////
         List<UICell> cells = new List<UICell>();
-        UIButton[] mainbuttons = null;
-        UIButton[] editbuttons = null;
         UIButton[] borderbuttons = null;
-        UIHud genhud;
+        UIMenu genmenu;
         UIHud edithud;
         UIHud borderhud;
         UIButton nextbtn;
         UIVisibleObject log;
+        UIButton menubtn;
+        UIButton resetbtn;
+        UIButton togglebtn;
+        UIButton savebtn;
+        UIButton delbtn;
         bool einitd = false;
         public void InitEditing()
         {
@@ -47,32 +50,31 @@ namespace Inlumino_SHARED
 
         private void InitHud()
         {
-            UIButton menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], 0, "menu");
-            UIButton resetbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RestartButton], 0, "reset");
-            mainbuttons = new UIButton[] { menubtn, resetbtn };
-            UIButton togglebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ToggleButton], 0, "toggle");
-            UIButton savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], 0, "save");
-            UIButton delbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], 0, "del");
-            editbuttons = new UIButton[] { togglebtn, savebtn, delbtn };
-            UIButton horzexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], 0, "he");
-            UIButton horzshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], 0, "hs");
-            UIButton vertexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], 0, "ve");
-            UIButton vertshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.UpButton], 0, "vs");
+            menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], hudbtnpressed, 0, "menu");
+            resetbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RestartButton], hudbtnpressed, 0, "reset");
+            togglebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ToggleButton], hudbtnpressed, 0, "toggle");
+            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");
+            delbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], hudbtnpressed, 0, "del");
+            UIButton horzexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], hudbtnpressed, 0, "he");
+            UIButton horzshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], hudbtnpressed, 0, "hs");
+            UIButton vertexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], hudbtnpressed, 0, "ve");
+            UIButton vertshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.UpButton], hudbtnpressed, 0, "vs");
             borderbuttons = new UIButton[] { horzshrink, vertshrink, horzexp, vertexp };
             UICell s1 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
             UICell s2 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
             UICell s3 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
             stars = new UIButton[] { s1, s2, s3 };
-            UIButton backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], 0, "back");
-            nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], 0, "next");
-            foreach (UIButton b in mainbuttons) b.Pressed += hudbtnpressed;
-            foreach (UIButton b in editbuttons) b.Pressed += hudbtnpressed;
-            foreach (UIButton b in borderbuttons) b.Pressed += hudbtnpressed;
-            backbtn.Pressed += hudbtnpressed; nextbtn.Pressed += hudbtnpressed;
+            UIButton backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], hudbtnpressed, 0, "back");
+            nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], hudbtnpressed, 0, "next");
+            genmenu = new UIMenu();
+            genmenu.Add(menubtn);
+            genmenu.Add(resetbtn);
+            genmenu.Add(togglebtn);
+            genmenu.Add(savebtn);
+            genmenu.Add(delbtn);
             foreach (ObjectType t in Common.EditorObjects)
             {
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], t, DataHandler.ObjectTextureMap[t][0], 0.1f);
-                cell.Pressed += cellpressed;
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], t, DataHandler.ObjectTextureMap[t][0], 0.1f, "", Color.White, cellpressed);
                 cells.Add(cell);
             }
         }
@@ -93,57 +95,39 @@ namespace Inlumino_SHARED
         /////////////////////////////////////////////////////////////////////////////////////////////////
         private void SetupHud()
         {
-            IEnumerable<UIButton> allbuttons = getAllButtons();
-            if (Screen.Mode == Orientation.Landscape)
+            togglebtn.Visible = savebtn.Visible = delbtn.Visible = editing;
+            genmenu.setAllSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
+            Padding minpad;
+            if (editing)
             {
-                genhud = new UIHud(allbuttons, Orientation.Portrait, Screen.Height * 0.4f, Screen.Height * 0.2f, 0, Screen.Height * (editmode ? 1 : 0.4f));
-                genhud.Setup();
-                Padding minpad;
-                if (editing)
-                {
-                    edithud = new UIHud(cells.ToArray(), Orientation.Portrait, Screen.Height * 0.1f, Screen.Height * 0.1f, 0, Screen.Height);
-                    edithud.Setup();
-                    edithud.Position = new Vector2(Screen.Width - edithud.TotalWidth, 0);
-                    borderhud = new UIHud(borderbuttons, Orientation.Portrait, Screen.Height * 0.1f, Screen.Height * 0.1f, 0, Screen.Height);
-                    borderhud.Position = new Vector2(edithud.BoundingBox.Left - borderhud.TotalWidth, (Screen.Height - borderhud.TotalHeight) / 2);
-                    minpad = new Padding(genhud.TotalWidth, edithud.TotalWidth + borderhud.TotalWidth, 0, 0);
-                }
-                else
-                    minpad = new Padding(genhud.TotalWidth, 0, 0, 0);
-                if (CurrentLevel != null)
-                    CurrentLevel.SetMinScreenPadding(minpad);
+                float d = Screen.SmallDim * 0.1f;
+                edithud = new UIHud(cells.ToArray(), Screen.Mode, d, d, Screen.Mode == Orientation.Landscape ? d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : d);
+                edithud.Setup();
+                edithud.Position = Screen.Mode == Orientation.Landscape ? new Vector2(Screen.Width - edithud.ActualWidth, 0) : new Vector2(0, Screen.Height - edithud.ActualHeight);
+                borderhud = new UIHud(borderbuttons, Screen.Mode, d, d, Screen.Mode == Orientation.Landscape ? d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : d);
+                borderhud.Setup();
+                borderhud.Position = Screen.Mode == Orientation.Landscape ?
+                    new Vector2(edithud.BoundingBox.Left - borderhud.ActualWidth, (Screen.Height - borderhud.ActualHeight) / 2)
+                    : new Vector2((Screen.Width - borderhud.ActualWidth) / 2, edithud.BoundingBox.Top - borderhud.ActualHeight);
+                minpad = new Padding(genmenu.Width, edithud.ActualWidth + borderhud.ActualWidth, 0, 0);
             }
             else
-            {
-                genhud = new UIHud(allbuttons, Orientation.Landscape, Screen.Width * 0.32f, Screen.Width * 0.16f, Screen.Width * (editmode ? 1 : 0.64f), 0);
-                genhud.Setup();
-                Padding minpad;
-                if (editing)
-                {
-                    selected = ObjectType.None;
-                    edithud = new UIHud(cells.ToArray(), Orientation.Landscape, Screen.Width * 0.1f, Screen.Width * 0.1f, Screen.Width, 0);
-                    edithud.Position = new Vector2(0, Screen.Height - edithud.TotalHeight);
-                    edithud.Setup();
-                    borderhud = new UIHud(borderbuttons, Orientation.Landscape, Screen.Width * 0.1f, Screen.Width * 0.1f, Screen.Width, 0);
-                    borderhud.Position = new Vector2((Screen.Width - borderhud.TotalWidth) / 2, edithud.BoundingBox.Top - borderhud.TotalHeight);
-                    borderhud.Setup();
-                    minpad = new Padding(0, 0, genhud.TotalHeight, edithud.TotalHeight + borderhud.TotalHeight);
-                }
-                else
-                    minpad = new Padding(0, 0, genhud.TotalHeight, 0);
-                if (CurrentLevel != null) CurrentLevel.SetMinScreenPadding(minpad);
-            }
+                minpad = new Padding(Screen.Mode == Orientation.Landscape ? genmenu.Width : 0, 0, Screen.Mode == Orientation.Landscape ? 0 : genmenu.Height, 0);
+            if (CurrentLevel != null)
+                CurrentLevel.SetMinScreenPadding(minpad);
             if (trans)
             {
                 SetStars();
                 log = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Log]);
                 log.setSizeRelative(0.7f, Screen.Mode);
-                starshud = new UIHud(stars, Orientation.Landscape, log.BoundingBox.Width * 0.2f, log.BoundingBox.Width * 0.2f, log.BoundingBox.Width * 0.8f, 0);
-                nextbtn.setSizeRelative(0.2f, Screen.Mode);
+                float d = log.Width * 0.2f;
+                starshud = new UIHud(stars, Orientation.Landscape, d, d, log.BoundingBox.Width * 0.8f, d);
+                nextbtn.setSizeRelative(0.25f, Screen.Mode);
                 starshud.Setup();
-                log.Position = new Vector2((Screen.Width - log.BoundingBox.Width) / 2, 0);
-                starshud.Position = new Vector2((Screen.Width - starshud.TotalWidth) / 2, log.BoundingBox.Height * 0.5f);
-                nextbtn.Position = new Vector2((Screen.Width - nextbtn.BoundingBox.Width) / 2, starshud.BoundingBox.Bottom);
+                log.Position = new Vector2((Screen.Width - log.Width) / 2, 0);
+                starshud.Position = new Vector2((Screen.Width - starshud.ActualWidth) / 2, log.GlobalPosition.Y + log.Height * 0.5f);
+                nextbtn.Position = new Vector2((Screen.Width - nextbtn.Width) / 2, starshud.BoundingBox.Bottom);
             }
         }
         int moves = 0;
@@ -156,12 +140,6 @@ namespace Inlumino_SHARED
             stars[2].State = moves <= perfmoves + 2 ? 1 : 0;
             int score = stars[0].State + stars[1].State + stars[2].State;
             Common.SetScore(cln, score);
-        }
-
-        private IEnumerable<UIButton> getAllButtons()
-        {
-            foreach (UIButton b in mainbuttons) yield return b;
-            if (editmode) foreach (UIButton b in editbuttons) yield return b;
         }
 
         ObjectType selected = ObjectType.None;
@@ -206,7 +184,7 @@ namespace Inlumino_SHARED
             if (CurrentLevel == null) return;
             if (!editing) ToggleMode();
             Screen.MakeVirtual(new Vector2(256, 256));
-            genhud.Visible = edithud.Visible = borderhud.Visible = false;
+            genmenu.Visible = edithud.Visible = borderhud.Visible = false;
             CurrentLevel.SetMinScreenPadding(new Padding(0, 0, 0, 0));
             Texture2D icon = Manager.Parent.TakeScreenshot();
             Screen.MakeReal();
@@ -249,12 +227,12 @@ namespace Inlumino_SHARED
         {
             if (CurrentLevel != null)
                 CurrentLevel.Draw(batch);
-            genhud.Draw(batch);
+            genmenu.Draw(batch);
             if (trans)
             {
                 log.Draw(batch);
                 starshud.Draw(batch);
-                nextbtn.Draw(batch);                
+                nextbtn.Draw(batch);
             }
             if (editing)
             {
@@ -281,7 +259,7 @@ namespace Inlumino_SHARED
                     CurrentLevel.Camera.Zoom(0.02f);
                 CurrentLevel.Update(time);
             }
-            genhud.Update(time);
+            genmenu.Update(time);
             if (trans)
             {
                 starshud.Update(time);
@@ -321,7 +299,7 @@ namespace Inlumino_SHARED
         }
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
-            genhud.HandleEvent(e);
+            genmenu.HandleEvent(e);
             if (trans)
             {
                 starshud.HandleEvent(e);

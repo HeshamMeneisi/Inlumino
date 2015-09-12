@@ -8,8 +8,8 @@ namespace Inlumino_SHARED
 {
     class Camera
     {
-        private RectangleF CurrentView;
-        private RectangleF TargetView;
+        private RectangleF currentView;
+        private RectangleF targetView;
         // Moving allowance around the stage (For background visibility)
         private Padding stagepadding;
 
@@ -18,6 +18,9 @@ namespace Inlumino_SHARED
         private float stgxlim;
         private float stgylim;
 
+        public RectangleF ActualView { get { return currentView; } }
+        public RectangleF TargetView
+        { get { return targetView; } }
         public float MaxX
         { get { return stgxlim + stagepadding.Right; } }
 
@@ -40,8 +43,8 @@ namespace Inlumino_SHARED
         float smoothness;// larger is less smooth, (>=1) means no smoothness
         public Camera(float x, float y, float vieww, float viewh, float totalw, float totalh, Padding stpad = null, float maxz = 0.25f, float smoothfactor = 0.08f)
         {
-            CurrentView = new RectangleF(x, y, vieww, viewh);
-            TargetView = CurrentView.Clone();
+            currentView = new RectangleF(x, y, vieww, viewh);
+            targetView = currentView.Clone();
             stgxlim = totalw;
             stgylim = totalh;
             stagepadding = stpad != null ? stpad : new Padding(0, 0, 0, 0);
@@ -49,52 +52,58 @@ namespace Inlumino_SHARED
             smoothness = smoothfactor;
         }
         public bool FitToScreen = true;
-        private float xScale { get { return FitToScreen ? Screen.Width / CurrentView.Width : 1; } }
-        private float yScale { get { return FitToScreen ? Screen.Height / CurrentView.Height : 1; } }
+        private float xScale { get { return FitToScreen ? Screen.Width / currentView.Width : 1; } }
+        private float yScale { get { return FitToScreen ? Screen.Height / currentView.Height : 1; } }
         public bool isInsideView(RectangleF r)
         {
-            return (r.X < CurrentView.X + CurrentView.Width && r.X + r.Width > CurrentView.X) || (r.Y < CurrentView.Y + CurrentView.Height && r.Y + r.Height > CurrentView.Y);
+            return currentView.Intersects(r);
         }
         public bool isInsideView(Vector2 v)
         {
-            return v.X > CurrentView.X && v.Y > CurrentView.Y && v.X < CurrentView.X + CurrentView.Width && v.Y < CurrentView.Y + CurrentView.Height;
+            return currentView.ContainsPoint(v);
         }
         public Vector2 Transform(Vector2 v)
         {
-            return new Vector2(xScale * (v.X - CurrentView.X), yScale * (v.Y - CurrentView.Y));
+            return new Vector2(xScale * (v.X - currentView.X), yScale * (v.Y - currentView.Y));
         }
         public RectangleF Transform(RectangleF r)
         {
-            return new RectangleF(xScale * (r.X - CurrentView.X), yScale * (r.Y - CurrentView.Y), xScale * r.Width, yScale * r.Height);
+            if (r == null) return null;
+            return new RectangleF(xScale * (r.X - currentView.X), yScale * (r.Y - currentView.Y), xScale * r.Width, yScale * r.Height);
+        }
+        public RectangleF TransformWithCropping(RectangleF r, out RectangleF rectnocropping)
+        {
+            rectnocropping = Transform(r);
+            return Transform(currentView.Intersection(r));
         }
         public Rectangle Transform(Rectangle r)
         {
-            return new RectangleF(xScale * (r.X - CurrentView.X), yScale * (r.Y - CurrentView.Y), xScale * r.Width, yScale * r.Height).getRectangle();
+            return new RectangleF(xScale * (r.X - currentView.X), yScale * (r.Y - currentView.Y), xScale * r.Width, yScale * r.Height).ToRectangle();
         }
         internal Vector2 DeTransform(Vector2 v)
         {
-            return new Vector2(v.X / xScale + CurrentView.X, v.Y / yScale + CurrentView.Y);
+            return new Vector2(v.X / xScale + currentView.X, v.Y / yScale + currentView.Y);
         }
         public void StepHorizontal(float stepsize)
         {
             float scaledStep = stepsize / xScale;
-            if (TargetView.X + TargetView.Width + scaledStep > MaxX)
-                TargetView.X = MaxX - TargetView.Width;
-            else if (TargetView.X + scaledStep < MinX)
-                TargetView.X = MinX;
+            if (targetView.X + targetView.Width + scaledStep > MaxX)
+                targetView.X = MaxX - targetView.Width;
+            else if (targetView.X + scaledStep < MinX)
+                targetView.X = MinX;
             else
-                TargetView.X += scaledStep;
+                targetView.X += scaledStep;
         }
 
         public void StepVertical(float stepsize)
         {
             float scaledStep = stepsize / yScale;
-            if (TargetView.Y + TargetView.Height + scaledStep > MaxY)
-                TargetView.Y = MaxY - TargetView.Height;
-            else if (TargetView.Y + scaledStep < MinY)
-                TargetView.Y = MinY;
+            if (targetView.Y + targetView.Height + scaledStep > MaxY)
+                targetView.Y = MaxY - targetView.Height;
+            else if (targetView.Y + scaledStep < MinY)
+                targetView.Y = MinY;
             else
-                TargetView.Y += scaledStep;
+                targetView.Y += scaledStep;
         }
 
         public void Zoom(float p)
@@ -102,22 +111,22 @@ namespace Inlumino_SHARED
             if (p != 0) // Save time
             {
                 float nx, ny, nw, nh;
-                nw = TargetView.Width * (1 + p);
-                nh = TargetView.Height * (1 + p);
+                nw = targetView.Width * (1 + p);
+                nh = targetView.Height * (1 + p);
                 // Enforcing max zoom settings
                 if (nh / MaxH < maxzoom)
                 {
                     nh = MaxH * maxzoom;
-                    nw = TargetView.Width * (nh / TargetView.Height);
+                    nw = targetView.Width * (nh / targetView.Height);
                 }
                 else if (nw / MaxW < maxzoom)
                 {
                     nw = MaxW * maxzoom;
-                    nh = TargetView.Height * (nw / TargetView.Width);
+                    nh = targetView.Height * (nw / targetView.Width);
                 }
                 // Making the zoom effect appear central
-                nx = TargetView.X - (nw - TargetView.Width) / 2;
-                ny = TargetView.Y - (nh - TargetView.Height) / 2;
+                nx = targetView.X - (nw - targetView.Width) / 2;
+                ny = targetView.Y - (nh - targetView.Height) / 2;
                 if (nx < MinX) nx = MinX;
                 if (ny < MinY) ny = MinY;
                 recheck:
@@ -126,8 +135,8 @@ namespace Inlumino_SHARED
                     if (nw > MaxW)
                     {
                         nw = MaxW; nx = MinX;
-                        nh = TargetView.Height * (nw / TargetView.Width);
-                        ny = TargetView.Y - (nh - TargetView.Height) / 2;
+                        nh = targetView.Height * (nw / targetView.Width);
+                        ny = targetView.Y - (nh - targetView.Height) / 2;
                         if (ny < MinY) ny = MinY;
                     }
                     else nx = MaxX - nw;
@@ -137,52 +146,58 @@ namespace Inlumino_SHARED
                     if (nh > MaxH)
                     {
                         nh = MaxH; ny = MinY;
-                        nw = TargetView.Width * (nh / TargetView.Height);
-                        nx = TargetView.X - (nw - TargetView.Width) / 2;
+                        nw = targetView.Width * (nh / targetView.Height);
+                        nx = targetView.X - (nw - targetView.Width) / 2;
                         if (nx < MinX) nx = MinX;
                     }
                     else ny = MaxY - nh;
                     goto recheck;
                 }
-                TargetView = new RectangleF(nx, ny, nw, nh);
+                targetView = new RectangleF(nx, ny, nw, nh);
             }
 
         }
 
         internal void CenterStage(bool animated)
         {
-            float nx = (MaxW - CurrentView.Width) / 2 + MinX;
-            float ny = (MaxH - CurrentView.Height) / 2 + MinY;
-            if (animated) TargetView = new RectangleF(nx, ny, TargetView.Width, TargetView.Height);
+            float nx = (MaxW - currentView.Width) / 2 + MinX;
+            float ny = (MaxH - currentView.Height) / 2 + MinY;
+            if (animated) targetView = new RectangleF(nx, ny, targetView.Width, targetView.Height);
             else
             {
-                CurrentView = new RectangleF(nx, ny, CurrentView.Width, CurrentView.Height);
-                TargetView = CurrentView.Clone();
+                currentView = new RectangleF(nx, ny, currentView.Width, currentView.Height);
+                targetView = currentView.Clone();
             }
+        }
+
+        internal void EnsureVisible(RectangleF r,bool resize=false)
+        {
+            if (resize) Zoom(r.Area / targetView.Area);
+            targetView = new RectangleF(r.X, r.Y, targetView.Width, targetView.Height);            
         }
 
         public float getStageScale()
         {
-            return MaxY / CurrentView.Height;
+            return MaxY / currentView.Height;
         }
         public void Update(GameTime time)
         {
-            Vector2 lv = TargetView.Location - CurrentView.Location;
-            Vector2 sv = TargetView.Size - CurrentView.Size;
+            Vector2 lv = targetView.Location - currentView.Location;
+            Vector2 sv = targetView.Size - currentView.Size;
             float ls;
             if (lv.Length() > 0)
             {
                 ls = lv.Length() * smoothness;
                 lv.Normalize();
-                CurrentView.X = MathHelper.Clamp(CurrentView.X + ls * lv.X, lv.X > 0 ? MinX : TargetView.X, lv.X > 0 ? TargetView.X : MaxX);
-                CurrentView.Y = MathHelper.Clamp(CurrentView.Y + ls * lv.Y, lv.Y > 0 ? MinY : TargetView.Y, lv.Y > 0 ? TargetView.Y : MaxY);
+                currentView.X = MathHelper.Clamp(currentView.X + ls * lv.X, lv.X > 0 ? MinX : targetView.X, lv.X > 0 ? targetView.X : MaxX);
+                currentView.Y = MathHelper.Clamp(currentView.Y + ls * lv.Y, lv.Y > 0 ? MinY : targetView.Y, lv.Y > 0 ? targetView.Y : MaxY);
             }
             if (sv.Length() > 0)
             {
                 ls = sv.Length() * smoothness;
                 sv.Normalize();
-                CurrentView.Width = MathHelper.Clamp(CurrentView.Width + ls * sv.X, sv.X > 0 ? 0 : TargetView.Width, sv.X > 0 ? TargetView.Width : MaxW);
-                CurrentView.Height = MathHelper.Clamp(CurrentView.Height + ls * sv.Y, sv.Y > 0 ? 0 : TargetView.Height, sv.Y > 0 ? TargetView.Height : MaxH);
+                currentView.Width = MathHelper.Clamp(currentView.Width + ls * sv.X, sv.X > 0 ? 0 : targetView.Width, sv.X > 0 ? targetView.Width : MaxW);
+                currentView.Height = MathHelper.Clamp(currentView.Height + ls * sv.Y, sv.Y > 0 ? 0 : targetView.Height, sv.Y > 0 ? targetView.Height : MaxH);
             }
         }
 

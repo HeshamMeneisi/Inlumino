@@ -30,7 +30,7 @@ namespace Inlumino_SHARED
         {
             Vector2 tsize = font.MeasureString(text == "" ? deftext : text);
             batch.DrawString(font, text == "" ? deftext : text, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
-            base.Draw(batch);
+            base.Draw(batch, cam);
         }
         public override void HandleEvent(WorldEvent e)
         {

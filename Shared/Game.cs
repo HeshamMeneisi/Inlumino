@@ -22,7 +22,7 @@ namespace Inlumino_SHARED
 #if WINDOWS_UAP
             IsMouseVisible = true;
 #endif
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;            
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
         }
@@ -48,7 +48,6 @@ namespace Inlumino_SHARED
 
             base.Initialize();
         }
-
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -97,6 +96,7 @@ namespace Inlumino_SHARED
         {
             _lastdrawtime = gameTime;
 
+
             GraphicsDevice.Clear(Color.Black);
 
             // TODO: Add your drawing code here
@@ -117,6 +117,28 @@ namespace Inlumino_SHARED
             GraphicsDevice.Present();
             GraphicsDevice.SetRenderTarget(null);
             return screenshot;
+        }
+        public Texture2D Concat(params TextureID[] args)
+        {
+            int w = 0, h = 0;
+            foreach (TextureID tid in args)
+            {
+                w += (int)tid.TotalWidth; h = Math.Max(h, (int)tid.TotalHeight);
+            }
+            RenderTarget2D target = new RenderTarget2D(GraphicsDevice, w, h);
+            GraphicsDevice.SetRenderTarget(target);
+            GraphicsDevice.Clear(Color.Transparent);
+            spriteBatch.Begin();
+            int x = 0;
+            foreach (TextureID tid in args)
+            {
+                spriteBatch.Draw(DataHandler.getTexture(tid.GroupIndex), new Rectangle(x, 0, (int)tid.TotalWidth, (int)tid.TotalHeight), DataHandler.getTextureSource(tid), Color.White);
+                x += (int)tid.TotalWidth;
+            }
+            spriteBatch.End();
+            GraphicsDevice.Present();
+            GraphicsDevice.SetRenderTarget(null);
+            return target;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Inlumino_SHARED
 {
@@ -11,6 +12,7 @@ namespace Inlumino_SHARED
         protected int layer;
         protected string id;
         protected bool visible;
+        protected List<UIObject> siblings = new List<UIObject>();
 
         public UIObject(int layer = 0, string id = "")
         {
@@ -23,10 +25,6 @@ namespace Inlumino_SHARED
         public virtual void Update(GameTime time)
         {
 
-        }
-
-        public virtual void Draw(SpriteBatch batch, Camera cam = null) // No need for camera, gui is always visible. Draw ontop.
-        {
         }
 
         public virtual void Clear()
@@ -84,7 +82,9 @@ namespace Inlumino_SHARED
         public virtual UIObject Parent
         {
             get { return parent; }
-            set { parent = value; }
+            set { parent = value;
+                foreach (UIObject obj in siblings) obj.parent = parent;
+            }
         }
 
         public string ID
@@ -124,5 +124,6 @@ enum UIObjectType
     DeleteBtn,
     Star,
     Log,
-    Next
+    Next,
+    Lock
 }

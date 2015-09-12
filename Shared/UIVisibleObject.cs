@@ -10,7 +10,6 @@ namespace Inlumino_SHARED
         protected TextureID[] sprite;
         protected Vector2 size = Vector2.Zero; // I told you the size must be custom, texture size is irrelevant to actual size :P
         protected Vector2 origin = Vector2.Zero;
-
         protected int state = 0;
 
         public int State { get { return state; } set { state = value; } }
@@ -30,11 +29,27 @@ namespace Inlumino_SHARED
             }
         }
 
-        public override void Draw(SpriteBatch batch, Camera cam = null) // You don't need a camera, draw ontop of the stage
+        public virtual void Draw(SpriteBatch batch, Camera cam = null) // You don't need a camera, draw ontop of the stage
         {
             if (!visible || sprite == null)
                 return;
-            batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, cam == null ? BoundingBox.getRectangle() : cam.Transform(BoundingBox).getRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+            if (cam == null)
+                batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, BoundingBox.ToRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+            else
+            {
+                if (cam.isInsideView(LocalBoundingBox))
+                {
+                    RectangleF nocrop;
+                    RectangleF cropped = cam.TransformWithCropping(LocalBoundingBox, out nocrop);
+                    RectangleF source = DataHandler.getTextureSource(sprite[state]);
+                    // rect is an intersection of nocrop, thus contained by it
+                    source = source.Mask(nocrop, cropped);
+                    batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/,
+                        cropped.Offset(parent.GlobalPosition).ToRectangle()/*on-screen box*/,
+                        source.ToRectangle()/*Rectange on the sheet*/,
+                        Color.White/*white=no tint*/);
+                }
+            }
         }
 
         public Vector2 Center
@@ -43,6 +58,8 @@ namespace Inlumino_SHARED
             get { return BoundingBox.Center; }
         }
 
+        public float Width { get { return size.X; } }
+        public float Height { get { return size.Y; } }
         public Vector2 Size
         {
             get { return size; }
@@ -55,6 +72,13 @@ namespace Inlumino_SHARED
             set { this.origin = value; }
         }
 
+        public RectangleF LocalBoundingBox
+        {
+            get
+            {
+                return new RectangleF(position.X - origin.X, position.Y - origin.Y, size.X, size.Y);
+            }
+        }
         public override RectangleF BoundingBox
         {
             get
@@ -84,6 +108,9 @@ namespace Inlumino_SHARED
                 setSizeRelativeToHeight(perc);
             else
                 setSizeRelativeToWidth(perc);
+        }
+        public override void HandleEvent(WorldEvent e)
+        {
         }
     }
 }

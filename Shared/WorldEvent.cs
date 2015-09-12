@@ -99,13 +99,22 @@ namespace Inlumino_SHARED
     }
     class TouchFreeDragEvent : WorldEvent
     {
-        private Vector2 delta;
-
-        public TouchFreeDragEvent(Vector2 delta)
+        public TouchFreeDragEvent(Vector2 delta, Vector2 position)
         {
-            this.delta = delta;
+            Delta = delta;
+            Postion = position;
         }
-        public Vector2 Delta { get { return delta; } }
+        public Vector2 Delta { get; private set; }
+
+        public Vector2 Postion { get; private set; }
+    }
+    class TouchDragCompleteEvent:WorldEvent
+    {
+        public Vector2 Postion { get; private set; }
+        public TouchDragCompleteEvent(Vector2 position)
+        {        
+            Postion = position;
+        }
     }
     class TouchPinchEvent : WorldEvent
     {
@@ -125,6 +134,10 @@ namespace Inlumino_SHARED
         { this.newsize = newsize; }
 
         public Vector2 NewSize { get { return newsize; } }
+    }
+    class TouchAllFingersOffEvent:WorldEvent
+    {
+
     }
     class OrientationChangedEvent : WorldEvent
     {
