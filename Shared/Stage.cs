@@ -31,14 +31,17 @@ namespace Inlumino_SHARED
 
         public bool IsPaused { get { return paused; } }
 
-        internal void CheckWin()
+        public bool EditMode { get { return editmode; } }
+
+        internal bool CheckWin()
         {
             Crystal[] crystals = map.AllTiles.Select(t => t.getObject() as Crystal).ToArray();
             foreach (Crystal c in crystals)
                 if (c != default(Crystal))
-                    if (!c.IsLit()) return;
+                    if (!c.IsLit()) return false;
             // Level Won            
             if (LevelWon != null) LevelWon();
+            return true;
         }
         public delegate void LevelWonEventHandler();
         public event LevelWonEventHandler LevelWon;
@@ -174,11 +177,23 @@ namespace Inlumino_SHARED
         internal void HighlightTileAt(Vector2 vector2)
         {
             foreach (Tile t in map.AllTiles)
-            { t.UnHighlight(); }
+            { t.RemoveEffect(OverlayEffect.Highlighted); }
             Tile temp = getTileAt(vector2);
-            if (temp != null) temp.Highlight();
+            if (temp != null) temp.SetEffect(OverlayEffect.Highlighted);
         }
-
+        bool gridon = false;
+        public void EnableGrid()
+        {
+            gridon = true;
+            foreach (Tile t in map.AllTiles)
+            { t.SetEffect(OverlayEffect.Grid); }
+        }
+        public void DisableGrid()
+        {
+            gridon = false;
+            foreach (Tile t in map.AllTiles)
+            { t.RemoveEffect(OverlayEffect.Grid); }
+        }
         public void Pause()
         {
             paused = true;
@@ -213,11 +228,13 @@ namespace Inlumino_SHARED
                 SetSourceStatus(false);
                 ClearAllObjects(typeof(LightBeam));
                 ResetAll();
+                EnableGrid();
             }
             else
             {
                 Resume();
                 SetSourceStatus(true);
+                DisableGrid();
             }
         }
 
@@ -266,6 +283,7 @@ namespace Inlumino_SHARED
                     map.RemoveLastCol();
             }
             SetupCamera();
+            if (gridon) EnableGrid();
         }
         public void Clear()
         {

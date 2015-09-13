@@ -19,8 +19,8 @@ namespace Inlumino_SHARED
             hud.Position = new Vector2(x, y);
             hud.Setup();
         }
-        static UIButton[] allkeys = null;
-        private static UIButton[] getcontent()
+        static UICell[] allkeys = null;
+        private static UICell[] getcontent()
         {
             List<UICell> keys = new List<UICell>();
             foreach (Keys k in Keys.GetValues(typeof(Keys)))

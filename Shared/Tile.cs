@@ -80,22 +80,24 @@ namespace Inlumino_SHARED
             return p.X < Bounds2D.Right && p.X > Bounds2D.Left && p.Y < Bounds2D.Bottom && p.Y > Bounds2D.Top;
         }
 
-        internal void Highlight()
+        internal void SetEffect(OverlayEffect effect)
         {
-            ActiveEffect = OverlayEffect.Highlighted;
+            ActiveEffect |= effect;
         }
-        internal void UnHighlight()
+        internal void RemoveEffect(OverlayEffect effect)
         {
-            ActiveEffect = OverlayEffect.None;
+            ActiveEffect &= ~effect;
         }
         internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
-            batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//White for no tinting            
+            bool highlight = (ActiveEffect & OverlayEffect.Highlighted) > 0;
+            bool grid = (ActiveEffect & OverlayEffect.Grid) > 0;
+            batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), highlight ? HighlightColor : Color.White);//White for no tinting            
             if (Auxiliary != null)
-                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White);//, auxrot, AuxRect.Center, SpriteEffects.None, 0);//White for no tinting            
+                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), highlight ? HighlightColor : Color.White);//, auxrot, AuxRect.Center, SpriteEffects.None, 0);//White for no tinting            
             if (hasObject())
                 obj.Draw(batch, cam, coordOrigin);
-            if (ActiveEffect == OverlayEffect.Highlighted)
+            if (grid)
                 batch.Draw(DataHandler.getTexture(TextureID[1].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
         }
 
@@ -135,7 +137,7 @@ namespace Inlumino_SHARED
         }
     }
 
-    enum OverlayEffect { None, Highlighted }
+    enum OverlayEffect { None = 0, Highlighted = 1, Grid = 2 }/*Powers of 2*/
     enum TileState { Default = 0, Glowing = 1 }
 
     public enum TileType { Unknown = 0, Default = 1 }

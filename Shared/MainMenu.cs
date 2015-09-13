@@ -32,9 +32,10 @@ namespace Inlumino_SHARED
         private void SetupMenu()
         {
             float logo = Screen.Height * 0.25f;
-            mainmenu.setAllSizeRelative(0.25f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
+            mainmenu.setAllSizeRelative(0.25f, Orientation.Landscape);
+            mainmenu.Position = new Vector2(0, logo + Screen.Height * 0.1f);
             mainmenu.ArrangeInForm(Orientation.Portrait);
-            mainmenu.Position = new Vector2((Screen.Width - mainmenu.Size.X) / 2, logo + Screen.Height * 0.1f);
+            mainmenu.Position = new Vector2((Screen.Width - mainmenu.Size.X) / 2, mainmenu.GlobalPosition.Y);
         }
 
         private void editpressed(UIButton sender)

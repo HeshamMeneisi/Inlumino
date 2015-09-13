@@ -12,7 +12,7 @@ namespace Inlumino_SHARED
     {
         float minuwidth, minuheight, maxwidth, maxheight, unitwidth, unitheight, aspect;
         int cellsperrowcol, rowcolcount;
-        List<UIButton> cells = new List<UIButton>();
+        List<UICell> cells = new List<UICell>();
         Orientation mode;
         Camera cam;
         UICell snaptarget = null;
@@ -24,7 +24,7 @@ namespace Inlumino_SHARED
 
         public bool SnapCameraToCells = true;
 
-        public UICell SnapTarget { get { return snaptarget; } set { snaptarget = value;cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
+        public UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 
         public override RectangleF BoundingBox
         {
@@ -36,7 +36,7 @@ namespace Inlumino_SHARED
 
         public Camera Camera { get { return cam; } }
 
-        public UIHud(IEnumerable<UIButton> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
+        public UIHud(IEnumerable<UICell> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
         {
             cells.AddRange(content);
             foreach (UIButton b in content) b.Parent = this;
@@ -127,7 +127,7 @@ namespace Inlumino_SHARED
         {
             if (visible)
             {
-                if (e is MouseUpEvent && dragging) { dragging = false; return; }
+                if (e is MouseUpEvent && dragging) { dragging = false; if(SnapCameraToCells)SnapCam(); return; }
                 foreach (UICell b in cells) b.HandleEvent(e);
                 if (e is TouchFreeDragEvent)
                 {
@@ -142,33 +142,36 @@ namespace Inlumino_SHARED
                 {
                     if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                     {
-                        if(!BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) { dragging = false;return; }
+                        if (!BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) { dragging = false; return; }
                         dragging = true;
                         Point offset = (e as MouseMovedEvent).Offset;
                         cam.StepHorizontal(offset.X);
-                        cam.StepVertical(offset.Y);                        
+                        cam.StepVertical(offset.Y);
                     }
                 }
-                if(e is TouchAllFingersOffEvent && SnapCameraToCells)
+                if (e is TouchAllFingersOffEvent && SnapCameraToCells)
+                    SnapCam();
+            }
+        }
+
+        private void SnapCam()
+        {
+            snaptarget = null;
+            float intersize = 0;
+            foreach (UICell cell in cells)
+            {
+                if (cell.LocalBoundingBox.Intersects(cam.TargetView))
                 {
-                    snaptarget = null;
-                    float intersize = 0;
-                    foreach(UICell cell in cells)
+                    float cis = cell.LocalBoundingBox.Intersection(cam.TargetView).Area;
+                    if (cis > intersize)
                     {
-                        if(cell.LocalBoundingBox.Intersects(cam.TargetView))
-                        {
-                            float cis = cell.LocalBoundingBox.Intersection(cam.TargetView).Area;
-                            if(cis > intersize)
-                            {
-                                intersize = cis;
-                                snaptarget = cell;
-                            }
-                        }
+                        intersize = cis;
+                        snaptarget = cell;
                     }
-                    if (snaptarget != null)
-                        cam.EnsureVisible(snaptarget.LocalBoundingBox);
                 }
             }
+            if (snaptarget != null)
+                cam.EnsureVisible(snaptarget.LocalBoundingBox);
         }
 
         internal void FitCellSiblings()

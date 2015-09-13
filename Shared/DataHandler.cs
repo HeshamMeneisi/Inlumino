@@ -97,7 +97,8 @@ namespace Inlumino_SHARED
             {UIObjectType.DownButton,new TextureID[] {new TextureID(1, 10, 0.5f, 0.5f) } },
             {UIObjectType.Star,new TextureID[] {new TextureID(1, 20, 0.5f, 0.5f), new TextureID(1, 21, 0.5f, 0.5f) } },
             {UIObjectType.Log,new TextureID[] {new TextureID(1,22,2,2)} },
-            {UIObjectType.Lock,new TextureID[] {new TextureID(1,30,2,2)} }
+            {UIObjectType.Lock,new TextureID[] {new TextureID(1,30,2,2)} },
+            {UIObjectType.Border,new TextureID[] {new TextureID(1,24,2,1)} }
         };
         #endregion
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();

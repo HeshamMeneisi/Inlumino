@@ -103,7 +103,7 @@ namespace Inlumino_SHARED
                     obj.Position = new Vector2(x, y);
                     x += obj.Width;
                     w = Math.Max(w, x);
-                    h = Math.Max(h, obj.Height);
+                    h = Math.Max(h, y + obj.Height);
                 }
             else
                 foreach (UIVisibleObject obj in UIObjects)
@@ -112,7 +112,7 @@ namespace Inlumino_SHARED
                     obj.Position = new Vector2(x, y);
                     y += obj.Height;
                     h = Math.Max(h, y);
-                    w = Math.Max(w, obj.Width);
+                    w = Math.Max(w, x + obj.Width);
                 }
             size = new Vector2(w, h);
         }

@@ -28,7 +28,7 @@ namespace Inlumino_SHARED
             this.text = text;
         }
 
-        public UICell(TextureID[] tid, object tag, TextureID overlay = null, float border = 0, string text = "", Color textcol = default(Color), ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
+        public UICell(TextureID[] tid, object tag, TextureID overlay, float border = 0, string text = "", Color textcol = default(Color), ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
         {
             this.overlay = overlay;
             this.tag = tag;

@@ -125,5 +125,6 @@ enum UIObjectType
     Star,
     Log,
     Next,
-    Lock
+    Lock,
+    Border
 }

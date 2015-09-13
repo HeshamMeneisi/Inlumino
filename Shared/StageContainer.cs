@@ -15,9 +15,10 @@ namespace Inlumino_SHARED
         static Stage CurrentLevel = null;
         bool editmode;
         const int defaultstagewidth = 4;
+        int perfmoves = 0;
         /// GUI //////////////////////////////////////////////////////////////////////////////////////////////
         List<UICell> cells = new List<UICell>();
-        UIButton[] borderbuttons = null;
+        UICell[] borderbuttons = null;
         UIMenu genmenu;
         UIHud edithud;
         UIHud borderhud;
@@ -28,19 +29,22 @@ namespace Inlumino_SHARED
         UIButton togglebtn;
         UIButton savebtn;
         UIButton delbtn;
+        TextureID border = DataHandler.UIObjectsTextureMap[UIObjectType.Border][0];
+        float borderwidth = 16;
         bool einitd = false;
         public void InitEditing()
         {
             editing = true;
-            if (einitd) { SetupHud(); return; }
             if (CurrentLevel == null)
             {
                 CurrentLevel = new Stage();
                 CurrentLevel.ToggleEditMode();
                 CurrentLevel.SetSize(defaultstagewidth, defaultstagewidth);
                 CurrentLevel.setBackground(DataHandler.getTexture(0));
+                CurrentLevel.LevelWon += levelwon;
             }
-            einitd = true;
+            else if (!CurrentLevel.EditMode) CurrentLevel.ToggleEditMode();
+            SetupHud();
         }
 
         internal Stage getCurrentStage()
@@ -55,15 +59,11 @@ namespace Inlumino_SHARED
             togglebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ToggleButton], hudbtnpressed, 0, "toggle");
             savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");
             delbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], hudbtnpressed, 0, "del");
-            UIButton horzexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], hudbtnpressed, 0, "he");
-            UIButton horzshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], hudbtnpressed, 0, "hs");
-            UIButton vertexp = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], hudbtnpressed, 0, "ve");
-            UIButton vertshrink = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.UpButton], hudbtnpressed, 0, "vs");
-            borderbuttons = new UIButton[] { horzshrink, vertshrink, horzexp, vertexp };
-            UICell s1 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
-            UICell s2 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
-            UICell s3 = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Star], 1, "");
-            stars = new UIButton[] { s1, s2, s3 };
+            UICell horzexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], "he", null, 0, "", default(Color), hudbtnpressed, 0);
+            UICell horzshrink = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], "hs", null, 0, "", default(Color), hudbtnpressed, 0);
+            UICell vertexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], "ve", null, 0, "", default(Color), hudbtnpressed, 0);
+            UICell vertshrink = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.UpButton], "vs", null, 0, "", default(Color), hudbtnpressed, 0);
+            borderbuttons = new UICell[] { horzshrink, vertshrink, horzexp, vertexp };
             UIButton backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], hudbtnpressed, 0, "back");
             nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], hudbtnpressed, 0, "next");
             genmenu = new UIMenu();
@@ -78,12 +78,14 @@ namespace Inlumino_SHARED
                 cells.Add(cell);
             }
         }
-        // Transition
-        UIHud starshud;
-        UIButton[] stars = null;
+        // Transition        
+        UICell stars = null;
         bool trans = false;
+        bool verified = false;
         private void levelwon()
         {
+            verified = true;
+            if (editmode) return;
             if (ism)
             {
                 trans = true;
@@ -95,14 +97,15 @@ namespace Inlumino_SHARED
         /////////////////////////////////////////////////////////////////////////////////////////////////
         private void SetupHud()
         {
-            togglebtn.Visible = savebtn.Visible = delbtn.Visible = editing;
+            togglebtn.Visible = editmode;
+            savebtn.Visible = delbtn.Visible = editing;
             genmenu.setAllSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
             Padding minpad;
             if (editing)
             {
                 float d = Screen.SmallDim * 0.1f;
-                edithud = new UIHud(cells.ToArray(), Screen.Mode, d, d, Screen.Mode == Orientation.Landscape ? d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : d);
+                edithud = new UIHud(cells.ToArray(), Common.ReverseOrientation(Screen.Mode), d, d, Screen.Mode == Orientation.Landscape ? 2 * d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : 2 * d);
                 edithud.Setup();
                 edithud.Position = Screen.Mode == Orientation.Landscape ? new Vector2(Screen.Width - edithud.ActualWidth, 0) : new Vector2(0, Screen.Height - edithud.ActualHeight);
                 borderhud = new UIHud(borderbuttons, Screen.Mode, d, d, Screen.Mode == Orientation.Landscape ? d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : d);
@@ -110,7 +113,9 @@ namespace Inlumino_SHARED
                 borderhud.Position = Screen.Mode == Orientation.Landscape ?
                     new Vector2(edithud.BoundingBox.Left - borderhud.ActualWidth, (Screen.Height - borderhud.ActualHeight) / 2)
                     : new Vector2((Screen.Width - borderhud.ActualWidth) / 2, edithud.BoundingBox.Top - borderhud.ActualHeight);
-                minpad = new Padding(genmenu.Width, edithud.ActualWidth + borderhud.ActualWidth, 0, 0);
+                minpad = Screen.Mode == Orientation.Landscape ?
+                    new Padding(genmenu.Width, edithud.ActualWidth + borderhud.ActualWidth, 0, 0)
+                    : new Padding(0, 0, genmenu.Height, edithud.ActualHeight + borderhud.ActualHeight);
             }
             else
                 minpad = new Padding(Screen.Mode == Orientation.Landscape ? genmenu.Width : 0, 0, Screen.Mode == Orientation.Landscape ? 0 : genmenu.Height, 0);
@@ -118,28 +123,28 @@ namespace Inlumino_SHARED
                 CurrentLevel.SetMinScreenPadding(minpad);
             if (trans)
             {
-                SetStars();
+                float p = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0;
+                nextbtn.Visible = SetStars();
                 log = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Log]);
                 log.setSizeRelative(0.7f, Screen.Mode);
                 float d = log.Width * 0.2f;
-                starshud = new UIHud(stars, Orientation.Landscape, d, d, log.BoundingBox.Width * 0.8f, d);
                 nextbtn.setSizeRelative(0.25f, Screen.Mode);
-                starshud.Setup();
-                log.Position = new Vector2((Screen.Width - log.Width) / 2, 0);
-                starshud.Position = new Vector2((Screen.Width - starshud.ActualWidth) / 2, log.GlobalPosition.Y + log.Height * 0.5f);
-                nextbtn.Position = new Vector2((Screen.Width - nextbtn.Width) / 2, starshud.BoundingBox.Bottom);
+                log.Position = new Vector2((Screen.Width - log.Width) / 2, p);
+                stars.Position = new Vector2((Screen.Width - stars.Width) / 2, log.GlobalPosition.Y + log.Height * 0.5f);
+                nextbtn.Position = new Vector2((Screen.Width - nextbtn.Width) / 2, stars.BoundingBox.Bottom);
             }
         }
         int moves = 0;
-        private void SetStars()
+        private bool SetStars()
         {
             // For now
-            int perfmoves = Common.GetMoves(cln);
-            stars[0].State = moves <= perfmoves + 10 ? 1 : 0;
-            stars[1].State = moves <= perfmoves + 5 ? 1 : 0;
-            stars[2].State = moves <= perfmoves + 2 ? 1 : 0;
-            int score = stars[0].State + stars[1].State + stars[2].State;
-            Common.SetScore(cln, score);
+            //int perfmoves = Common.GetMoves(cln);
+            int s = (moves <= perfmoves + 10 ? 1 : 0)
+            + (moves <= perfmoves + 5 ? 1 : 0)
+            + (moves <= perfmoves + 2 ? 1 : 0);
+            Common.SetScore(cln, s);
+            stars = new UICell(new TextureID[] { Common.GetStarsTex(s) }, "");
+            return Common.GetScore(cln) != 0;
         }
 
         ObjectType selected = ObjectType.None;
@@ -182,12 +187,16 @@ namespace Inlumino_SHARED
         private void SaveLevel()
         {
             if (CurrentLevel == null) return;
+            if (!verified) { MessageBox.Show("Proof of concept", "Please solve the level in play mode then switch to edit mode and try again.", new string[] { "OK" }); return; }
             if (!editing) ToggleMode();
-            Screen.MakeVirtual(new Vector2(256, 256));
+            CurrentLevel.DisableGrid();
+            Screen.MakeVirtual(new Vector2(512, 512));
             genmenu.Visible = edithud.Visible = borderhud.Visible = false;
             CurrentLevel.SetMinScreenPadding(new Padding(0, 0, 0, 0));
             Texture2D icon = Manager.Parent.TakeScreenshot();
             Screen.MakeReal();
+            genmenu.Visible = edithud.Visible = borderhud.Visible = true;
+            CurrentLevel.EnableGrid();
             Manager.StateManager.SwitchTo(GameState.SaveLevel, null, icon);
         }
 
@@ -231,7 +240,7 @@ namespace Inlumino_SHARED
             if (trans)
             {
                 log.Draw(batch);
-                starshud.Draw(batch);
+                stars.Draw(batch);
                 nextbtn.Draw(batch);
             }
             if (editing)
@@ -239,6 +248,17 @@ namespace Inlumino_SHARED
                 edithud.Draw(batch);
                 borderhud.Draw(batch);
             }
+            /*
+            if (border != null)
+            {
+                float l = CurrentLevel.Camera.StagePadding.Left,
+                    r = Screen.Width - CurrentLevel.Camera.StagePadding.Right,
+                    t = CurrentLevel.Camera.StagePadding.Top,
+                    b = Screen.Height - CurrentLevel.Camera.StagePadding.Bottom,
+                    fuzz = CurrentLevel.Camera.GetRecommendedDrawingFuzz();
+                RectangleF bottomrect = new RectangleF(l, b + borderwidth, Screen.Width - l - r, borderwidth);
+                batch.Draw(DataHandler.getTexture(border.GroupIndex), bottomrect.getSmoothRectangle(fuzz), DataHandler.getTextureSource(border), Color.White);
+            }*/
         }
 
         public void Update(GameTime time)
@@ -262,7 +282,7 @@ namespace Inlumino_SHARED
             genmenu.Update(time);
             if (trans)
             {
-                starshud.Update(time);
+                stars.Update(time);
                 nextbtn.Update(time);
             }
             if (editing)
@@ -289,7 +309,13 @@ namespace Inlumino_SHARED
                     editing = false;
                     editmode = true;
                 }
-                else { editmode = editing = false; }
+                else
+                {
+                    editmode = editing = false;
+                    CurrentLevel.SetSourceStatus(false);
+                    perfmoves = ShuffleLevel();
+                    CurrentLevel.SetSourceStatus(true);
+                }
                 CurrentLevel.LevelWon += levelwon;
                 SetupHud();
                 Common.SpreadAuxiliaries(CurrentLevel, 0.1f);
@@ -297,12 +323,26 @@ namespace Inlumino_SHARED
             else
                 MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
         }
+
+        private int ShuffleLevel()
+        {
+            Random ran = new Random();
+            int moves = 0;
+            foreach (Tile t in CurrentLevel.getTileMap().AllTiles)
+                if (t.hasObject() && !(t.getObject() is LightBeam) && !(t.getObject() is LightSourceObject) && !(t.getObject() is Crystal) && !(t.getObject() is Block))
+                    for (int i = ran.Next(1, 4); i > 0; i--)
+                    {
+                        moves++;
+                        t.getObject().RotateCCW(true);
+                    }
+            return moves;
+        }
+
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             genmenu.HandleEvent(e);
             if (trans)
             {
-                starshud.HandleEvent(e);
                 nextbtn.HandleEvent(e);
             }
             if (editing)
@@ -329,6 +369,7 @@ namespace Inlumino_SHARED
                     if (selected == ObjectType.Delete) target.RemoveObject();
                     else
                     {
+                        verified = false;
                         target.RemoveObject();
                         target.SetObject(StaticObjectCreator.CreateObject(selected, target));
                     }
@@ -336,7 +377,7 @@ namespace Inlumino_SHARED
                 else
                 {
                     if (obj != null && !(obj is LightBeam))
-                    { obj.RotateCW(editing); moves++; }
+                    { verified = false; obj.RotateCW(editing); moves++; }
                 }
             }
 
@@ -365,6 +406,7 @@ namespace Inlumino_SHARED
 
             if (e is MouseUpEvent)
             {
+                verified = false;
                 MouseUpEvent ev = (e as MouseUpEvent);
                 Tile target = CurrentLevel.getTileAt(CurrentLevel.Camera.DeTransform(ev.Position.ToVector2()));
                 StaticObject obj = target == default(Tile) ? null : target.getObject();
@@ -373,6 +415,7 @@ namespace Inlumino_SHARED
                     if (selected == ObjectType.Delete || ev.Key == InputManager.MouseKey.RightKey) target.RemoveObject();
                     else
                     {
+                        verified = false;
                         target.RemoveObject();
                         target.SetObject(StaticObjectCreator.CreateObject(selected, target));
                     }
@@ -381,8 +424,8 @@ namespace Inlumino_SHARED
                 {
                     if (obj != null && !(obj is LightBeam))
                     {
-                        if (ev.Key == InputManager.MouseKey.LeftKey) obj.RotateCCW(editing);
-                        else if (ev.Key == InputManager.MouseKey.RightKey) obj.RotateCW(editing);
+                        verified = false;
+                        obj.RotateCW(editing);
                         moves++;
                     }
                 }
