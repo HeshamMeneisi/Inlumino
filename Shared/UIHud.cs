@@ -22,7 +22,7 @@ namespace Inlumino_SHARED
         public float TotalWidth { get { return mode == Orientation.Landscape ? unitwidth * cellsperrowcol : unitwidth * rowcolcount; } }
         public float TotalHeight { get { return mode == Orientation.Portrait ? unitheight * cellsperrowcol : unitheight * rowcolcount; } }
 
-        public bool SnapCameraToCells = true;
+        public bool SnapCameraToCells = false;
 
         public UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 

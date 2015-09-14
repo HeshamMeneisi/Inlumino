@@ -26,9 +26,10 @@ namespace Inlumino_SHARED
             savebtn.Pressed += savepressed;
             backbtn.Pressed += backpressed;
 
+            nametext.Size = new Vector2(nametext.Width, nametext.Height * 0.5f);
+            //menu.Add(nametext);
             menu.Add(savebtn);
-            menu.Add(backbtn);
-            menu.Add(nametext);
+            menu.Add(backbtn);            
 
             VirtualKeyboard.KeyPressed += keypressed;
         }
@@ -57,13 +58,12 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            nametext.setSizeRelative(0.2f, Screen.Mode);
-            savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            backbtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             VirtualKeyboard.Show(Orientation.Landscape, 0.1f * Screen.BigDim, Screen.Width, Screen.Height, k => ((int)k >= 65 && (int)k <= 90) || k == Keys.Back || k == Keys.LeftShift);
-            nametext.Position = new Vector2((Screen.Width - nametext.Size.X) / 2, VirtualKeyboard.BoundingBox.Bottom);
-            savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, nametext.BoundingBox.Bottom);
-            backbtn.Position = new Vector2((Screen.Width - backbtn.Size.X) / 2, savebtn.BoundingBox.Bottom);
+            menu.setAllSizeRelative(0.3f * VirtualKeyboard.BoundingBox.Height/Screen.Height, Screen.Mode);
+            menu.ArrangeInForm(Screen.Mode);
+            nametext.setSizeRelative(0.3f * VirtualKeyboard.BoundingBox.Height / Screen.Height, Orientation.Landscape);
+            nametext.Position = new Vector2((Screen.Width - nametext.Width) / 2, VirtualKeyboard.BoundingBox.Bottom);
+            menu.Position = new Vector2((Screen.Width - menu.Width) / 2, nametext.BoundingBox.Bottom);
         }
 
         private void keypressed(Keys key)
@@ -77,12 +77,14 @@ namespace Inlumino_SHARED
         public void Update(GameTime time)
         {
             VirtualKeyboard.Update(time);
+            nametext.Update(time);
             menu.Update(time);
         }
 
         public void Draw(SpriteBatch batch)
         {
             VirtualKeyboard.Draw(batch);
+            nametext.Draw(batch);
             menu.Draw(batch);
         }
 
@@ -92,8 +94,8 @@ namespace Inlumino_SHARED
                 SetupMenu();
             VirtualKeyboard.HandleEvent(e);
             menu.HandleEvent(e);
+            nametext.HandleEvent(e);
         }
-        Texture2D icon = null;
         Stage stage = null;
         public void OnActivated(params object[] args)
         {

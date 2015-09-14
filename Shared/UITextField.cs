@@ -29,6 +29,7 @@ namespace Inlumino_SHARED
         }
         public override void Draw(SpriteBatch batch, Camera cam = null)
         {
+            if (!visible) return;
             string t = Padding + (text == "" ? deftext : text);
             Vector2 tsize = font.MeasureString(t);
             batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
@@ -36,6 +37,7 @@ namespace Inlumino_SHARED
         }
         public override void HandleEvent(WorldEvent e)
         {
+            if (!visible) return;
             if (e is KeyDownEvent)
             {
                 Keys k = (e as KeyDownEvent).Key;

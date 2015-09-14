@@ -85,20 +85,23 @@ namespace Inlumino_SHARED
             List<UICell> ulcells = new List<UICell>();
             mlcells.Clear();
             bool first = true;
+            UICell target = null;
             foreach (string name in Common.MainLevelNames)
             {
                 int s = Common.GetScore(name);
                 TextureID stex;
                 bool flag = false;
+                bool scrollflage = false;
                 if (s > 0 || first)
                 {
                     if (s == 0)
-                        first = false;
+                    { first = false; scrollflage = true; }
                     stex = Common.GetStarsTex(s);
                     flag = true;
                 }
                 else stex = DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0];
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, true), name, 0, 2, 2), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, true), name, 0, -1, -1), 0.1f);
+                if (scrollflage) target = cell;
                 cell.AttachSibling(new UIVisibleObject(new TextureID[] { stex }));
                 cell.FitSiblings();
                 cell.Pressed += mlcellpressed;
@@ -106,17 +109,20 @@ namespace Inlumino_SHARED
             }
             foreach (string name in DataHandler.getSavedLevelNames())
             {
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, false), name, 0, 2, 2), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, false), name, 0, -1, -1), 0.1f);
+                cell.FitSiblings();
                 cell.Pressed += ulcellpressed;
                 ulcells.Add(cell);
             }
             float d = Math.Min(Screen.SmallDim, Screen.BigDim * 0.6f);
             mainlevels = new UIHud(mlcells.ToArray(), Orientation.Portrait, d, d, d, d);
             userlevels = new UIHud(ulcells.ToArray(), Orientation.Portrait, d, d, d, d);
+            mainlevels.SnapCameraToCells = userlevels.SnapCameraToCells = true;
             float tp = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0;
             mainlevels.Position = userlevels.Position = new Vector2(Screen.Mode == Orientation.Landscape ? genmenu.Width + (Screen.Width - genmenu.Width - d) / 2 : (Screen.Width - d) / 2, (Screen.Height - tp - d) / 2 + tp);
             mainlevels.Setup(); userlevels.Setup();
             mainlevels.FitCellSiblings();
+            mainlevels.SnapTarget = target;
             mainlevels.Visible = true;
             userlevels.Visible = false;
         }

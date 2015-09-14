@@ -12,7 +12,7 @@ namespace Inlumino_SHARED
 {
     class StageContainer : IState
     {
-        static Stage CurrentLevel = null;
+        Stage CurrentLevel = null;
         bool editmode;
         const int defaultstagewidth = 4;
         int perfmoves = 0;
@@ -37,11 +37,11 @@ namespace Inlumino_SHARED
         UIButton delbtn;
         UITextField counter;
         TextureID border = DataHandler.UIObjectsTextureMap[UIObjectType.Border][0];
-        float borderwidth = 16;
-        bool einitd = false;
         public void InitEditing()
         {
-            editing = true;
+            ism = false;
+            editmode = editing = true;
+            trans = popup.Visible = false;
             if (CurrentLevel == null)
             {
                 CurrentLevel = new Stage();
@@ -81,14 +81,14 @@ namespace Inlumino_SHARED
             ropes1 = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Ropes]);
             ropes2 = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Ropes]);
             toplog = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.TopLog]);
-            counter = new UITextField(16, Color.White, Color.Black);                      
+            counter = new UITextField(16, Color.White, Color.Black);
             genmenu = new UIMenu();
             genmenu.Add(menubtn);
             genmenu.Add(resetbtn);
             genmenu.Add(counter);
             genmenu.Add(togglebtn);
             genmenu.Add(savebtn);
-            genmenu.Add(delbtn);            
+            genmenu.Add(delbtn);
             popup = new UIMenu();
             popup.Add(nextbtn);
             popup.Add(trybtn);
@@ -107,15 +107,12 @@ namespace Inlumino_SHARED
         bool verified = false;
         private void levelwon()
         {
+            if (loading) return;
             verified = true;
-            if (editmode) return;
-            if (ism)
-            {
-                trans = true;
-                SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
-                CurrentLevel.Pause();
-                SetupHud();
-            }
+            trans = true;
+            SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
+            CurrentLevel.Pause();
+            SetupHud();
         }
         ////////////////////////////////////////// Setup Hud ///////////////////////////////////////////////////////
         private void SetupHud()
@@ -151,8 +148,9 @@ namespace Inlumino_SHARED
                 float p = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0,
                 ah = Screen.Height - p;
                 bool passed = SetStars();
-                nextbtn.Visible = passed;
+                nextbtn.Visible = passed && ism;
                 trybtn.Visible = !passed;
+                ropes2.Visible = nextbtn.Visible || trybtn.Visible;
                 popup.setAllSizeRelative(ah / 5 / Screen.Height, Orientation.Landscape);
                 log.FitSiblings();
                 //  Element positions
@@ -164,6 +162,7 @@ namespace Inlumino_SHARED
                 log.CentralizeSiblings();
                 ///
                 popup.Position = new Vector2((Screen.Width - popup.Width) / 2, 0);
+                popup.Visible = true;
             }
         }
         int moves = 0;
@@ -227,6 +226,7 @@ namespace Inlumino_SHARED
 
         private void ToggleMode()
         {
+            moves = 0; trans = popup.Visible = ism = false;
             editing = !editing;
             CurrentLevel.ToggleEditMode();
 
@@ -313,34 +313,34 @@ namespace Inlumino_SHARED
 
         string cln = null;
         bool ism;
+        bool loading = true;
         public void loadLevel(string levelname, bool ismainlevel)
         {
+            loading = true;
             trans = false; moves = 0;
             cln = levelname; ism = ismainlevel;
             CurrentLevel = Common.CreateLevel(levelname, ismainlevel);
             if (CurrentLevel != null)
             {
-                CurrentLevel.SetSourceStatus(true);
                 if (!ismainlevel)
                 {
                     InitEditing();
                     editing = false;
-                    editmode = true;
-                    if (CurrentLevel.EditMode) CurrentLevel.ToggleEditMode();
                 }
                 else
-                {
                     editmode = editing = false;
+                if (!CurrentLevel.EditMode)
                     CurrentLevel.SetSourceStatus(false);
-                    perfmoves = ShuffleLevel();
-                    CurrentLevel.SetSourceStatus(true);
-                }
+                perfmoves = ShuffleLevel();
+                if (CurrentLevel.EditMode) CurrentLevel.ToggleEditMode();
+                else CurrentLevel.SetSourceStatus(true);
                 CurrentLevel.LevelWon += levelwon;
                 SetupHud();
                 Common.SpreadAuxiliaries(CurrentLevel, 0.1f);
             }
             else
                 MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
+            loading = false;
         }
 
         private int ShuffleLevel()
@@ -423,7 +423,6 @@ namespace Inlumino_SHARED
 
             if (e is MouseUpEvent)
             {
-                verified = false;
                 MouseUpEvent ev = (e as MouseUpEvent);
                 Tile target = CurrentLevel.getTileAt(CurrentLevel.Camera.DeTransform(ev.Position.ToVector2()));
                 StaticObject obj = target == default(Tile) ? null : target.getObject();
