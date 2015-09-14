@@ -40,8 +40,8 @@ namespace Inlumino_SHARED
         internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
             if(this is IObstructingObject)
-                batch.Draw(DataHandler.getTexture(tID[state].GroupIndex), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(parenttile.TextureID[2]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), parenttile.TextureID[2].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
-            batch.Draw(DataHandler.getTexture(tID[state].GroupIndex), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(tID[state]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), tID[state].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
+                batch.Draw(DataHandler.getTexture(tID[state]), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(parenttile.TextureID[2]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), parenttile.TextureID[2].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
+            batch.Draw(DataHandler.getTexture(tID[state]), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(tID[state]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), tID[state].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
         }
         float sfactor = 0;
         private float getRotationAngle()
@@ -68,7 +68,7 @@ namespace Inlumino_SHARED
         {
             rotating = true;
             targetrotation = Common.NextDirCW(rotation, clicks);
-            if (instant) rotation = targetrotation;
+            if (instant) { rotation = targetrotation; smoothrotation = (float)rotation * MathHelper.PiOver2; }
             else
             {
                 sfactor = 0.2f; SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);
@@ -79,7 +79,7 @@ namespace Inlumino_SHARED
         {
             rotating = true;
             targetrotation = Common.NextDirCCW(rotation, clicks);
-            if (instant) rotation = targetrotation;
+            if (instant) { rotation = targetrotation; smoothrotation = (float)rotation * MathHelper.PiOver2; }
             else
             {
                 sfactor = -0.2f; SoundManager.PlaySound(DataHandler.Sounds[SoundType.RotateSound], SoundCategory.SFX);

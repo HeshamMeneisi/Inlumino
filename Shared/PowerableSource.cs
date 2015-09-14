@@ -94,6 +94,7 @@ namespace Inlumino_SHARED
                 base.Update(time);
                 updateStatus();
             }
+            else base.Update(time);
         }
 
         private void updateStatus()

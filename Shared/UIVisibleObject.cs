@@ -34,7 +34,7 @@ namespace Inlumino_SHARED
             if (!visible || sprite == null)
                 return;
             if (cam == null)
-                batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/, BoundingBox.ToRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+                batch.Draw(DataHandler.getTexture(sprite[state].RefKey)/*Texture2D from file*/, BoundingBox.ToRectangle()/*on-screen box*/, DataHandler.getTextureSource(sprite[state])/*Rectange on the sheet*/, Color.White/*white=no tint*/);
             else
             {
                 if (cam.isInsideView(LocalBoundingBox))
@@ -44,7 +44,7 @@ namespace Inlumino_SHARED
                     RectangleF source = DataHandler.getTextureSource(sprite[state]);
                     // rect is an intersection of nocrop, thus contained by it
                     source = source.Mask(nocrop, cropped);
-                    batch.Draw(DataHandler.getTexture(sprite[state].GroupIndex)/*Texture2D from file*/,
+                    batch.Draw(DataHandler.getTexture(sprite[state].RefKey)/*Texture2D from file*/,
                         cropped.Offset(parent.GlobalPosition).ToRectangle()/*on-screen box*/,
                         source.ToRectangle()/*Rectange on the sheet*/,
                         Color.White/*white=no tint*/);
@@ -58,9 +58,9 @@ namespace Inlumino_SHARED
             get { return BoundingBox.Center; }
         }
 
-        public float Width { get { return size.X; } }
-        public float Height { get { return size.Y; } }
-        public Vector2 Size
+        public virtual float Width { get { return Size.X; } }
+        public virtual float Height { get { return Size.Y; } }
+        public virtual Vector2 Size
         {
             get { return size; }
             set { size = value; }
@@ -76,7 +76,7 @@ namespace Inlumino_SHARED
         {
             get
             {
-                return new RectangleF(position.X - origin.X, position.Y - origin.Y, size.X, size.Y);
+                return new RectangleF(Position.X - Origin.X, Position.Y - Origin.Y, Size.X, Size.Y);
             }
         }
         public override RectangleF BoundingBox
@@ -102,7 +102,7 @@ namespace Inlumino_SHARED
             size = new Vector2(w, h);
         }
 
-        public void setSizeRelative(float perc, Orientation mode)
+        public virtual void setSizeRelative(float perc, Orientation mode)
         {
             if (mode == Orientation.Landscape)
                 setSizeRelativeToHeight(perc);

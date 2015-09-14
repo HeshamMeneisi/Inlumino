@@ -92,13 +92,13 @@ namespace Inlumino_SHARED
         {
             bool highlight = (ActiveEffect & OverlayEffect.Highlighted) > 0;
             bool grid = (ActiveEffect & OverlayEffect.Grid) > 0;
-            batch.Draw(DataHandler.getTexture(TextureID[0].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), highlight ? HighlightColor : Color.White);//White for no tinting            
+            batch.Draw(DataHandler.getTexture(TextureID[0].RefKey), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), highlight ? HighlightColor : Color.White);//White for no tinting            
             if (Auxiliary != null)
-                batch.Draw(DataHandler.getTexture(Auxiliary.GroupIndex), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), highlight ? HighlightColor : Color.White);//, auxrot, AuxRect.Center, SpriteEffects.None, 0);//White for no tinting            
+                batch.Draw(DataHandler.getTexture(Auxiliary.RefKey), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), highlight ? HighlightColor : Color.White);//, auxrot, AuxRect.Center, SpriteEffects.None, 0);//White for no tinting            
             if (hasObject())
                 obj.Draw(batch, cam, coordOrigin);
             if (grid)
-                batch.Draw(DataHandler.getTexture(TextureID[1].GroupIndex), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
+                batch.Draw(DataHandler.getTexture(TextureID[1].RefKey), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
         }
 
         internal void Update(GameTime time)

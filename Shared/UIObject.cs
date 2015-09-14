@@ -126,5 +126,9 @@ enum UIObjectType
     Log,
     Next,
     Lock,
-    Border
+    Border,
+    TryAgain,
+    Frame,
+    Ropes,
+    TopLog
 }

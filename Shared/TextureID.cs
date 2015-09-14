@@ -9,7 +9,7 @@ namespace Inlumino_SHARED
 {
     public class TextureID
     {        
-        public int GroupIndex;
+        public string RefKey;
         public int Index;
         public float WidthUnits;
         public float HeightUnits;
@@ -18,23 +18,17 @@ namespace Inlumino_SHARED
         public static int UnitSizeX2D = 128;
         public static int UnitSizeY2D = 128;        
 
-        public TextureID(int groupIndex, int idx, float wunits=1, float hunits=1)
-        {
-            this.GroupIndex = groupIndex;
-            this.Index = idx;
-            this.WidthUnits = wunits;
-            this.HeightUnits = hunits;
-        }
         public TextureID(string name, int idx, float wunits = 1, float hunits = 1)
         {
-            this.GroupIndex = DataHandler.getGroupIndexFromName(name);
+            this.RefKey = name;
             this.Index = idx;
             this.WidthUnits = wunits;
             this.HeightUnits = hunits;
         }
         public TextureID(Texture2D texture,string name, int idx, float wunits = 1, float hunits = 1)
         {
-            this.GroupIndex = DataHandler.getGroupIndexFromName(name, texture);
+            DataHandler.LoadTexture(name, texture);
+            this.RefKey = name;
             this.Index = idx;
             this.WidthUnits = wunits;
             this.HeightUnits = hunits;

@@ -9,9 +9,10 @@ namespace Inlumino_SHARED
         private string text = "";
         private string deftext;
         private int maxl;
-        private SpriteFont font;
+        private SpriteFont font;        
         private Color color;
         private Color background;
+        public string Padding = "";
 
         public string Text
         {
@@ -24,12 +25,13 @@ namespace Inlumino_SHARED
             this.font = DataHandler.Fonts[0];
             this.color = col;
             this.deftext = defaulttext;
-            this.background = background;
+            this.background = background;            
         }
         public override void Draw(SpriteBatch batch, Camera cam = null)
         {
-            Vector2 tsize = font.MeasureString(text == "" ? deftext : text);
-            batch.DrawString(font, text == "" ? deftext : text, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
+            string t = Padding + (text == "" ? deftext : text);
+            Vector2 tsize = font.MeasureString(t);
+            batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
         }
         public override void HandleEvent(WorldEvent e)
@@ -45,6 +47,10 @@ namespace Inlumino_SHARED
                         text += InputManager.isKeyDown(Keys.LeftShift) || InputManager.isKeyDown(Keys.RightShift) ? k.ToString() : k.ToString().ToLower();
                 }
             }
+        }
+        public override void setSizeRelative(float perc, Orientation mode)
+        {
+            
         }
     }
 }

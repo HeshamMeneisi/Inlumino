@@ -11,7 +11,7 @@ namespace Inlumino_SHARED
         Texture2D background;
         public MainMenu()
         {
-            background = DataHandler.getTexture(3);
+            background = DataHandler.getTexture("mmb");
             mainmenu = new UIMenu();
 
             playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn]);
@@ -54,7 +54,7 @@ namespace Inlumino_SHARED
         }
 
         public void Update(GameTime time)
-        {
+        {            
             mainmenu.Update(time);
         }
 

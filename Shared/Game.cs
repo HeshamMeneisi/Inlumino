@@ -118,6 +118,20 @@ namespace Inlumino_SHARED
             GraphicsDevice.SetRenderTarget(null);
             return screenshot;
         }
+        internal Texture2D TakeScreenshot(Stage currentLevel)
+        {
+            RenderTarget2D screenshot;
+            screenshot = new RenderTarget2D(GraphicsDevice, (int)Screen.Width, (int)Screen.Height);
+            GraphicsDevice.SetRenderTarget(screenshot);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin();
+            currentLevel.Draw(spriteBatch);
+            spriteBatch.End();
+            base.Draw(_lastdrawtime);
+            GraphicsDevice.Present();
+            GraphicsDevice.SetRenderTarget(null);
+            return screenshot;
+        }
         public Texture2D Concat(params TextureID[] args)
         {
             int w = 0, h = 0;
@@ -132,7 +146,7 @@ namespace Inlumino_SHARED
             int x = 0;
             foreach (TextureID tid in args)
             {
-                spriteBatch.Draw(DataHandler.getTexture(tid.GroupIndex), new Rectangle(x, 0, (int)tid.TotalWidth, (int)tid.TotalHeight), DataHandler.getTextureSource(tid), Color.White);
+                spriteBatch.Draw(DataHandler.getTexture(tid.RefKey), new Rectangle(x, 0, (int)tid.TotalWidth, (int)tid.TotalHeight), DataHandler.getTextureSource(tid), Color.White);
                 x += (int)tid.TotalWidth;
             }
             spriteBatch.End();

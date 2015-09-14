@@ -6,6 +6,7 @@ namespace Inlumino_SHARED
 {
     public class Settings
     {
+        public ThemeType CurrentTheme = ThemeType.Beach; //Default
         public float SFXVolume = 1;
         public float MusicVolume = 1;
         public int[] stars = new int[Common.MainLevelNames.Length];

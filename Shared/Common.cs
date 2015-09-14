@@ -15,8 +15,8 @@ namespace Inlumino_SHARED
         public static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
         public static string[] MainLevelNames = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" }; // For the selector
         public static int[] moves = new int[] { 3, 4, 8, 20, 12, 32, 9, 9, 27, 2, 13, 17, 11, 11, 17, 13, 17, 11, 21, 58 };
-        public static TextureID[] Auxiliaries = new TextureID[] { new TextureID(4, 0), new TextureID(4, 1), new TextureID(4, 2), new TextureID(4, 3), new TextureID(4, 4) };        
-
+        public static TextureID[] Auxiliaries = GetAux().ToArray();
+        private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 5; i++) yield return new TextureID("aux", i); }
         public static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
         {
             if (target == default(Tile)) return;
@@ -50,7 +50,7 @@ namespace Inlumino_SHARED
             Stage level = DataHandler.LoadStage(name, ismain);
 
             if (level != null)
-                level.setBackground(DataHandler.getTexture(0));
+                level.setBackground(DataHandler.getTexture("bg"));
 
             return level;
         }
@@ -77,7 +77,7 @@ namespace Inlumino_SHARED
         {
             TextureID[] star = DataHandler.UIObjectsTextureMap[UIObjectType.Star];
             Texture2D t = Manager.Parent.Concat(star[s > 0 ? 1 : 0], star[s > 1 ? 1 : 0], star[s > 2 ? 1 : 0]);
-            return new TextureID(DataHandler.getGroupIndexFromName(s + "stars", t), 0, 1.5f, 0.5f);
+            return new TextureID(DataHandler.LoadTexture(s + "stars", t), 0, 3, 1);
         }
 
         public static bool isDirHorizontal(Direction dir)

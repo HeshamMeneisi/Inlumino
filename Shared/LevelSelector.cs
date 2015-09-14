@@ -98,14 +98,15 @@ namespace Inlumino_SHARED
                     flag = true;
                 }
                 else stex = DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0];
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, true), name, 0, 2, 2), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, true), name, 0, 2, 2), 0.1f);
                 cell.AttachSibling(new UIVisibleObject(new TextureID[] { stex }));
+                cell.FitSiblings();
                 cell.Pressed += mlcellpressed;
                 mlcells.Add(cell);
             }
             foreach (string name in DataHandler.getSavedLevelNames())
             {
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, false), name, 0, 2, 2), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, false), name, 0, 2, 2), 0.1f);
                 cell.Pressed += ulcellpressed;
                 ulcells.Add(cell);
             }

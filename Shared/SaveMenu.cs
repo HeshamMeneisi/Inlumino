@@ -51,7 +51,7 @@ namespace Inlumino_SHARED
                 if (r == 0 || r == null)
                     return;
             }
-            DataHandler.SaveStage((Manager.StateManager.GetGameState(GameState.EditMode) as StageContainer).getCurrentStage(), nametext.Text, icon);
+            DataHandler.SaveStage(stage, nametext.Text);
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
 
@@ -94,9 +94,11 @@ namespace Inlumino_SHARED
             menu.HandleEvent(e);
         }
         Texture2D icon = null;
+        Stage stage = null;
         public void OnActivated(params object[] args)
         {
-            if (args.Length > 0) icon = args[0] as Texture2D;
+            if (args.Length == 0) Manager.StateManager.SwitchTo(GameState.MainMenu);
+            stage = args[0] as Stage;
             SetupMenu();
         }
     }

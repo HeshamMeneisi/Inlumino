@@ -46,14 +46,14 @@ namespace Inlumino_SHARED
             {
                 RectangleF rect = LocalBoundingBox.Inflate(-Width * border, -Height * border);
                 if (cam == null)
-                    batch.Draw(DataHandler.getTexture(overlay.GroupIndex)/*Texture2D from file*/, cam == null ? rect.ToRectangle() : cam.Transform(rect).ToRectangle()/*on-screen box*/, DataHandler.getTextureSource(overlay)/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+                    batch.Draw(DataHandler.getTexture(overlay.RefKey)/*Texture2D from file*/, cam == null ? rect.ToRectangle() : cam.Transform(rect).ToRectangle()/*on-screen box*/, DataHandler.getTextureSource(overlay)/*Rectange on the sheet*/, Color.White/*white=no tint*/);
                 else if (cam.isInsideView(rect))
                 {
                     RectangleF nocrop;
                     RectangleF cropped = cam.TransformWithCropping(rect, out nocrop);
                     RectangleF source = DataHandler.getTextureSource(overlay);
                     source = source.Mask(nocrop, cropped);
-                    batch.Draw(DataHandler.getTexture(overlay.GroupIndex)/*Texture2D from file*/, cropped.Offset(parent.GlobalPosition).ToRectangle()/*on-screen box*/, source.ToRectangle()/*Rectange on the sheet*/, Color.White/*white=no tint*/);
+                    batch.Draw(DataHandler.getTexture(overlay.RefKey)/*Texture2D from file*/, cropped.Offset(parent.GlobalPosition).ToRectangle()/*on-screen box*/, source.ToRectangle()/*Rectange on the sheet*/, Color.White/*white=no tint*/);
                 }
             }
             // Children

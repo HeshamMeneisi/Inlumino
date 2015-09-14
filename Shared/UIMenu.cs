@@ -7,35 +7,71 @@ namespace Inlumino_SHARED
 {
     class UIMenu : UIVisibleObject
     {
-        protected List<UIVisibleObject> UIObjects;
+        protected List<UIVisibleObject> children;
+
+        public override Vector2 Size
+        {
+            get
+            {
+                return new Vector2(Width, Height);
+            }
+        }
+        public override float Height
+        {
+            get
+            {
+                float miny = float.MaxValue, maxy = float.MinValue;
+                foreach (UIVisibleObject obj in children)
+                {
+                    RectangleF temp = obj.BoundingBox;                    
+                    miny = Math.Min(miny, temp.Top);
+                    maxy = Math.Max(maxy, temp.Bottom);
+                }
+                return maxy - miny;                    
+            }
+        }
+        public override float Width
+        {
+            get
+            {
+                float minx = float.MaxValue, maxx = float.MinValue;
+                foreach (UIVisibleObject obj in children)
+                {
+                    RectangleF temp = obj.BoundingBox;
+                    minx = Math.Min(minx, temp.Left);
+                    maxx = Math.Max(maxx, temp.Right);
+                }
+                return maxx - minx;
+            }
+        }
         public UIMenu(int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
         {
-            UIObjects = new List<UIVisibleObject>();
+            children = new List<UIVisibleObject>();
         }
 
         public void Add(UIVisibleObject obj)
         {
             obj.Parent = this;
-            for (int i = 0; i < UIObjects.Count; i++)
+            for (int i = 0; i < children.Count; i++)
             {
-                if (UIObjects[i].Layer > obj.Layer)
+                if (children[i].Layer > obj.Layer)
                 {
-                    UIObjects.Insert(i, obj);
+                    children.Insert(i, obj);
                     return;
                 }
             }
-            UIObjects.Add(obj);
+            children.Add(obj);
         }
 
         public void Remove(UIVisibleObject obj)
         {
-            UIObjects.Remove(obj);
+            children.Remove(obj);
             obj.Parent = null;
         }
 
         public UIObject Find(string id)
         {
-            foreach (UIObject obj in UIObjects)
+            foreach (UIObject obj in children)
             {
                 if (obj.ID == id)
                     return obj;
@@ -52,27 +88,27 @@ namespace Inlumino_SHARED
 
         internal void setAllSizeRelative(float v, Orientation mode)
         {
-            foreach (UIVisibleObject obj in UIObjects) obj.setSizeRelative(v, mode);
+            foreach (UIVisibleObject obj in children) obj.setSizeRelative(v, mode);
         }
 
         public override void HandleEvent(WorldEvent e)
         {
             if (!visible) return;
             base.HandleEvent(e);
-            foreach (UIObject obj in UIObjects)
+            foreach (UIObject obj in children)
                 obj.HandleEvent(e);
             base.HandleEvent(e);
         }
 
         public List<UIVisibleObject> Objects
         {
-            get { return UIObjects; }
+            get { return children; }
         }
 
         public override void Update(GameTime time)
         {
             if (!visible) return;
-            foreach (UIObject obj in UIObjects)
+            foreach (UIObject obj in children)
                 obj.Update(time);
         }
 
@@ -80,7 +116,7 @@ namespace Inlumino_SHARED
         {
             if (!visible)
                 return;
-            List<UIVisibleObject>.Enumerator e = UIObjects.GetEnumerator();
+            List<UIVisibleObject>.Enumerator e = children.GetEnumerator();
             while (e.MoveNext())
                 if (e.Current is UIVisibleObject) (e.Current as UIVisibleObject).Draw(batch);
         }
@@ -88,33 +124,30 @@ namespace Inlumino_SHARED
         public override void Clear()
         {
             base.Clear();
-            foreach (UIObject obj in UIObjects)
+            foreach (UIObject obj in children)
                 obj.Clear();
         }
         public void ArrangeInForm(Orientation mode, float maxwidth = -1, float maxheight = -1)
         {
             maxwidth = maxwidth > 0 ? maxwidth : Screen.Width - GlobalPosition.X;
             maxheight = maxheight > 0 ? maxheight : Screen.Height - GlobalPosition.Y;
-            float x = 0, y = 0, w = 0, h = 0;
+            float x = 0, y = 0;
             if (mode == Orientation.Landscape)
-                foreach (UIVisibleObject obj in UIObjects)
+                foreach (UIVisibleObject obj in children)
                 {
+                    if (!obj.Visible) continue;
                     if (x + obj.Width > maxwidth) { x = 0; y += obj.Height; }
                     obj.Position = new Vector2(x, y);
                     x += obj.Width;
-                    w = Math.Max(w, x);
-                    h = Math.Max(h, y + obj.Height);
                 }
             else
-                foreach (UIVisibleObject obj in UIObjects)
+                foreach (UIVisibleObject obj in children)
                 {
+                    if (!obj.Visible) continue;
                     if (y + obj.Height > maxheight) { y = 0; x += obj.Width; }
                     obj.Position = new Vector2(x, y);
                     y += obj.Height;
-                    h = Math.Max(h, y);
-                    w = Math.Max(w, x + obj.Width);
                 }
-            size = new Vector2(w, h);
         }
     }
 }

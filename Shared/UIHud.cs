@@ -142,7 +142,7 @@ namespace Inlumino_SHARED
                 {
                     if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                     {
-                        if (!BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) { dragging = false; return; }
+                        if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) return;
                         dragging = true;
                         Point offset = (e as MouseMovedEvent).Offset;
                         cam.StepHorizontal(offset.X);

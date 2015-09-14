@@ -298,5 +298,19 @@ namespace Inlumino_SHARED
             foreach (Tile t in map.AllTiles)
                 if (type == null || t.hasObject(type)) t.RemoveObject();
         }
+
+        public int ShuffleLevel()
+        {
+            Random ran = new Random();
+            int moves = 0;
+            foreach (Tile t in map.AllTiles)
+                if (t.hasObject() && !(t.getObject() is LightBeam) && !(t.getObject() is LightSourceObject) && !(t.getObject() is Crystal) && !(t.getObject() is Block))
+                    for (int i = ran.Next(1, 4); i > 0; i--)
+                    {
+                        moves++;
+                        t.getObject().RotateCCW(true);
+                    }
+            return moves;
+        }
     }
 }

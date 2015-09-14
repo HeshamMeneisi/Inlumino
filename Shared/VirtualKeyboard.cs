@@ -17,6 +17,7 @@ namespace Inlumino_SHARED
             filterfunc = filter;
             hud = new UIHud(getcontent(), mode, minkeydim, minkeydim, width, height);
             hud.Position = new Vector2(x, y);
+            hud.SnapCameraToCells = false;
             hud.Setup();
         }
         static UICell[] allkeys = null;

@@ -14,34 +14,67 @@ namespace Inlumino_SHARED
     class DataHandler
     {
         public const int TextureUnitDim = 256;
-
+        // Files
         // The index in this array represents the groupindex used in TextureID
-        private static List<string> TextureFiles = new List<string> { "Textures\\background"/*group=0*/, "Textures\\ui", "Textures\\objects","Textures\\mmbackground","Textures\\auxiliary"/*,add more files here*/};
+        private static Dictionary<string, string> TextureFiles;
 
-        private static string[] FontFiles = new string[] { "Fonts\\MainFont" };
+        private static string[] FontFiles;
 
-        private static Dictionary<SoundType, string> SoundFiles = new Dictionary<SoundType, string>
+        private static Dictionary<SoundType, string> SoundFiles;
+
+        public static void LoadCurrentTheme()
         {
-            {SoundType.TapSound, "Sounds\\TapSound" },
-            { SoundType.RotateSound, "Sounds\\RotateSound" },
-            { SoundType.CrystalLit, "Sounds\\CrystalLit" },
-            {SoundType.AllCrystalsLit, "Sounds\\AllCrystalsLit" },
-            {SoundType.Background, "Sounds\\Background" }
-        };
+            UnloadAll();
+            string d = GetCurrentThemeDirectory();
+            TextureFiles = new Dictionary<string, string>
+            {
+            { "bg","Textures\\"+d+"\\background" },
+            {"mmb","Textures\\"+d+"\\mmbackground"},
+            {"ui","Textures\\"+d+"\\ui"},
+            {"obj","Textures\\"+d+"\\objects"},
+            {"aux","Textures\\"+d+"\\auxiliary"}
+             };
+            LoadTextures();
+            SoundFiles = new Dictionary<SoundType, string>
+            {
+            {SoundType.TapSound, "Sounds\\"+d+"\\TapSound" },
+            { SoundType.RotateSound, "Sounds\\"+d+"\\RotateSound" },
+            { SoundType.CrystalLit, "Sounds\\"+d+"\\CrystalLit" },
+            {SoundType.AllCrystalsLit, "Sounds\\"+d+"\\AllCrystalsLit" },
+            {SoundType.Background, "Sounds\\"+d+"\\Background" }
+            };
+            LoadSounds();
+            FontFiles = new string[] { "Fonts\\" + d + "\\MainFont" };
+            LoadFonts();
+        }
+
+        private static void UnloadAll()
+        {
+            Manager.ContentManager.Unload();
+            Textures.Clear();
+            Sounds.Clear();
+            Fonts.Clear();
+        }
+
+        private static string GetCurrentThemeDirectory()
+        {
+            return Manager.GameSettings.CurrentTheme.ToString();
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
         private static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         public static List<SpriteFont> Fonts = new List<SpriteFont>();
 
         public static Dictionary<SoundType, SoundEffect> Sounds = new Dictionary<SoundType, SoundEffect>();
-
         /// <summary>
         /// We should define new tiles here.
         /// </summary>
         #region Tile Definition        
         public static Dictionary<TileType, TextureID[]> TileTextureMap = new Dictionary<TileType, TextureID[]>()
         {
-            {TileType.Default,new TextureID[] {new TextureID(2,0) /*Normal*/, new TextureID(2,1) /*Highlight overlay*/, new TextureID(2,15) /*Object Board*/} },
+            {TileType.Default,new TextureID[] {new TextureID("obj",0) /*Normal*/, new TextureID("obj",1) /*Highlight overlay*/, new TextureID("obj",15) /*Object Board*/} },
         };
         #endregion
 
@@ -52,26 +85,18 @@ namespace Inlumino_SHARED
         public static Dictionary<ObjectType, TextureID[]> ObjectTextureMap = new Dictionary<ObjectType, TextureID[]>()
         {            
             // Virtual
-            {ObjectType.None, new TextureID[] { new TextureID(1,2)} },
-            {ObjectType.Delete, new TextureID[] {new TextureID(1,3)} },
-            {ObjectType.Invisible, new TextureID[] {new TextureID(1,0)} },
+            {ObjectType.None, new TextureID[] { new TextureID("ui",2)} },
+            {ObjectType.Delete, new TextureID[] {new TextureID("ui",3)} },
+            {ObjectType.Invisible, new TextureID[] {new TextureID("ui",0)} },
             // Real
-            {ObjectType.LightSource, new TextureID[] { new TextureID(2,12),new TextureID(2,13)} },
-            {ObjectType.Block, new TextureID[] { new TextureID(2,4)} },
-            {ObjectType.Prism, new TextureID[] { new TextureID(2,8), new TextureID(2,9)} },
-            {ObjectType.LightBeam, new TextureID[] { new TextureID(2,7),new TextureID(2,6)} },
-            {ObjectType.Crystal, new TextureID[] { new TextureID(2, 3), new TextureID(2, 2) } },
-            {ObjectType.Splitter, new TextureID[] {new TextureID(2,11),new TextureID(2,10)} },
-            {ObjectType.Portal, new TextureID[] {new TextureID(2,14),new TextureID(2,5)} }
+            {ObjectType.LightSource, new TextureID[] { new TextureID("obj",12),new TextureID("obj",13)} },
+            {ObjectType.Block, new TextureID[] { new TextureID("obj",4)} },
+            {ObjectType.Prism, new TextureID[] { new TextureID("obj",8), new TextureID("obj",9)} },
+            {ObjectType.LightBeam, new TextureID[] { new TextureID("obj",7),new TextureID("obj",6)} },
+            {ObjectType.Crystal, new TextureID[] { new TextureID("obj", 3), new TextureID("obj", 2) } },
+            {ObjectType.Splitter, new TextureID[] {new TextureID("obj",11),new TextureID("obj",10)} },
+            {ObjectType.Portal, new TextureID[] {new TextureID("obj",14),new TextureID("obj",5)} }
         };
-
-        internal static IEnumerable<string> getSavedLevelNames()
-        {
-            foreach (string s in savegameStorage.GetFileNames())
-            {
-                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
-            }
-        }
         #endregion
         /// <summary>
         /// We should define ui objects here.
@@ -79,30 +104,40 @@ namespace Inlumino_SHARED
         #region UI Items
         public static Dictionary<UIObjectType, TextureID[]> UIObjectsTextureMap = new Dictionary<UIObjectType, TextureID[]>()
         {
-            {UIObjectType.PlayBtn, new TextureID[] {new TextureID(1,17, 1, 0.5f) } },
-            {UIObjectType.EditModeBtn, new TextureID[] {new TextureID(1,4, 1, 0.5f) } },
-            {UIObjectType.OptionsBtn,new TextureID[] {new TextureID(1,8, 1, 0.5f) } },
-            {UIObjectType.Cell, new TextureID[] {new TextureID(1,1)} },
-            {UIObjectType.MenuButton,new TextureID[] {new TextureID(1,12, 1, 0.5f) } },
-            {UIObjectType.RestartButton,new TextureID[] {new TextureID(1,13, 1, 0.5f) } },
-            {UIObjectType.ToggleButton,new TextureID[] {new TextureID(1,14, 1, 0.5f) } },
-            {UIObjectType.SaveButton,new TextureID[] {new TextureID(1,15, 1, 0.5f)} },
-            {UIObjectType.Next,new TextureID[] {new TextureID(1,18, 1, 0.5f)} },
-            {UIObjectType.BackButton,new TextureID[] {new TextureID (1,11, 1, 0.5f) } },
-            {UIObjectType.MainUser,new TextureID[] {new TextureID(1,7, 1, 0.5f)} },
-            {UIObjectType.DeleteBtn,new TextureID[] {new TextureID(1,16, 1, 0.5f)} },
-            {UIObjectType.LeftButton,new TextureID[] {new TextureID(1,5, 0.5f,0.5f)} },
-            {UIObjectType.RightButton,new TextureID[] {new TextureID(1, 6, 0.5f, 0.5f) } },
-            {UIObjectType.UpButton,new TextureID[] {new TextureID(1, 9, 0.5f, 0.5f) } },
-            {UIObjectType.DownButton,new TextureID[] {new TextureID(1, 10, 0.5f, 0.5f) } },
-            {UIObjectType.Star,new TextureID[] {new TextureID(1, 20, 0.5f, 0.5f), new TextureID(1, 21, 0.5f, 0.5f) } },
-            {UIObjectType.Log,new TextureID[] {new TextureID(1,22,2,2)} },
-            {UIObjectType.Lock,new TextureID[] {new TextureID(1,30,2,2)} },
-            {UIObjectType.Border,new TextureID[] {new TextureID(1,24,2,1)} }
+            {UIObjectType.PlayBtn, new TextureID[] {new TextureID("ui",17, 1, 0.5f) } },
+            {UIObjectType.EditModeBtn, new TextureID[] {new TextureID("ui",4, 1, 0.5f) } },
+            {UIObjectType.OptionsBtn,new TextureID[] {new TextureID("ui",8, 1, 0.5f) } },
+            {UIObjectType.Cell, new TextureID[] {new TextureID("ui",1)} },
+            {UIObjectType.MenuButton,new TextureID[] {new TextureID("ui",12, 1, 0.5f) } },
+            {UIObjectType.RestartButton,new TextureID[] {new TextureID("ui",13, 1, 0.5f) } },
+            {UIObjectType.ToggleButton,new TextureID[] {new TextureID("ui",14, 1, 0.5f) } },
+            {UIObjectType.SaveButton,new TextureID[] {new TextureID("ui",15, 1, 0.5f)} },
+            {UIObjectType.Next,new TextureID[] {new TextureID("ui",18, 2, 1)} },
+            {UIObjectType.TryAgain,new TextureID[] {new TextureID("ui",22, 2, 1)} },
+            {UIObjectType.BackButton,new TextureID[] {new TextureID ("ui",11, 1, 0.5f) } },
+            {UIObjectType.MainUser,new TextureID[] {new TextureID("ui",7, 1, 0.5f)} },
+            {UIObjectType.DeleteBtn,new TextureID[] {new TextureID("ui",16, 1, 0.5f)} },
+            {UIObjectType.LeftButton,new TextureID[] {new TextureID("ui",5, 0.5f,0.5f)} },
+            {UIObjectType.RightButton,new TextureID[] {new TextureID("ui", 6, 0.5f, 0.5f) } },
+            {UIObjectType.UpButton,new TextureID[] {new TextureID("ui", 9, 0.5f, 0.5f) } },
+            {UIObjectType.DownButton,new TextureID[] {new TextureID("ui", 10, 0.5f, 0.5f) } },
+            {UIObjectType.Star,new TextureID[] {new TextureID("ui", 20, 1, 1), new TextureID("ui", 21, 1, 1) } },
+            {UIObjectType.Log,new TextureID[] {new TextureID("ui",26,2,1)} },
+            {UIObjectType.Lock,new TextureID[] {new TextureID("ui",38,2,2)} },
+            {UIObjectType.Border,new TextureID[] {new TextureID("ui",24,2,1)} },
+            {UIObjectType.TopLog,new TextureID[] {new TextureID("ui",30,2,1),new TextureID("ui",28,2,1)} },
+            {UIObjectType.Ropes,new TextureID[] {new TextureID("ui",34,2,1)} },
+            {UIObjectType.Frame,new TextureID[] {new TextureID("ui",36,2,2)} }
         };
         #endregion
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
-
+        internal static IEnumerable<string> getSavedLevelNames()
+        {
+            foreach (string s in savegameStorage.GetFileNames())
+            {
+                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
+            }
+        }
         static string getDataFileName(string stagename)
         {
             return "S_" + stagename + ".xml";
@@ -111,11 +146,17 @@ namespace Inlumino_SHARED
         {
             return "T_" + stagename + ".png";
         }
-        internal static void SaveStage(Stage currentLevel, string name, Texture2D img)
+        internal static void SaveStage(Stage currentLevel, string name)
         {
             LevelData data = new LevelData(currentLevel.getTileMap().getIntMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
             SaveData<string>(data.Data, getDataFileName(name));
             Stream s = savegameStorage.CreateFile(getThumbFileName(name));
+            /////// Thumb
+            Screen.MakeVirtual(new Vector2(512, 512));
+            currentLevel.ShuffleLevel();
+            currentLevel.SetMinScreenPadding(new Padding(0, 0, 0, 0));
+            Texture2D img = Manager.Parent.TakeScreenshot(currentLevel);
+            Screen.MakeReal();
             img.SaveAsPng(s, img.Width, img.Width);
 #if ANDROID
             saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
@@ -156,17 +197,21 @@ namespace Inlumino_SHARED
             }
             else
             {
-                if (!savegameStorage.FileExists(getThumbFileName(name))) return null;
-                Stream s = savegameStorage.OpenFile(getThumbFileName(name), FileMode.Open);
-                Texture2D ret = Texture2D.FromStream(Manager.Parent.GraphicsDevice, s);
-                s.Dispose();
-                return ret;
+                try
+                {
+                    if (!savegameStorage.FileExists(getThumbFileName(name))) return null;
+                    Stream s = savegameStorage.OpenFile(getThumbFileName(name), FileMode.Open);
+                    Texture2D ret = Texture2D.FromStream(Manager.Parent.GraphicsDevice, s);
+                    s.Dispose();
+                    return ret;
+                }
+                catch { return null; }
             }
         }
         public static void LoadTextures()
         {
-            foreach (string t in TextureFiles)
-                Textures.Add(t, Manager.ContentManager.Load<Texture2D>(t));
+            foreach (string t in TextureFiles.Keys)
+                Textures.Add(t, Manager.ContentManager.Load<Texture2D>(TextureFiles[t]));
         }
         public static void LoadFonts()
         {
@@ -182,17 +227,20 @@ namespace Inlumino_SHARED
         public static Rectangle getTextureSource(TextureID id)
         {
             // Textures are expected to be square
-            int unitsperrow = Textures[TextureFiles[id.GroupIndex]].Width / TextureUnitDim;
+            int unitsperrow = Textures[id.RefKey].Width / TextureUnitDim;
             int texw = (int)(TextureUnitDim * id.WidthUnits);
             int texh = (int)(TextureUnitDim * id.HeightUnits);
             return new Rectangle(id.Index % unitsperrow * TextureUnitDim + 1, id.Index / unitsperrow * TextureUnitDim + 1, texw - 1, texh - 1);
         }
 
-        internal static Texture2D getTexture(int p)
+        internal static Texture2D getTexture(string key)
         {
-            return Textures[TextureFiles[p]];
+            return Textures[key];
         }
-
+        public static Texture2D getTexture(TextureID tid)
+        {
+            return Textures[tid.RefKey];
+        }
         public static void SaveData<T>(T data, string file)
         {
             IsolatedStorageFileStream str = savegameStorage.CreateFile(file);
@@ -259,32 +307,25 @@ namespace Inlumino_SHARED
         /// </summary>
         /// <param name="name">File name without extension. (e.g "ObjectTex")</param>
         /// <returns></returns>
-        public static int getGroupIndexFromName(string name, Texture2D texture = null)
+        public static string LoadTexture(string name, Texture2D texture = null)
         {
-            int r = TextureFiles.IndexOf(name);
-            if (r >= 0) return r;
+            if (Textures.ContainsKey(name)) return name;
             if (texture != null)
-            {
-                TextureFiles.Add(name);
-                Textures.Add(name, texture);
-                return Textures.Count - 1;
-            }
+            { Textures.Add(name, texture); return name; }
             try
             {
                 Texture2D temp = Manager.ContentManager.Load<Texture2D>(name);
-                TextureFiles.Add(name);
-                Textures.Add(name, temp);
-                return Textures.Count - 1;
+                if (temp != null)
+                    Textures.Add(name, temp);
+                return name;
             }
-            catch
-            {
-                return -1;
-            }
+            catch { return ""; }
         }
         internal static bool isValid(TextureID tid)
         {
-            return tid != default(TextureID) && tid.GroupIndex >= 0 && tid.GroupIndex < TextureFiles.Count;
+            return tid != default(TextureID) && Textures.ContainsKey(tid.RefKey);
         }
     }
     public enum SoundType { TapSound = 0, RotateSound = 1, CrystalLit = 2, AllCrystalsLit = 3, Background = 4 }
 }
+public enum ThemeType { Beach = 0, Space = 1 }

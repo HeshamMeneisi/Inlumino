@@ -39,10 +39,8 @@ namespace Inlumino_SHARED
         {
             parentGame = parent;
             contentManager = parent.Content;
-            DataHandler.LoadTextures();
-            DataHandler.LoadFonts();
-            DataHandler.LoadSounds();
             LoadSettings();
+            DataHandler.LoadCurrentTheme();            
             stateManager = new StateManager();
             menu = new MainMenu();
             optionsmenu = new OptionsMenu();
