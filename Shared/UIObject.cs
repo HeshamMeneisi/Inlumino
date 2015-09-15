@@ -14,7 +14,7 @@ namespace Inlumino_SHARED
         protected bool visible;
         protected List<UIObject> siblings = new List<UIObject>();
 
-        public UIObject(int layer = 0, string id = "")
+        internal UIObject(int layer = 0, string id = "")
         {
             this.layer = layer;
             this.id = id;
@@ -22,23 +22,23 @@ namespace Inlumino_SHARED
             this.visible = true;
         }
 
-        public virtual void Update(GameTime time)
+        internal virtual void Update(GameTime time)
         {
 
         }
 
-        public virtual void Clear()
+        internal virtual void Clear()
         {
             visible = true;
         }
 
-        public virtual Vector2 Position
+        internal virtual Vector2 Position
         {
             get { return position; }
             set { position = value; }
         }
 
-        public virtual Vector2 GlobalPosition
+        internal virtual Vector2 GlobalPosition
         {
             get
             {                
@@ -49,7 +49,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public UIObject Root
+        internal UIObject Root
         {
             get
             {
@@ -60,7 +60,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public UIObject Menu
+        internal UIObject Menu
         {
             get
             {
@@ -68,18 +68,18 @@ namespace Inlumino_SHARED
             }
         }
 
-        public virtual void HandleEvent(WorldEvent e)
+        internal virtual void HandleEvent(WorldEvent e)
         {
                         
         }
 
-        public virtual int Layer
+        internal virtual int Layer
         {
             get { return layer; }
             set { layer = value; }
         }
 
-        public virtual UIObject Parent
+        internal virtual UIObject Parent
         {
             get { return parent; }
             set { parent = value;
@@ -87,18 +87,18 @@ namespace Inlumino_SHARED
             }
         }
 
-        public string ID
+        internal string ID
         {
             get { return id; }
         }
 
-        public bool Visible
+        internal bool Visible
         {
             get { return visible; }
             set { visible = value; }
         }
 
-        public virtual RectangleF BoundingBox
+        internal virtual RectangleF BoundingBox
         {
             get
             {

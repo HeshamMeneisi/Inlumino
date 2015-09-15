@@ -9,12 +9,12 @@ namespace Inlumino_SHARED
 {
     class Prism : PowerableSource
     {
-        public Prism(TextureID[] tid, Tile parent) : base(tid, parent)
+        internal Prism(TextureID[] tid, Tile parent) : base(tid, parent)
         {
             map[Direction.East] = new List<Direction>() { Direction.South };
             map[Direction.South] = new List<Direction>() { Direction.East };
         }
-        public override ObjectType getType()
+        internal override ObjectType getType()
         {
             return ObjectType.Prism;
         }

@@ -8,11 +8,11 @@ namespace Inlumino_SHARED
 {
     static class VirtualKeyboard
     {
-        public delegate void KeyPressedEventHandler(Keys key);
-        public static event KeyPressedEventHandler KeyPressed;
+        internal delegate void KeyPressedEventHandler(Keys key);
+        internal static event KeyPressedEventHandler KeyPressed;
         static UIHud hud;
         static Func<Keys, bool> filterfunc;
-        public static void Show(Orientation mode, float minkeydim, float width, float height, Func<Keys, bool> filter = null, float x = 0, float y = 0)
+        internal static void Show(Orientation mode, float minkeydim, float width, float height, Func<Keys, bool> filter = null, float x = 0, float y = 0)
         {
             filterfunc = filter;
             hud = new UIHud(getcontent(), mode, minkeydim, minkeydim, width, height);
@@ -35,9 +35,9 @@ namespace Inlumino_SHARED
             }
             return allkeys = keys.ToArray();
         }
-        public static bool Low = true;
+        internal static bool Low = true;
 
-        public static RectangleF BoundingBox
+        internal static RectangleF BoundingBox
         {
             get { return hud.BoundingBox; }
         }
@@ -49,15 +49,15 @@ namespace Inlumino_SHARED
             if (KeyPressed != null) KeyPressed(k);
         }
 
-        public static void Draw(SpriteBatch batch)
+        internal static void Draw(SpriteBatch batch)
         {
             hud.Draw(batch);
         }
-        public static void Update(GameTime time)
+        internal static void Update(GameTime time)
         {
             hud.Update(time);
         }
-        public static void HandleEvent(WorldEvent e)
+        internal static void HandleEvent(WorldEvent e)
         {
             hud.HandleEvent(e);
         }

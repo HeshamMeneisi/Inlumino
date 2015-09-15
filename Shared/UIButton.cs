@@ -5,25 +5,25 @@ namespace Inlumino_SHARED
 {
     class UIButton : UIVisibleObject
     {
-        public TextureID[] Texture {
+        internal TextureID[] Texture {
             get { return sprite; }
             set { sprite = value; } }
 
-        public delegate void ButtonPressedEventHandler(UIButton sender);
-        public event ButtonPressedEventHandler Pressed;
+        internal delegate void ButtonPressedEventHandler(UIButton sender);
+        internal event ButtonPressedEventHandler Pressed;
 
-        public UIButton(TextureID[] tid,ButtonPressedEventHandler pressed=null, int layer = 0, string id = "")
+        internal UIButton(TextureID[] tid,ButtonPressedEventHandler pressed=null, int layer = 0, string id = "")
             : base(tid, layer, id)
         {
             Pressed += pressed;
         }
 
-        public override void Clear()
+        internal override void Clear()
         {
             base.Clear();
         }
 
-        public override void HandleEvent(WorldEvent e)
+        internal override void HandleEvent(WorldEvent e)
         {
             if (e.Handled) return;
             if (visible)

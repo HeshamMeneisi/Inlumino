@@ -10,7 +10,7 @@ namespace Inlumino_SHARED
         List<ILightSource> currentdistantsources = new List<ILightSource>();
         Dictionary<ILightSource, Direction> allsources = new Dictionary<ILightSource, Direction>();
 
-        public override void Update(GameTime time)
+        internal override void Update(GameTime time)
         {
             if (rotation != targetrotation)
             {
@@ -22,9 +22,13 @@ namespace Inlumino_SHARED
                 // Simulate current source off
                 while (currentnearbysources.Count > 0)
                 {
-                    ILightSource temp = currentnearbysources[0];
-                    HandlePulse(false, Common.NextDirCW(rotation), currentnearbysources[0]);
-                    allsources.Add(temp, Common.NextDirCW(rotation));
+                    try
+                    {
+                        ILightSource temp = currentnearbysources[0];
+                        HandlePulse(false, Common.NextDirCW(rotation), currentnearbysources[0]);
+                        allsources.Add(temp, Common.NextDirCW(rotation));
+                    }
+                    catch { }
                 }
                 Rotation = targetrotation;
                 // Rehandle everything currently on
@@ -50,7 +54,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public override ObjectType getType()
+        internal override ObjectType getType()
         {
             return ObjectType.Portal;
         }
@@ -68,10 +72,12 @@ namespace Inlumino_SHARED
         {
             if (source == this) return;
             state = 1;
+            bool flag = IsOn;
             if (!currentdistantsources.Contains(source))
                 currentdistantsources.Add(source);
+            if (flag) return; // Avoid the nasty stack overflow that could happen here
             Tile target = parenttile.getAdjacentTile(Common.NextDirCW(rotation));
-            if (target != default(Tile)) Common.PulseTile(target, true, Common.ReverseDir(Common.NextDirCW(rotation)), this);
+            if (target != default(Tile)) Common.PulseTile(target, true, Common.ReverseDir(Common.NextDirCW(rotation)), this);            
         }
         private void PowerOff(Portal source)
         {
@@ -87,7 +93,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public bool IsFeedingDirection(Direction dir)
+        internal bool IsFeedingDirection(Direction dir)
         {
             return IsOn && dir == Common.NextDirCW(rotation);
         }
@@ -134,9 +140,9 @@ namespace Inlumino_SHARED
             allsources.Clear();
         }
 
-        public Portal(TextureID[] tid, Tile parent) : base(tid, parent)
+        internal Portal(TextureID[] tid, Tile parent) : base(tid, parent)
         {
-
+            IsInteractable = true;
         }
     }
 }

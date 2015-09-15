@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using Parse;
 
 namespace Inlumino_SHARED
 {
@@ -15,6 +16,9 @@ namespace Inlumino_SHARED
 
         public Game()
         {
+            string test = "this is a very long string for testing 123456789 !@#$%^&*()_+";
+
+            ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
@@ -108,7 +112,7 @@ namespace Inlumino_SHARED
             base.Draw(gameTime);
         }
 
-        public Texture2D TakeScreenshot()
+        internal Texture2D TakeScreenshot()
         {
             RenderTarget2D screenshot;
             screenshot = new RenderTarget2D(GraphicsDevice, (int)Screen.Width, (int)Screen.Height);
@@ -132,7 +136,7 @@ namespace Inlumino_SHARED
             GraphicsDevice.SetRenderTarget(null);
             return screenshot;
         }
-        public Texture2D Concat(params TextureID[] args)
+        internal Texture2D Concat(params TextureID[] args)
         {
             int w = 0, h = 0;
             foreach (TextureID tid in args)

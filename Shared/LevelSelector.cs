@@ -18,7 +18,7 @@ namespace Inlumino_SHARED
         protected UIButton switchbtn;
         protected List<UICell> mlcells = new List<UICell>();
 
-        public LevelSelector()
+        internal LevelSelector()
         {
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton]);
             switchbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MainUser]);

@@ -8,9 +8,9 @@ namespace Inlumino_SHARED
 {
     class Crystal : StaticObject, IObstructingObject
     {
-        public Crystal(TextureID[] tid, Tile parent) : base(tid, parent) { }
-        public List<ILightSource> allsources = new List<ILightSource>();
-        public override ObjectType getType()
+        internal Crystal(TextureID[] tid, Tile parent) : base(tid, parent) { }
+        internal List<ILightSource> allsources = new List<ILightSource>();
+        internal override ObjectType getType()
         {
             return ObjectType.Crystal;
         }
@@ -28,15 +28,14 @@ namespace Inlumino_SHARED
                     SoundManager.PlaySound(DataHandler.Sounds[SoundType.CrystalLit], SoundCategory.SFX);                    
                 }
             state = Math.Min(1, allsources.Count);
-            parenttile.Parent.CheckWin();
         }
 
 
-        public override void RotateCW(bool instant, int clicks = 1)
+        internal override void RotateCW(bool instant, int clicks = 1)
         {
             if (instant) base.RotateCW(instant, clicks);
         }
-        public override void RotateCCW(bool instant, int clicks = 1)
+        internal override void RotateCCW(bool instant, int clicks = 1)
         {
             if (instant) base.RotateCCW(instant, clicks);
         }

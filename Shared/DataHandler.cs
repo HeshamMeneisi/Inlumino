@@ -13,7 +13,7 @@ namespace Inlumino_SHARED
 {
     class DataHandler
     {
-        public const int TextureUnitDim = 256;
+        internal const int TextureUnitDim = 256;
         // Files
         // The index in this array represents the groupindex used in TextureID
         private static Dictionary<string, string> TextureFiles;
@@ -22,7 +22,7 @@ namespace Inlumino_SHARED
 
         private static Dictionary<SoundType, string> SoundFiles;
 
-        public static void LoadCurrentTheme()
+        internal static void LoadCurrentTheme()
         {
             UnloadAll();
             string d = GetCurrentThemeDirectory();
@@ -65,14 +65,14 @@ namespace Inlumino_SHARED
 
         private static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
-        public static List<SpriteFont> Fonts = new List<SpriteFont>();
+        internal static List<SpriteFont> Fonts = new List<SpriteFont>();
 
-        public static Dictionary<SoundType, SoundEffect> Sounds = new Dictionary<SoundType, SoundEffect>();
+        internal static Dictionary<SoundType, SoundEffect> Sounds = new Dictionary<SoundType, SoundEffect>();
         /// <summary>
         /// We should define new tiles here.
         /// </summary>
         #region Tile Definition        
-        public static Dictionary<TileType, TextureID[]> TileTextureMap = new Dictionary<TileType, TextureID[]>()
+        internal static Dictionary<TileType, TextureID[]> TileTextureMap = new Dictionary<TileType, TextureID[]>()
         {
             {TileType.Default,new TextureID[] {new TextureID("obj",0) /*Normal*/, new TextureID("obj",1) /*Highlight overlay*/, new TextureID("obj",15) /*Object Board*/} },
         };
@@ -82,7 +82,7 @@ namespace Inlumino_SHARED
         /// We should define new objects here.
         /// </summary>
         #region Object Definition
-        public static Dictionary<ObjectType, TextureID[]> ObjectTextureMap = new Dictionary<ObjectType, TextureID[]>()
+        internal static Dictionary<ObjectType, TextureID[]> ObjectTextureMap = new Dictionary<ObjectType, TextureID[]>()
         {            
             // Virtual
             {ObjectType.None, new TextureID[] { new TextureID("ui",2)} },
@@ -102,7 +102,7 @@ namespace Inlumino_SHARED
         /// We should define ui objects here.
         /// </summary>
         #region UI Items
-        public static Dictionary<UIObjectType, TextureID[]> UIObjectsTextureMap = new Dictionary<UIObjectType, TextureID[]>()
+        internal static Dictionary<UIObjectType, TextureID[]> UIObjectsTextureMap = new Dictionary<UIObjectType, TextureID[]>()
         {
             {UIObjectType.PlayBtn, new TextureID[] {new TextureID("ui",17, 1, 0.5f) } },
             {UIObjectType.EditModeBtn, new TextureID[] {new TextureID("ui",4, 1, 0.5f) } },
@@ -189,7 +189,7 @@ namespace Inlumino_SHARED
                 return null;
             return new Stage(temp);
         }
-        public static Texture2D GetLevelThumb(string name, bool mainlevel)
+        internal static Texture2D GetLevelThumb(string name, bool mainlevel)
         {
             if (mainlevel)
             {
@@ -208,23 +208,23 @@ namespace Inlumino_SHARED
                 catch { return null; }
             }
         }
-        public static void LoadTextures()
+        internal static void LoadTextures()
         {
             foreach (string t in TextureFiles.Keys)
                 Textures.Add(t, Manager.ContentManager.Load<Texture2D>(TextureFiles[t]));
         }
-        public static void LoadFonts()
+        internal static void LoadFonts()
         {
             foreach (string f in FontFiles)
                 Fonts.Add(Manager.ContentManager.Load<SpriteFont>(f));
         }
-        public static void LoadSounds()
+        internal static void LoadSounds()
         {
             foreach (KeyValuePair<SoundType, string> p in SoundFiles)
                 Sounds.Add(p.Key, Manager.ContentManager.Load<SoundEffect>(p.Value));
         }
 
-        public static Rectangle getTextureSource(TextureID id)
+        internal static Rectangle getTextureSource(TextureID id)
         {
             // Textures are expected to be square
             int unitsperrow = Textures[id.RefKey].Width / TextureUnitDim;
@@ -237,11 +237,11 @@ namespace Inlumino_SHARED
         {
             return Textures[key];
         }
-        public static Texture2D getTexture(TextureID tid)
+        internal static Texture2D getTexture(TextureID tid)
         {
             return Textures[tid.RefKey];
         }
-        public static void SaveData<T>(T data, string file)
+        internal static void SaveData<T>(T data, string file)
         {
             IsolatedStorageFileStream str = savegameStorage.CreateFile(file);
             string path = "Unkown";
@@ -282,7 +282,7 @@ namespace Inlumino_SHARED
         /// <param name="file"></param>
         /// <param name="debugmode"></param>
         /// <returns></returns>
-        public static T LoadData<T>(string file)
+        internal static T LoadData<T>(string file)
         {
             if (!savegameStorage.FileExists(file)) return default(T);
 
@@ -307,7 +307,7 @@ namespace Inlumino_SHARED
         /// </summary>
         /// <param name="name">File name without extension. (e.g "ObjectTex")</param>
         /// <returns></returns>
-        public static string LoadTexture(string name, Texture2D texture = null)
+        internal static string LoadTexture(string name, Texture2D texture = null)
         {
             if (Textures.ContainsKey(name)) return name;
             if (texture != null)
@@ -326,6 +326,6 @@ namespace Inlumino_SHARED
             return tid != default(TextureID) && Textures.ContainsKey(tid.RefKey);
         }
     }
-    public enum SoundType { TapSound = 0, RotateSound = 1, CrystalLit = 2, AllCrystalsLit = 3, Background = 4 }
+    internal enum SoundType { TapSound = 0, RotateSound = 1, CrystalLit = 2, AllCrystalsLit = 3, Background = 4 }
 }
 public enum ThemeType { Beach = 0, Space = 1 }

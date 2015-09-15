@@ -16,9 +16,9 @@ namespace Inlumino_SHARED
         TextureID overlay;
         float border;
         string text = "";
-        public object Tag { get { return tag; } }
+        internal object Tag { get { return tag; } }
 
-        public UICell(TextureID[] tid, object tag, string text = "", Color textcol = default(Color), TextureID overlay = null, float border = 0, ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
+        internal UICell(TextureID[] tid, object tag, string text = "", Color textcol = default(Color), TextureID overlay = null, float border = 0, ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
         {
             this.overlay = overlay;
             this.tag = tag;
@@ -28,7 +28,7 @@ namespace Inlumino_SHARED
             this.text = text;
         }
 
-        public UICell(TextureID[] tid, object tag, TextureID overlay, float border = 0, string text = "", Color textcol = default(Color), ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
+        internal UICell(TextureID[] tid, object tag, TextureID overlay, float border = 0, string text = "", Color textcol = default(Color), ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
         {
             this.overlay = overlay;
             this.tag = tag;
@@ -37,7 +37,7 @@ namespace Inlumino_SHARED
             this.border = border;
             this.text = text;
         }
-        public override void Draw(SpriteBatch batch, Camera cam = null)
+        internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             base.Draw(batch, cam);
             if (!visible) return;
@@ -58,9 +58,16 @@ namespace Inlumino_SHARED
             }
             // Children
             foreach (UIVisibleObject obj in siblings) obj.Draw(batch, cam);
-            // Draw text
+            // Draw text                        
             Vector2 tsize = font.MeasureString(text);
-            batch.DrawString(font, text, this.Center - tsize / 2, color);
+            if (cam == null)
+                batch.DrawString(font, text, Center - tsize / 2 + parent.GlobalPosition, color);
+            else
+            {
+                Vector2 pos = LocalBoundingBox.Center - tsize / 2;
+                if (cam.isInsideView(pos))
+                    batch.DrawString(font, text, cam.Transform(pos) + parent.GlobalPosition, color);
+            }
         }
 
         internal void CentralizeSiblings()
@@ -69,7 +76,7 @@ namespace Inlumino_SHARED
                 obj.Position = new Vector2(position.X + (Width - obj.Width) / 2, position.Y + (Height - obj.Height) / 2);
         }
 
-        public void AttachSibling(UIVisibleObject child)
+        internal void AttachSibling(UIVisibleObject child)
         {
             child.Parent = Parent;
             siblings.Add(child);

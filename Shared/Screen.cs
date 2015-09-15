@@ -14,17 +14,17 @@ namespace Inlumino_SHARED
         private static bool isVirtual = false;
         private static Vector2 virtualbounds;
         // This is deprecated
-        //public static int Width{get{return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;}}
-        //public static int Height { get { return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height; } }
-        public static float Width { get { return isVirtual ? virtualbounds.X : window.ClientBounds.Width; } }
-        public static float Height { get { return isVirtual ? virtualbounds.Y : window.ClientBounds.Height; } }
+        //internal static int Width{get{return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;}}
+        //internal static int Height { get { return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height; } }
+        internal static float Width { get { return isVirtual ? virtualbounds.X : window.ClientBounds.Width; } }
+        internal static float Height { get { return isVirtual ? virtualbounds.Y : window.ClientBounds.Height; } }
         // window.CurrentOrientation also works, but this is more literal representation of the concept.
-        public static Orientation Mode { get { return Width > Height ? Orientation.Landscape : Orientation.Portrait; } }
+        internal static Orientation Mode { get { return Width > Height ? Orientation.Landscape : Orientation.Portrait; } }
 
-        public static float BigDim { get { return MathHelper.Max(Width, Height); } }
-        public static float SmallDim { get { return MathHelper.Min(Width, Height); } }
+        internal static float BigDim { get { return MathHelper.Max(Width, Height); } }
+        internal static float SmallDim { get { return MathHelper.Min(Width, Height); } }
 
-        public static void SetUp(GameWindow gamewindow, GraphicsDeviceManager devicemanager)
+        internal static void SetUp(GameWindow gamewindow, GraphicsDeviceManager devicemanager)
         {
             device = devicemanager;
             window = gamewindow;
@@ -35,14 +35,14 @@ namespace Inlumino_SHARED
                 device.ToggleFullScreen();
         }
 
-        public static void MakeVirtual(Vector2 virtualbounds)
+        internal static void MakeVirtual(Vector2 virtualbounds)
         {
             Screen.virtualbounds = virtualbounds;
             isVirtual = true;
             Manager.HandleEvent(new DisplaySizeChangedEvent(virtualbounds));
         }
 
-        public static void MakeReal()
+        internal static void MakeReal()
         {
             isVirtual = false;
             Manager.HandleEvent(new DisplaySizeChangedEvent(new Vector2(Width, Height)));

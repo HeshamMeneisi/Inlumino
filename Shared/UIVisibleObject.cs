@@ -12,8 +12,8 @@ namespace Inlumino_SHARED
         protected Vector2 origin = Vector2.Zero;
         protected int state = 0;
 
-        public int State { get { return state; } set { state = value; } }
-        public UIVisibleObject(TextureID[] tid, int layer = 0, string id = "")
+        internal int State { get { return state; } set { state = value; } }
+        internal UIVisibleObject(TextureID[] tid, int layer = 0, string id = "")
         : base(layer, id)
         {
             // Use TextureID to describe the texture.   new VisibleUIObject(new TextureID(
@@ -29,7 +29,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public virtual void Draw(SpriteBatch batch, Camera cam = null) // You don't need a camera, draw ontop of the stage
+        internal virtual void Draw(SpriteBatch batch, Camera cam = null) // You don't need a camera, draw ontop of the stage
         {
             if (!visible || sprite == null)
                 return;
@@ -52,34 +52,34 @@ namespace Inlumino_SHARED
             }
         }
 
-        public Vector2 Center
+        internal Vector2 Center
         {
             // Real center is found this way (on screen)
             get { return BoundingBox.Center; }
         }
 
-        public virtual float Width { get { return Size.X; } }
-        public virtual float Height { get { return Size.Y; } }
-        public virtual Vector2 Size
+        internal virtual float Width { get { return Size.X; } }
+        internal virtual float Height { get { return Size.Y; } }
+        internal virtual Vector2 Size
         {
             get { return size; }
             set { size = value; }
         }
 
-        public Vector2 Origin
+        internal Vector2 Origin
         {
             get { return this.origin; }
             set { this.origin = value; }
         }
 
-        public RectangleF LocalBoundingBox
+        internal RectangleF LocalBoundingBox
         {
             get
             {
                 return new RectangleF(Position.X - Origin.X, Position.Y - Origin.Y, Size.X, Size.Y);
             }
         }
-        public override RectangleF BoundingBox
+        internal override RectangleF BoundingBox
         {
             get
             {
@@ -89,27 +89,27 @@ namespace Inlumino_SHARED
             }
         }
 
-        public void setSizeRelativeToWidth(float perc)
+        internal void setSizeRelativeToWidth(float perc)
         {
             float w = Screen.Width * perc;
             float h = size.Y / size.X * w;
             size = new Vector2(w, h);
         }
-        public void setSizeRelativeToHeight(float perc)
+        internal void setSizeRelativeToHeight(float perc)
         {
             float h = Screen.Height * perc;
             float w = size.X / size.Y * h;
             size = new Vector2(w, h);
         }
 
-        public virtual void setSizeRelative(float perc, Orientation mode)
+        internal virtual void setSizeRelative(float perc, Orientation mode)
         {
             if (mode == Orientation.Landscape)
                 setSizeRelativeToHeight(perc);
             else
                 setSizeRelativeToWidth(perc);
         }
-        public override void HandleEvent(WorldEvent e)
+        internal override void HandleEvent(WorldEvent e)
         {
         }
     }

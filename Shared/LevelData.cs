@@ -7,18 +7,18 @@ using System.Xml.Serialization;
 
 namespace Inlumino_SHARED
 {
-    public class LevelData
+    internal class LevelData
     {
-        // public for the serializer
-        public int width;
+        // internal for the serializer
+        internal int width;
 
-        public string tmap;
+        internal string tmap;
 
-        public string omap;
+        internal string omap;
 
-        public string rmap;
+        internal string rmap;
 
-        public string Data {
+        internal string Data {
             get
             {
                 return width + "$" + tmap + "$" + omap + "$" + rmap;
@@ -33,23 +33,23 @@ namespace Inlumino_SHARED
             }
         }
 
-        public int[,] getTileMap()
+        internal int[,] getTileMap()
         {
             return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(tmap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        public void setTileMap(int[,] value) { tmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Join("#", getArrayFromMatrix(value)))); }
-        public int[,] getObjMap()
+        internal void setTileMap(int[,] value) { tmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Join("#", getArrayFromMatrix(value)))); }
+        internal int[,] getObjMap()
         {
             return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(omap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        public void setObjMap(int[,] value) { omap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
-        public int[,] getRotationMap()
+        internal void setObjMap(int[,] value) { omap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
+        internal int[,] getRotationMap()
         {
             return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(rmap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        public void setRotationMap(int[,] value) { rmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
+        internal void setRotationMap(int[,] value) { rmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
 
-        public static int[] getArrayFromMatrix(int[,] mat)
+        internal static int[] getArrayFromMatrix(int[,] mat)
         {
             int[] temp = new int[mat.GetLength(0) * mat.GetLength(1)+1];
             int w = temp[0] = mat.GetLength(1);
@@ -61,7 +61,7 @@ namespace Inlumino_SHARED
             return temp;
         }
 
-        public static int[,] getMatrixFromArray(int[] array, int w)
+        internal static int[,] getMatrixFromArray(int[] array, int w)
         {
             w = array[0];
             int[,] temp = new int[array.Length / w, w];            
@@ -70,9 +70,9 @@ namespace Inlumino_SHARED
             return temp;
         }
 
-        public LevelData()
+        internal LevelData()
         { }
-        public LevelData(int[,] tiles, int[,] objects, int[,] rotations)
+        internal LevelData(int[,] tiles, int[,] objects, int[,] rotations)
         {
             width = tiles.GetLength(1);
             setTileMap(tiles);
@@ -84,7 +84,7 @@ namespace Inlumino_SHARED
             Data = data;
         }
 
-        public static LevelData CreateNew(string data)
+        internal static LevelData CreateNew(string data)
         {
             try
             {

@@ -9,7 +9,7 @@ namespace Inlumino_SHARED
         protected UIButton playButton, editorButton, optionsButton;
         protected UIMenu mainmenu;
         Texture2D background;
-        public MainMenu()
+        internal MainMenu()
         {
             background = DataHandler.getTexture("mmb");
             mainmenu = new UIMenu();
@@ -65,7 +65,7 @@ namespace Inlumino_SHARED
             mainmenu.Draw(batch);
         }
 
-        public void Clear()
+        internal void Clear()
         {
             mainmenu.Clear();
         }

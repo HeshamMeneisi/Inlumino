@@ -14,6 +14,7 @@ namespace Inlumino_SHARED
     {
         Stage CurrentLevel = null;
         bool editmode;
+        bool interacted = true;
         const int defaultstagewidth = 4;
         int perfmoves = 0;
         /// GUI //////////////////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +38,7 @@ namespace Inlumino_SHARED
         UIButton delbtn;
         UITextField counter;
         TextureID border = DataHandler.UIObjectsTextureMap[UIObjectType.Border][0];
-        public void InitEditing()
+        internal void InitEditing()
         {
             ism = false;
             editmode = editing = true;
@@ -229,7 +230,7 @@ namespace Inlumino_SHARED
             moves = 0; trans = popup.Visible = ism = false;
             editing = !editing;
             CurrentLevel.ToggleEditMode();
-
+            interacted = true;
             SetupHud();
         }
 
@@ -243,13 +244,13 @@ namespace Inlumino_SHARED
         }
 
         /// //////////////////////////////////////////////////////////////////////////////////////////////////        
-        public StageContainer(bool editmode)
+        internal StageContainer(bool editmode)
         {
             this.editmode = editmode;
             InitHud();
         }
 
-        public void Clear()
+        internal void Clear()
         {
             if (CurrentLevel != null)
             {
@@ -299,6 +300,11 @@ namespace Inlumino_SHARED
                 if (InputManager.isKeyDown(Keys.Subtract))
                     CurrentLevel.Camera.Zoom(0.02f);
                 CurrentLevel.Update(time);
+                if(interacted)
+                {
+                    interacted = false;
+                    CurrentLevel.CheckWin();
+                }
             }
             genmenu.Update(time);
             if (trans)
@@ -314,7 +320,7 @@ namespace Inlumino_SHARED
         string cln = null;
         bool ism;
         bool loading = true;
-        public void loadLevel(string levelname, bool ismainlevel)
+        internal void loadLevel(string levelname, bool ismainlevel)
         {
             loading = true;
             trans = false; moves = 0;
@@ -341,6 +347,7 @@ namespace Inlumino_SHARED
             else
                 MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
             loading = false;
+            interacted = true;
         }
 
         private int ShuffleLevel()
@@ -348,7 +355,7 @@ namespace Inlumino_SHARED
             Random ran = new Random();
             int mv = 0;
             foreach (Tile t in CurrentLevel.getTileMap().AllTiles)
-                if (t.hasObject() && !(t.getObject() is LightBeam) && !(t.getObject() is LightSourceObject) && !(t.getObject() is Crystal) && !(t.getObject() is Block))
+                if (t.hasObject() && t.getObject().IsInteractable)
                     for (int i = ran.Next(1, 4); i > 0; i--)
                     {
                         mv++;
@@ -393,8 +400,13 @@ namespace Inlumino_SHARED
                 }
                 else
                 {
-                    if (obj != null && !(obj is LightBeam))
-                    { verified = false; obj.RotateCW(editing); moves++; counter.Text = "Moves: " + moves; }
+                    if (obj != null && obj.IsInteractable)
+                    {
+                        verified = false; interacted = true;
+                        obj.RotateCW(editing);
+                        moves++;
+                        counter.Text = "Moves: " + moves;
+                    }
                 }
             }
 
@@ -438,9 +450,9 @@ namespace Inlumino_SHARED
                 }
                 else
                 {
-                    if (obj != null && !(obj is LightBeam))
+                    if (obj != null && obj.IsInteractable)
                     {
-                        verified = false;
+                        verified = false; interacted = true;
                         obj.RotateCW(editing);
                         moves++;
                         counter.Text = "Moves: " + moves;

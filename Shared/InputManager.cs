@@ -11,32 +11,32 @@ namespace Inlumino_SHARED
 {
     static class InputManager
     {
-        public delegate void KeyDownEventHandler(Keys k);
-        public static event KeyDownEventHandler KeyDown;
-        public delegate void KeyUpEventHandler(Keys k);
-        public static event KeyUpEventHandler KeyUp;
-        public delegate void MouseDownEventHandler(MouseKey k, Point position);
-        public static event MouseDownEventHandler MouseDown;
-        public delegate void MouseUpEventHandler(MouseKey k, Point position);
-        public static event MouseUpEventHandler MouseUp;
-        public delegate void ScrollEventHandler(int value);
-        public static event ScrollEventHandler Scrolled;
-        public delegate void MouseMovedEventHandler(Point position, Point offset);
-        public static event MouseMovedEventHandler MouseMoved;
-        public delegate void TouchTapEventHandler(Vector2 position);
-        public static event TouchTapEventHandler Tapped;
-        public delegate void DragEventHandler(Vector2 delta, Vector2 position);
-        public static event DragEventHandler Dragged;
-        public delegate void PinchEventHandler(float delta);
-        public static event PinchEventHandler Pinched;
-        public delegate void DragCompleteHandler(Vector2 position);
-        public static event DragCompleteHandler DragComplete;
-        public delegate void FingerDownHandler(Vector2 position);
-        public static event  FingerDownHandler FingerDown;
-        public delegate void FingerOffHandler(Vector2 position);
-        public static event FingerOffHandler FingerOff;
-        public delegate void AllFingersOffHandler();
-        public static event AllFingersOffHandler AllFingersOff;
+        internal delegate void KeyDownEventHandler(Keys k);
+        internal static event KeyDownEventHandler KeyDown;
+        internal delegate void KeyUpEventHandler(Keys k);
+        internal static event KeyUpEventHandler KeyUp;
+        internal delegate void MouseDownEventHandler(MouseKey k, Point position);
+        internal static event MouseDownEventHandler MouseDown;
+        internal delegate void MouseUpEventHandler(MouseKey k, Point position);
+        internal static event MouseUpEventHandler MouseUp;
+        internal delegate void ScrollEventHandler(int value);
+        internal static event ScrollEventHandler Scrolled;
+        internal delegate void MouseMovedEventHandler(Point position, Point offset);
+        internal static event MouseMovedEventHandler MouseMoved;
+        internal delegate void TouchTapEventHandler(Vector2 position);
+        internal static event TouchTapEventHandler Tapped;
+        internal delegate void DragEventHandler(Vector2 delta, Vector2 position);
+        internal static event DragEventHandler Dragged;
+        internal delegate void PinchEventHandler(float delta);
+        internal static event PinchEventHandler Pinched;
+        internal delegate void DragCompleteHandler(Vector2 position);
+        internal static event DragCompleteHandler DragComplete;
+        internal delegate void FingerDownHandler(Vector2 position);
+        internal static event  FingerDownHandler FingerDown;
+        internal delegate void FingerOffHandler(Vector2 position);
+        internal static event FingerOffHandler FingerOff;
+        internal delegate void AllFingersOffHandler();
+        internal static event AllFingersOffHandler AllFingersOff;
         internal static void init()
         {
             lmx = Mouse.GetState().X;
@@ -160,40 +160,40 @@ namespace Inlumino_SHARED
             mousepressed[2] = ms.RightButton == ButtonState.Pressed;
         }
 
-        static public void WatchKeys(Keys[] keys)
+        static internal void WatchKeys(Keys[] keys)
         {
             watchlist.AddRange(keys);
         }
-        static public void WatchKey(Keys key)
+        static internal void WatchKey(Keys key)
         {
             if (!watchlist.Contains(key)) watchlist.Add(key);
         }
-        static public void StopWatchingdKey(Keys key)
+        static internal void StopWatchingdKey(Keys key)
         {
             if (watchlist.Contains(key)) watchlist.Remove(key);
         }
 
-        static public bool isKeyDown(Keys k)
+        static internal bool isKeyDown(Keys k)
         {
             return ks.IsKeyDown(k);
         }
 
-        static public bool isMouseVisible()
+        static internal bool isMouseVisible()
         {
             return Manager.Parent.IsMouseVisible;
         }
 
-        static public bool isMouseDown(MouseKey button)
+        static internal bool isMouseDown(MouseKey button)
         {
             return mousepressed[(int)button];
         }
 
-        public enum MouseKey
+        internal enum MouseKey
         {
             LeftKey = 0, MiddleKey = 1, RightKey = 2
         }
 
-        public static Point getMousePos()
+        internal static Point getMousePos()
         {
             return ms.Position;
         }

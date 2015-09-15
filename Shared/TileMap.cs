@@ -12,10 +12,10 @@ namespace Inlumino_SHARED
         // List of rows
         private List<List<Tile>> map = new List<List<Tile>>();
 
-        public int Width { get { return map.Count == 0 ? 0 : map.Max(t => t.Count); } }
-        public int Height { get { return map.Count; } }
+        internal int Width { get { return map.Count == 0 ? 0 : map.Max(t => t.Count); } }
+        internal int Height { get { return map.Count; } }
 
-        public IEnumerable<Tile> AllTiles
+        internal IEnumerable<Tile> AllTiles
         {
             get
             {
@@ -26,7 +26,7 @@ namespace Inlumino_SHARED
                 }
             }
         }
-        public TileMap(int[,] intmap, Stage parent)
+        internal TileMap(int[,] intmap, Stage parent)
         {
             if (intmap == null) return;
             for (int row = 0; row < intmap.GetLength(0); row++)
@@ -38,7 +38,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public TileMap(int rows, int cols, Stage parent)
+        internal TileMap(int rows, int cols, Stage parent)
         {
             for (int r = 0; r < rows; r++)
             {
@@ -46,14 +46,14 @@ namespace Inlumino_SHARED
             }
         }
 
-        public void AddRow(Tile[] row, int pos = -1)
+        internal void AddRow(Tile[] row, int pos = -1)
         {
             if (pos >= 0)
                 map.Insert(pos, row.ToList());
             else
                 map.Add(row.ToList());
         }
-        public void AddDefaultRow(Stage parent, int cols)
+        internal void AddDefaultRow(Stage parent, int cols)
         {
             Tile[] row = new Tile[cols];
             int r = Height;
@@ -61,7 +61,7 @@ namespace Inlumino_SHARED
                 row[c] = new Tile(TileType.Default, getTileBounds(r, c), parent, new Point(r, c));
             AddRow(row);
         }
-        public void AddCol(Tile[] col, int pos = -1)
+        internal void AddCol(Tile[] col, int pos = -1)
         {
             if (pos >= 0)
                 for (int i = 0; i < map.Count; i++)
@@ -78,7 +78,7 @@ namespace Inlumino_SHARED
                     map[i].Add(col[i]);
                 }
         }
-        public void AddDefaultCol(Stage parent, int rows)
+        internal void AddDefaultCol(Stage parent, int rows)
         {
             Tile[] col = new Tile[rows];
             int c = Width;
@@ -92,12 +92,12 @@ namespace Inlumino_SHARED
             return new RectangleF(col * TextureID.UnitSizeX2D, row * TextureID.UnitSizeY2D, TextureID.UnitSizeX2D, TextureID.UnitSizeY2D);
         }
 
-        public Tile getTileAt(int row, int col)
+        internal Tile getTileAt(int row, int col)
         {
             return row < Height && col < Width && row >= 0 && col >= 0 ? map[row][col] : default(Tile);
         }
 
-        public Tile[] getAdjacentsOf(Tile t1, bool includeDiagonals)
+        internal Tile[] getAdjacentsOf(Tile t1, bool includeDiagonals)
         {
             int row = t1.MapPos.X, col = t1.MapPos.Y;
             List<Tile> adj = new List<Tile>();
@@ -116,7 +116,7 @@ namespace Inlumino_SHARED
             return adj.ToArray();
         }
 
-        public int[,] getIntMap()
+        internal int[,] getIntMap()
         {
             int[,] intmap = new int[Height, Width];
             for (int row = 0; row < Height; row++)
@@ -163,11 +163,11 @@ namespace Inlumino_SHARED
             }
         }
 
-        public IEnumerable<Tile> getRow(int row)
+        internal IEnumerable<Tile> getRow(int row)
         {
             return row < map.Count ? map[row] : null;
         }
-        public IEnumerable<Tile> getColumn(int col)
+        internal IEnumerable<Tile> getColumn(int col)
         {
             foreach (List<Tile> row in map)
                 yield return col < row.Count ? row[col] : null;

@@ -7,7 +7,7 @@ namespace Inlumino_SHARED
 {
     class DeleteMenu : LevelSelector
     {
-        public DeleteMenu() : base()
+        internal DeleteMenu() : base()
         {
             switchbtn.Visible = false;
             menubtn.Texture = DataHandler.UIObjectsTextureMap[UIObjectType.BackButton];

@@ -12,13 +12,13 @@ namespace Inlumino_SHARED
 
         private List<ILightSource> horzsources = new List<ILightSource>();
         private List<ILightSource> vertsources = new List<ILightSource>();
-        public BeamType BeamState
+        internal BeamType BeamState
         {
             get { return type; }
             set { type = value; if (value == BeamType.Cross) state = 1; else { state = 0; Rotation = value == BeamType.Horizontal ? Direction.North : Direction.East; } }
         }
 
-        public void CarryPulse(bool charge, Direction dir, ILightSource source)
+        internal void CarryPulse(bool charge, Direction dir, ILightSource source)
         {
             // Logic            
             if (charge)
@@ -45,12 +45,12 @@ namespace Inlumino_SHARED
             Common.PulseTile(target, charge, Common.ReverseDir(dir), source);
         }
 
-        public override ObjectType getType()
+        internal override ObjectType getType()
         {
             return ObjectType.LightBeam;
         }
 
-        public LightBeam(TextureID[] tid, Tile parent, BeamType type) : base(tid, parent)
+        internal LightBeam(TextureID[] tid, Tile parent, BeamType type) : base(tid, parent)
         {
             BeamState = type;
         }

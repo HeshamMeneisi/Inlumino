@@ -13,7 +13,7 @@ namespace Inlumino_SHARED
         float width;
         float height;
 
-        public RectangleF(float x, float y, float width, float height)
+        internal RectangleF(float x, float y, float width, float height)
         {
             this._x = x;
             this._y = y;
@@ -21,33 +21,33 @@ namespace Inlumino_SHARED
             this.height = height;
         }
 
-        public RectangleF(Vector2 location, Vector2 size)
+        internal RectangleF(Vector2 location, Vector2 size)
         {
             Location = location;
             Size = size;
         }
 
-        public float X { get { return _x; } set { _x = value; } }
-        public float Y { get { return _y; } set { _y = value; } }
-        public float Width { get { return width; } set { width = value; } }
-        public float Height { get { return height; } set { height = value; } }
+        internal float X { get { return _x; } set { _x = value; } }
+        internal float Y { get { return _y; } set { _y = value; } }
+        internal float Width { get { return width; } set { width = value; } }
+        internal float Height { get { return height; } set { height = value; } }
 
-        public Vector2 Location { get { return new Vector2(_x, _y); } set { _x = value.X; _y = value.Y; } }
-        public Vector2 Size { get { return new Vector2(width, height); } set { width = value.X; height = value.Y; } }
+        internal Vector2 Location { get { return new Vector2(_x, _y); } set { _x = value.X; _y = value.Y; } }
+        internal Vector2 Size { get { return new Vector2(width, height); } set { width = value.X; height = value.Y; } }
 
-        public float Right { get { return _x + width; } }
+        internal float Right { get { return _x + width; } }
 
         internal RectangleF Offset(Vector2 offset)
         {
             return new RectangleF(_x + offset.X, _y + offset.Y, width, height);
         }
 
-        public float Left { get { return _x; } }
-        public float Bottom { get { return _y + height; } }
-        public float Top { get { return _y; } }
-        public Vector2 Center { get { return new Vector2(_x + width / 2, _y + height / 2); } }
+        internal float Left { get { return _x; } }
+        internal float Bottom { get { return _y + height; } }
+        internal float Top { get { return _y; } }
+        internal Vector2 Center { get { return new Vector2(_x + width / 2, _y + height / 2); } }
 
-        public float Area { get { return Width * Height; } }
+        internal float Area { get { return Width * Height; } }
 
         internal Rectangle ToRectangle()
         {
@@ -84,12 +84,12 @@ namespace Inlumino_SHARED
             return new RectangleF(X + Width * xs, Y + Height * ys, Width * ws, Height * hs);
         }
 
-        public bool Intersects(RectangleF r)
+        internal bool Intersects(RectangleF r)
         {
             return Left <= r.Right && Right >= r.Left && Top <= r.Bottom && Bottom >= r.Top;
         }
 
-        public RectangleF Intersection(RectangleF r)
+        internal RectangleF Intersection(RectangleF r)
         {
             if (!Intersects(r)) return default(RectangleF);
             float x, y;

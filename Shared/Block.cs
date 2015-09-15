@@ -9,8 +9,8 @@ namespace Inlumino_SHARED
     class Block : StaticObject, IObstructingObject
     {
 
-        public Block(TextureID[] tid, Tile parent) : base(tid, parent) { }
-        public override ObjectType getType()
+        internal Block(TextureID[] tid, Tile parent) : base(tid, parent) { }
+        internal override ObjectType getType()
         {
             return ObjectType.Block;
         }

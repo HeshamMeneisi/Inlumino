@@ -7,7 +7,7 @@ namespace Inlumino_SHARED
 {
     class PowerableSource : StaticObject, ILightSource, IObstructingObject
     {
-        public PowerableSource(TextureID[] tid, Tile parent) : base(tid, parent) { }
+        internal PowerableSource(TextureID[] tid, Tile parent) : base(tid, parent) { IsInteractable = true; }
         public bool IsOn
         {
             get
@@ -15,7 +15,7 @@ namespace Inlumino_SHARED
                 throw new NotImplementedException();
             }
         }
-        public override ObjectType getType()
+        internal override ObjectType getType()
         {
             throw new NotImplementedException();
         }
@@ -87,7 +87,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public override void Update(GameTime time)
+        internal override void Update(GameTime time)
         {
             if (rotation != targetrotation)
             {

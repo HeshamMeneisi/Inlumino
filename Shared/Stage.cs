@@ -17,21 +17,21 @@ namespace Inlumino_SHARED
 
         TileMap map = null;
 
-        public bool LoadedUp { get { return map != null; } }
-        public int Width { get { return map.Width; } }
-        public int Height { get { return map.Height; } }
+        internal bool LoadedUp { get { return map != null; } }
+        internal int Width { get { return map.Width; } }
+        internal int Height { get { return map.Height; } }
 
         private bool paused = false;
 
         private bool editmode = false;
         private Padding minpadding;
 
-        public Camera Camera { get { return maincam; } set { maincam = value; } }
-        public Vector2 Origin { get { return new Vector2(0, 0); } }
+        internal Camera Camera { get { return maincam; } set { maincam = value; } }
+        internal Vector2 Origin { get { return new Vector2(0, 0); } }
 
-        public bool IsPaused { get { return paused; } }
+        internal bool IsPaused { get { return paused; } }
 
-        public bool EditMode { get { return editmode; } }
+        internal bool EditMode { get { return editmode; } }
 
         internal bool CheckWin()
         {
@@ -43,9 +43,9 @@ namespace Inlumino_SHARED
             if (LevelWon != null) LevelWon();
             return true;
         }
-        public delegate void LevelWonEventHandler();
-        public event LevelWonEventHandler LevelWon;
-        public Stage(Padding minpad = null, int[,] map = null)
+        internal delegate void LevelWonEventHandler();
+        internal event LevelWonEventHandler LevelWon;
+        internal Stage(Padding minpad = null, int[,] map = null)
         {
             this.map = new TileMap(map, this);
             if (minpad == null) minpadding = new Padding(0, 0, 0, 0);
@@ -54,7 +54,7 @@ namespace Inlumino_SHARED
         }
 
 
-        public Stage(LevelData temp, Padding pad = null)
+        internal Stage(LevelData temp, Padding pad = null)
         {
             minpadding = new Padding(0, 0, 0, 0);
             if (temp == null) Debug.WriteLine("Attempted to load file from null data.");
@@ -123,18 +123,18 @@ namespace Inlumino_SHARED
                 if (maincam.isInsideView(t.Bounds2D))
                     t.Draw(batch, maincam, Origin);
         }
-        public virtual void Update(GameTime time)
+        internal virtual void Update(GameTime time)
         {
             maincam.Update(time);
             if (paused) return;
             foreach (Tile t in map.AllTiles) t.Update(time);
         }
-        public int GetTotalStageWidth()
+        internal int GetTotalStageWidth()
         {
             return (int)(Width * TextureID.UnitSizeX2D);
         }
 
-        public int GetTotalStageHeight()
+        internal int GetTotalStageHeight()
         {
             return (int)(Height * TextureID.UnitSizeY2D);
         }
@@ -149,12 +149,12 @@ namespace Inlumino_SHARED
             return map != null;
         }
 
-        public Tile getTileAt(Vector2 p)
+        internal Tile getTileAt(Vector2 p)
         {
             return map.AllTiles.Where(t => t.isPointOnSurface(p)).LastOrDefault();
         }
 
-        public Tile getTileAt(int row, int col)
+        internal Tile getTileAt(int row, int col)
         {
             if (!LoadedUp) return default(Tile);
             return map.getTileAt(row, col);
@@ -169,7 +169,7 @@ namespace Inlumino_SHARED
             return map.getObjectMap();
         }
 
-        public TileMap getTileMap()
+        internal TileMap getTileMap()
         {
             return map;
         }
@@ -182,28 +182,28 @@ namespace Inlumino_SHARED
             if (temp != null) temp.SetEffect(OverlayEffect.Highlighted);
         }
         bool gridon = false;
-        public void EnableGrid()
+        internal void EnableGrid()
         {
             gridon = true;
             foreach (Tile t in map.AllTiles)
             { t.SetEffect(OverlayEffect.Grid); }
         }
-        public void DisableGrid()
+        internal void DisableGrid()
         {
             gridon = false;
             foreach (Tile t in map.AllTiles)
             { t.RemoveEffect(OverlayEffect.Grid); }
         }
-        public void Pause()
+        internal void Pause()
         {
             paused = true;
         }
-        public void Resume()
+        internal void Resume()
         {
             paused = false;
         }
 
-        public void setBackground(Texture2D tex)
+        internal void setBackground(Texture2D tex)
         {
             background = tex;
             updateBackgroundBounds();
@@ -219,7 +219,7 @@ namespace Inlumino_SHARED
         /// Editing Features Enabled
         /// getTileAt(point).Set/RemoveObject() can be used by the editing hud
         /// 
-        public void ToggleEditMode()
+        internal void ToggleEditMode()
         {
             editmode = !editmode;
             if (editmode)
@@ -247,7 +247,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public void SetSourceStatus(bool s)
+        internal void SetSourceStatus(bool s)
         {
             foreach (Tile t in map.AllTiles)
             {
@@ -256,7 +256,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        internal void ResetCamera()
+        public void ResetCamera()
         {
             SetupCamera();
         }
@@ -266,7 +266,7 @@ namespace Inlumino_SHARED
         /// </summary>
         /// <param name="w">Width in tiles</param>
         /// <param name="h">Height in tiles</param>
-        public void SetSize(int w, int h)
+        internal void SetSize(int w, int h)
         {
             if (w <= 0 || h <= 0) return;
             if (map == null)
@@ -285,7 +285,7 @@ namespace Inlumino_SHARED
             SetupCamera();
             if (gridon) EnableGrid();
         }
-        public void Clear()
+        internal void Clear()
         {
             if (editmode)
             {
@@ -299,7 +299,7 @@ namespace Inlumino_SHARED
                 if (type == null || t.hasObject(type)) t.RemoveObject();
         }
 
-        public int ShuffleLevel()
+        internal int ShuffleLevel()
         {
             Random ran = new Random();
             int moves = 0;

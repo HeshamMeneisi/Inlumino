@@ -16,17 +16,17 @@ namespace Inlumino_SHARED
         Orientation mode;
         Camera cam;
         UICell snaptarget = null;
-        public float ActualWidth { get { return Math.Min(TotalWidth, maxwidth); } }
-        public float ActualHeight { get { return Math.Min(TotalHeight, maxheight); } }
+        internal float ActualWidth { get { return Math.Min(TotalWidth, maxwidth); } }
+        internal float ActualHeight { get { return Math.Min(TotalHeight, maxheight); } }
 
-        public float TotalWidth { get { return mode == Orientation.Landscape ? unitwidth * cellsperrowcol : unitwidth * rowcolcount; } }
-        public float TotalHeight { get { return mode == Orientation.Portrait ? unitheight * cellsperrowcol : unitheight * rowcolcount; } }
+        internal float TotalWidth { get { return mode == Orientation.Landscape ? unitwidth * cellsperrowcol : unitwidth * rowcolcount; } }
+        internal float TotalHeight { get { return mode == Orientation.Portrait ? unitheight * cellsperrowcol : unitheight * rowcolcount; } }
 
-        public bool SnapCameraToCells = false;
+        internal bool SnapCameraToCells = false;
 
-        public UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
+        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 
-        public override RectangleF BoundingBox
+        internal override RectangleF BoundingBox
         {
             get
             {
@@ -34,9 +34,9 @@ namespace Inlumino_SHARED
             }
         }
 
-        public Camera Camera { get { return cam; } }
+        internal Camera Camera { get { return cam; } }
 
-        public UIHud(IEnumerable<UICell> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
+        internal UIHud(IEnumerable<UICell> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
         {
             cells.AddRange(content);
             foreach (UIButton b in content) b.Parent = this;
@@ -49,7 +49,7 @@ namespace Inlumino_SHARED
             Setup();
         }
 
-        public void Setup()
+        internal void Setup()
         {
             int c = cells.Count;
             float cw = maxwidth, ch = maxheight;
@@ -114,7 +114,7 @@ namespace Inlumino_SHARED
                 }
         }
 
-        public override void Update(GameTime time)
+        internal override void Update(GameTime time)
         {
             if (visible)
             {
@@ -123,7 +123,7 @@ namespace Inlumino_SHARED
             }
         }
         bool dragging = true;
-        public override void HandleEvent(WorldEvent e)
+        internal override void HandleEvent(WorldEvent e)
         {
             if (visible)
             {
@@ -181,4 +181,4 @@ namespace Inlumino_SHARED
         }
     }
 }
-public enum Orientation { Landscape, Portrait }
+internal enum Orientation { Landscape, Portrait }

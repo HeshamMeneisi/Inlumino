@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Inlumino_SHARED
 {
@@ -8,7 +10,6 @@ namespace Inlumino_SHARED
     {
         public ThemeType CurrentTheme = ThemeType.Beach; //Default
         public float SFXVolume = 1;
-        public float MusicVolume = 1;
-        public int[] stars = new int[Common.MainLevelNames.Length];
+        public float MusicVolume = 1;        
     }
 }

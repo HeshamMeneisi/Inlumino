@@ -13,35 +13,35 @@ namespace Inlumino_SHARED
         // Moving allowance around the stage (For background visibility)
         private Padding stagepadding;
 
-        public Padding StagePadding { get { return stagepadding; } set { stagepadding = value; } }
+        internal Padding StagePadding { get { return stagepadding; } set { stagepadding = value; } }
 
         private float stgxlim;
         private float stgylim;
 
-        public RectangleF ActualView { get { return currentView; } }
-        public RectangleF TargetView
+        internal RectangleF ActualView { get { return currentView; } }
+        internal RectangleF TargetView
         { get { return targetView; } }
-        public float MaxX
+        internal float MaxX
         { get { return stgxlim + stagepadding.Right; } }
 
-        public float MaxY
+        internal float MaxY
         { get { return stgylim + stagepadding.Bottom; } }
 
-        public float MinX
+        internal float MinX
         { get { return -stagepadding.Left; } }
 
-        public float MinY
+        internal float MinY
         { get { return -stagepadding.Top; } }
 
-        public float MaxW
+        internal float MaxW
         { get { return MaxX - MinX; } }
 
-        public float MaxH
+        internal float MaxH
         { get { return MaxY - MinY; } }
 
         float maxzoom;
         float smoothness;// larger is less smooth, (>=1) means no smoothness
-        public Camera(float x, float y, float vieww, float viewh, float totalw, float totalh, Padding stpad = null, float maxz = 0.25f, float smoothfactor = 0.08f)
+        internal Camera(float x, float y, float vieww, float viewh, float totalw, float totalh, Padding stpad = null, float maxz = 0.25f, float smoothfactor = 0.08f)
         {
             currentView = new RectangleF(x, y, vieww, viewh);
             targetView = currentView.Clone();
@@ -51,32 +51,32 @@ namespace Inlumino_SHARED
             maxzoom = maxz;
             smoothness = smoothfactor;
         }
-        public bool FitToScreen = true;
+        internal bool FitToScreen = true;
         private float xScale { get { return FitToScreen ? Screen.Width / currentView.Width : 1; } }
         private float yScale { get { return FitToScreen ? Screen.Height / currentView.Height : 1; } }
-        public bool isInsideView(RectangleF r)
+        internal bool isInsideView(RectangleF r)
         {
             return currentView.Intersects(r);
         }
-        public bool isInsideView(Vector2 v)
+        internal bool isInsideView(Vector2 v)
         {
             return currentView.ContainsPoint(v);
         }
-        public Vector2 Transform(Vector2 v)
+        internal Vector2 Transform(Vector2 v)
         {
             return new Vector2(xScale * (v.X - currentView.X), yScale * (v.Y - currentView.Y));
         }
-        public RectangleF Transform(RectangleF r)
+        internal RectangleF Transform(RectangleF r)
         {
             if (r == null) return null;
             return new RectangleF(xScale * (r.X - currentView.X), yScale * (r.Y - currentView.Y), xScale * r.Width, yScale * r.Height);
         }
-        public RectangleF TransformWithCropping(RectangleF r, out RectangleF rectnocropping)
+        internal RectangleF TransformWithCropping(RectangleF r, out RectangleF rectnocropping)
         {
             rectnocropping = Transform(r);
             return Transform(currentView.Intersection(r));
         }
-        public Rectangle Transform(Rectangle r)
+        internal Rectangle Transform(Rectangle r)
         {
             return new RectangleF(xScale * (r.X - currentView.X), yScale * (r.Y - currentView.Y), xScale * r.Width, yScale * r.Height).ToRectangle();
         }
@@ -84,7 +84,7 @@ namespace Inlumino_SHARED
         {
             return new Vector2(v.X / xScale + currentView.X, v.Y / yScale + currentView.Y);
         }
-        public void StepHorizontal(float stepsize)
+        internal void StepHorizontal(float stepsize)
         {
             float scaledStep = stepsize / xScale;
             if (targetView.X + targetView.Width + scaledStep > MaxX)
@@ -95,7 +95,7 @@ namespace Inlumino_SHARED
                 targetView.X += scaledStep;
         }
 
-        public void StepVertical(float stepsize)
+        internal void StepVertical(float stepsize)
         {
             float scaledStep = stepsize / yScale;
             if (targetView.Y + targetView.Height + scaledStep > MaxY)
@@ -106,7 +106,7 @@ namespace Inlumino_SHARED
                 targetView.Y += scaledStep;
         }
 
-        public void Zoom(float p)
+        internal void Zoom(float p)
         {
             if (p != 0) // Save time
             {
@@ -176,7 +176,7 @@ namespace Inlumino_SHARED
             targetView = new RectangleF(r.X, r.Y, targetView.Width, targetView.Height);            
         }
 
-        public float getStageScale()
+        internal float getStageScale()
         {
             return MaxY / currentView.Height;
         }
@@ -201,7 +201,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public float GetRecommendedDrawingFuzz()
+        internal float GetRecommendedDrawingFuzz()
         {
             // This has to be based on both the camera to screen ratio and camera to stage ratio
             return ((/*The bigger the screen, the bigger the fuzz needed*/(xScale + yScale) / 2)

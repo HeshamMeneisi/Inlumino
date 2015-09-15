@@ -12,14 +12,14 @@ namespace Inlumino_SHARED
         private SpriteFont font;        
         private Color color;
         private Color background;
-        public string Padding = "";
+        internal string Padding = "";
 
-        public string Text
+        internal string Text
         {
             get { return text; }
             set { text = value.Substring(0, MathHelper.Min(value.Length, maxl)); }
         }
-        public UITextField(int maxl, Color col, Color background, string defaulttext = "", int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
+        internal UITextField(int maxl, Color col, Color background, string defaulttext = "", int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
         {
             this.maxl = maxl;
             this.font = DataHandler.Fonts[0];
@@ -27,7 +27,7 @@ namespace Inlumino_SHARED
             this.deftext = defaulttext;
             this.background = background;            
         }
-        public override void Draw(SpriteBatch batch, Camera cam = null)
+        internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible) return;
             string t = Padding + (text == "" ? deftext : text);
@@ -35,7 +35,7 @@ namespace Inlumino_SHARED
             batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
         }
-        public override void HandleEvent(WorldEvent e)
+        internal override void HandleEvent(WorldEvent e)
         {
             if (!visible) return;
             if (e is KeyDownEvent)
@@ -50,7 +50,7 @@ namespace Inlumino_SHARED
                 }
             }
         }
-        public override void setSizeRelative(float perc, Orientation mode)
+        internal override void setSizeRelative(float perc, Orientation mode)
         {
             
         }

@@ -9,14 +9,14 @@ namespace Inlumino_SHARED
     {
         protected List<UIVisibleObject> children;
 
-        public override Vector2 Size
+        internal override Vector2 Size
         {
             get
             {
                 return new Vector2(Width, Height);
             }
         }
-        public override float Height
+        internal override float Height
         {
             get
             {
@@ -30,7 +30,7 @@ namespace Inlumino_SHARED
                 return maxy - miny;                    
             }
         }
-        public override float Width
+        internal override float Width
         {
             get
             {
@@ -44,12 +44,12 @@ namespace Inlumino_SHARED
                 return maxx - minx;
             }
         }
-        public UIMenu(int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
+        internal UIMenu(int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
         {
             children = new List<UIVisibleObject>();
         }
 
-        public void Add(UIVisibleObject obj)
+        internal void Add(UIVisibleObject obj)
         {
             obj.Parent = this;
             for (int i = 0; i < children.Count; i++)
@@ -63,13 +63,13 @@ namespace Inlumino_SHARED
             children.Add(obj);
         }
 
-        public void Remove(UIVisibleObject obj)
+        internal void Remove(UIVisibleObject obj)
         {
             children.Remove(obj);
             obj.Parent = null;
         }
 
-        public UIObject Find(string id)
+        internal UIObject Find(string id)
         {
             foreach (UIObject obj in children)
             {
@@ -91,7 +91,7 @@ namespace Inlumino_SHARED
             foreach (UIVisibleObject obj in children) obj.setSizeRelative(v, mode);
         }
 
-        public override void HandleEvent(WorldEvent e)
+        internal override void HandleEvent(WorldEvent e)
         {
             if (!visible) return;
             base.HandleEvent(e);
@@ -100,19 +100,19 @@ namespace Inlumino_SHARED
             base.HandleEvent(e);
         }
 
-        public List<UIVisibleObject> Objects
+        internal List<UIVisibleObject> Objects
         {
             get { return children; }
         }
 
-        public override void Update(GameTime time)
+        internal override void Update(GameTime time)
         {
             if (!visible) return;
             foreach (UIObject obj in children)
                 obj.Update(time);
         }
 
-        public override void Draw(SpriteBatch batch, Camera cam = null)
+        internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible)
                 return;
@@ -121,13 +121,13 @@ namespace Inlumino_SHARED
                 if (e.Current is UIVisibleObject) (e.Current as UIVisibleObject).Draw(batch);
         }
 
-        public override void Clear()
+        internal override void Clear()
         {
             base.Clear();
             foreach (UIObject obj in children)
                 obj.Clear();
         }
-        public void ArrangeInForm(Orientation mode, float maxwidth = -1, float maxheight = -1)
+        internal void ArrangeInForm(Orientation mode, float maxwidth = -1, float maxheight = -1)
         {
             maxwidth = maxwidth > 0 ? maxwidth : Screen.Width - GlobalPosition.X;
             maxheight = maxheight > 0 ? maxheight : Screen.Height - GlobalPosition.Y;

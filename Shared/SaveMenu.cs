@@ -15,7 +15,7 @@ namespace Inlumino_SHARED
         protected UITextField nametext;
         protected UIMenu menu;
 
-        public SaveMenu()
+        internal SaveMenu()
         {
             menu = new UIMenu();
 

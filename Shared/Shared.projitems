@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)RectangleF.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SaveMenu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Screen.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Security.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SoundManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Splitter.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UIObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UITextField.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIVisibleObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserData.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VirtualKeyboard.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WorldEvent.cs" />
   </ItemGroup>

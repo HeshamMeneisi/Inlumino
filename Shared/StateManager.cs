@@ -4,28 +4,28 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Inlumino_SHARED
 {
-    public class StateManager
+    internal class StateManager
     {
         Dictionary<GameState, IState> gameStates;
         IState currentGameState;
 
-        public StateManager()
+        internal StateManager()
         {
             gameStates = new Dictionary<GameState, IState>();
             currentGameState = null;
         }
 
-        public void AddGameState(GameState name, IState state)
+        internal void AddGameState(GameState name, IState state)
         {
             gameStates[name] = state;
         }
 
-        public IState GetGameState(GameState name)
+        internal IState GetGameState(GameState name)
         {
             return gameStates[name];
         }
 
-        public void SwitchTo(GameState name, IState newstate = null, params object[] args)
+        internal void SwitchTo(GameState name, IState newstate = null, params object[] args)
         {
             State = name;
             if (gameStates.ContainsKey(name))
@@ -38,7 +38,7 @@ namespace Inlumino_SHARED
                 throw new KeyNotFoundException("Could not find game state: " + name);
         }
 
-        public IState CurrentGameState
+        internal IState CurrentGameState
         {
             get
             {
@@ -46,7 +46,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public GameState State { get; private set; }
+        internal GameState State { get; private set; }
 
         public void Update(GameTime gameTime)
         {
@@ -60,7 +60,7 @@ namespace Inlumino_SHARED
                 currentGameState.Draw(batch);
         }
     }
-    public enum GameState { MainMenu,OnStage,
+    internal enum GameState { MainMenu,OnStage,
         EditMode,
         SaveLevel,
         SelectLevel,

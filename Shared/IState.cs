@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Inlumino_SHARED
 {
-    public interface IState
+    internal interface IState
     {
         void Update(GameTime time);
 

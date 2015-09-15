@@ -22,22 +22,23 @@ namespace Inlumino_SHARED
 
         protected Direction targetrotation { get; private set; }
 
-        public Direction Rotation { get { return rotation; } set { rotation = targetrotation = value; } }
+        internal Direction Rotation { get { return rotation; } set { rotation = targetrotation = value; } }
 
         public Tile ParentTile { get { return parenttile; } }
 
-        public OverlayEffect ActiveEffect = OverlayEffect.None;
+        internal OverlayEffect ActiveEffect = OverlayEffect.None;
 
-        public Color HighlightColor = Color.AliceBlue;
-
-        public StaticObject(TextureID[] tid, Tile tile)
+        internal Color HighlightColor = Color.AliceBlue;
+        public bool IsInteractable { get; set; }
+        internal StaticObject(TextureID[] tid, Tile tile)
         {
             rotation = targetrotation = Direction.North;
             parenttile = tile;
             tID = tid;
+            IsInteractable = false;
         }
 
-        internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
+        public void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
             if(this is IObstructingObject)
                 batch.Draw(DataHandler.getTexture(tID[state]), cam.Transform(parenttile.Bounds2D.Offset(parenttile.LocalCenter)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(parenttile.TextureID[2]), ActiveEffect == OverlayEffect.Highlighted ? HighlightColor : Color.White, getRotationAngle(), parenttile.TextureID[2].Center - new Vector2(1, 1), SpriteEffects.None, 0);//White for no tinting
@@ -54,17 +55,17 @@ namespace Inlumino_SHARED
             return smoothrotation;
         }
 
-        public virtual void Update(GameTime time)
+        internal virtual void Update(GameTime time)
         {
             if (rotation != targetrotation) rotation = targetrotation;
             // Animation will be handled here
         }
 
         // This is for the datahandler, we could just use instanceof when the type is needed
-        public abstract ObjectType getType();
+        internal abstract ObjectType getType();
         bool rotating = false;
         // To be handled by childeren on update
-        public virtual void RotateCW(bool instant, int clicks = 1)
+        internal virtual void RotateCW(bool instant, int clicks = 1)
         {
             rotating = true;
             targetrotation = Common.NextDirCW(rotation, clicks);
@@ -75,7 +76,7 @@ namespace Inlumino_SHARED
             }
         }
 
-        public virtual void RotateCCW(bool instant, int clicks = 1)
+        internal virtual void RotateCCW(bool instant, int clicks = 1)
         {
             rotating = true;
             targetrotation = Common.NextDirCCW(rotation, clicks);
@@ -88,7 +89,7 @@ namespace Inlumino_SHARED
     }
 }
 /*For saving/loading levels*/
-public enum ObjectType
+internal enum ObjectType
 {
     Default = -2, Delete = -3, // Exclusive to editor
     LightBeam = -1, None = 0,

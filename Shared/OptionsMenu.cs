@@ -4,11 +4,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Inlumino_SHARED
 {
-    class OptionsMenu : IState
+    internal class OptionsMenu : IState
     {
         UIMenu menu;
         UIButton savebtn;
-        public OptionsMenu()
+        internal OptionsMenu()
         {
             menu = new UIMenu();
             // Need sliders for music & sfx volume

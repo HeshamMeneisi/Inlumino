@@ -10,10 +10,10 @@ namespace Inlumino_SHARED
     class Tile
     {
         private Point mappos;
-        public RectangleF Bounds2D;
-        public TileType Type;
-        public TileState CurrentState = TileState.Default;
-        public OverlayEffect ActiveEffect;
+        internal RectangleF Bounds2D;
+        internal TileType Type;
+        internal TileState CurrentState = TileState.Default;
+        internal OverlayEffect ActiveEffect;
         private Stage parentstage;
 
         RectangleF AuxRect;
@@ -21,24 +21,24 @@ namespace Inlumino_SHARED
 
         bool adjdi = false;
         Tile[] adj = null;
-        public Tile[] getAdjacentTiles(bool includediagonals)
+        internal Tile[] getAdjacentTiles(bool includediagonals)
         {
             // DP caching because the function is used alot per frame.            
             return adj != null && (adjdi == includediagonals) ? adj : adj = parentstage.getAdjacentTiles(this, adjdi = includediagonals);
         }
 
         private StaticObject obj = null;
-        public Color HighlightColor = Color.Cyan;
+        internal Color HighlightColor = Color.Cyan;
 
         int columncount = 0;
 
-        public TextureID[] TextureID;
+        internal TextureID[] TextureID;
 
-        public Point MapPos { get { return mappos; } }
+        internal Point MapPos { get { return mappos; } }
 
-        public int ColumnCount { get { return columncount; } }
+        internal int ColumnCount { get { return columncount; } }
 
-        public Tile RightAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.X > Bounds2D.X); } }
+        internal Tile RightAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.X > Bounds2D.X); } }
 
         internal Tile getAdjacentTile(Direction direction)
         {
@@ -52,20 +52,20 @@ namespace Inlumino_SHARED
             }
         }
 
-        public Tile LeftAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.X < Bounds2D.X); } }
-        public Tile TopAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.Y < Bounds2D.Y); } }
-        public Tile BottomAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.Y > Bounds2D.Y); } }
+        internal Tile LeftAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.X < Bounds2D.X); } }
+        internal Tile TopAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.Y < Bounds2D.Y); } }
+        internal Tile BottomAdj { get { return getAdjacentTiles(adjdi).FirstOrDefault(t => t.Bounds2D.Y > Bounds2D.Y); } }
 
-        public Vector2 LocalCenter { get { return Center - Bounds2D.Location; } }
+        internal Vector2 LocalCenter { get { return Center - Bounds2D.Location; } }
 
-        public Vector2 Center { get { return Bounds2D.ToRectangle().Center.ToVector2(); } }
+        internal Vector2 Center { get { return Bounds2D.ToRectangle().Center.ToVector2(); } }
 
-        public Stage Parent
+        internal Stage Parent
         {
             get { return parentstage; }
         }
 
-        public Tile(TileType type, RectangleF bounds, Stage parent, Point mappos)
+        internal Tile(TileType type, RectangleF bounds, Stage parent, Point mappos)
         {
             TileType[] valid = TileType.GetValues(typeof(TileType)).Cast<TileType>().ToArray();
             Type = valid.Contains(type) ? (TileType)type : TileType.Unknown;
@@ -88,7 +88,7 @@ namespace Inlumino_SHARED
         {
             ActiveEffect &= ~effect;
         }
-        internal void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
+        public void Draw(SpriteBatch batch, Camera cam, Vector2 coordOrigin)
         {
             bool highlight = (ActiveEffect & OverlayEffect.Highlighted) > 0;
             bool grid = (ActiveEffect & OverlayEffect.Grid) > 0;
@@ -101,7 +101,7 @@ namespace Inlumino_SHARED
                 batch.Draw(DataHandler.getTexture(TextureID[1].RefKey), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[1]), Color.White);
         }
 
-        internal void Update(GameTime time)
+        public void Update(GameTime time)
         {
             if (hasObject()) obj.Update(time);
         }
@@ -113,7 +113,7 @@ namespace Inlumino_SHARED
         {
             obj = null;
         }
-        public bool hasObject(Type type = null)
+        internal bool hasObject(Type type = null)
         { return obj != null && (type == null || type == obj.GetType()); }
         internal bool hasObject<T>()
         { return hasObject() && obj is T; }
@@ -124,7 +124,7 @@ namespace Inlumino_SHARED
         }
         static Random ran = new Random();
         float auxrot = 0;
-        public void SetAuxiliary(TextureID tid, RectangleF bounds = null)
+        internal void SetAuxiliary(TextureID tid, RectangleF bounds = null)
         {
             Auxiliary = tid;
             if (bounds != null) AuxRect = bounds;
@@ -140,5 +140,5 @@ namespace Inlumino_SHARED
     enum OverlayEffect { None = 0, Highlighted = 1, Grid = 2 }/*Powers of 2*/
     enum TileState { Default = 0, Glowing = 1 }
 
-    public enum TileType { Unknown = 0, Default = 1 }
+    internal enum TileType { Unknown = 0, Default = 1 }
 }

@@ -12,12 +12,12 @@ namespace Inlumino_SHARED
     // Common gampelay code affecting multiple classes is kept here
     static class Common
     {
-        public static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
-        public static string[] MainLevelNames = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" }; // For the selector
-        public static int[] moves = new int[] { 3, 4, 8, 20, 12, 32, 9, 9, 27, 2, 13, 17, 11, 11, 17, 13, 17, 11, 21, 58 };
-        public static TextureID[] Auxiliaries = GetAux().ToArray();
+        internal static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
+        internal static string[] MainLevelNames = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" }; // For the selector
+        internal static int[] moves = new int[] { 3, 4, 8, 20, 12, 32, 9, 9, 27, 2, 13, 17, 11, 11, 17, 13, 17, 11, 21, 58 };
+        internal static TextureID[] Auxiliaries = GetAux().ToArray();
         private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 5; i++) yield return new TextureID("aux", i); }
-        public static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
+        internal static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
         {
             if (target == default(Tile)) return;
             if (target.hasObject<IObstructingObject>()) (target.getObject() as IObstructingObject).HandlePulse(charge, side, source);
@@ -55,7 +55,7 @@ namespace Inlumino_SHARED
             return level;
         }
 
-        public static Direction ReverseDir(Direction dir)
+        internal static Direction ReverseDir(Direction dir)
         { return (Direction)((int)(dir + 2) % 4); }
 
         internal static Orientation ReverseOrientation(Orientation mode)
@@ -63,14 +63,14 @@ namespace Inlumino_SHARED
             return mode == Orientation.Landscape ? Orientation.Portrait : Orientation.Landscape;
         }
 
-        public static Direction NextDirCW(Direction dir, int count = 1)
+        internal static Direction NextDirCW(Direction dir, int count = 1)
         { return count >= 0 ? (Direction)((int)(dir + count) % 4) : NextDirCCW(dir, -count); }
-        public static Direction NextDirCCW(Direction dir, int count = 1)
+        internal static Direction NextDirCCW(Direction dir, int count = 1)
         { return count >= 0 ? (Direction)((int)(dir + 3 * count) % 4) : NextDirCW(dir, -count); }
-        public static Direction RelativeDir(Direction dir, Direction neworigin, Direction origin = Direction.North)
+        internal static Direction RelativeDir(Direction dir, Direction neworigin, Direction origin = Direction.North)
         { return NextDirCW(dir, origin - neworigin); }
 
-        public static bool isDirVertical(Direction dir)
+        internal static bool isDirVertical(Direction dir)
         { return dir == Direction.North || dir == Direction.South; }
 
         internal static TextureID GetStarsTex(int s)
@@ -80,7 +80,7 @@ namespace Inlumino_SHARED
             return new TextureID(DataHandler.LoadTexture(s + "stars", t), 0, 3, 1);
         }
 
-        public static bool isDirHorizontal(Direction dir)
+        internal static bool isDirHorizontal(Direction dir)
         { return dir == Direction.East || dir == Direction.West; }
 
         internal static void NextLevel(string cln)
@@ -94,7 +94,7 @@ namespace Inlumino_SHARED
             else
                 GameFinished();
         }
-        public static int GetMoves(string cln)
+        internal static int GetMoves(string cln)
         {
             for (int i = 0; i < moves.Length; i++)
                 if (MainLevelNames[i] == cln) return moves[i];
@@ -121,7 +121,10 @@ namespace Inlumino_SHARED
             int i = 0;
             for (; i < MainLevelNames.Length; i++)
                 if (MainLevelNames[i] == name)
-                    return Manager.GameSettings.stars[i];
+                {
+                    int[] stars = Manager.UserData.Stars;
+                    return i < stars.Length ? stars[i] : 0;
+                }
             return 0;
         }
         internal static void SetScore(string cln, int score)
@@ -129,8 +132,20 @@ namespace Inlumino_SHARED
             int i = 0;
             for (; i < MainLevelNames.Length; i++)
                 if (MainLevelNames[i] == cln)
-                    Manager.GameSettings.stars[i] = Math.Max(Manager.GameSettings.stars[i], score);
-            Manager.SaveSettings();
+                {
+                    int[] stars = Manager.UserData.Stars;
+                    int s = Math.Max(stars[i], score);
+                    if (i < stars.Length)
+                    { stars[i] = s; Manager.UserData.Stars = stars; }
+                    else
+                    {
+                        int[] nstars = new int[i+1];
+                        stars.CopyTo(nstars, 0);
+                        Manager.UserData.Stars = nstars;
+                    }                    
+                }
+
+            Manager.SaveUserData();
         }        
     }
 }

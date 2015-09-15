@@ -10,7 +10,7 @@ namespace Inlumino_SHARED
     class LightSourceObject : StaticObject, ILightSource, IObstructingObject
     {
         bool on = false;
-        public LightSourceObject(TextureID[] tid, Tile parent) : base(tid, parent) { }
+        internal LightSourceObject(TextureID[] tid, Tile parent) : base(tid, parent) { }
 
         public bool IsOn
         {
@@ -20,33 +20,33 @@ namespace Inlumino_SHARED
             }
         }
 
-        public override ObjectType getType()
+        internal override ObjectType getType()
         {
             return ObjectType.LightSource;
         }
 
-        public bool IsFeedingDirection(Direction dir)
+        internal bool IsFeedingDirection(Direction dir)
         {
             return dir == rotation;
         }
 
-        public void TurnOn()
+        internal void TurnOn()
         {
             on = true;
             state = 1;
             Common.PulseTile(parenttile.getAdjacentTile(rotation), true, Common.ReverseDir(rotation), this);
         }
-        public void TurnOff()
+        internal void TurnOff()
         {
             on = false;
             state = 0;
             Common.PulseTile(parenttile.getAdjacentTile(rotation), false, Common.ReverseDir(rotation), this);
         }
-        public override void RotateCW(bool instant, int clicks = 1)
+        internal override void RotateCW(bool instant, int clicks = 1)
         {
             if (instant) base.RotateCW(instant, clicks);
         }
-        public override void RotateCCW(bool instant, int clicks = 1)
+        internal override void RotateCCW(bool instant, int clicks = 1)
         {
             if (instant) base.RotateCCW(instant, clicks);
         }

@@ -18,7 +18,7 @@ namespace Inlumino_SHARED
         /// <param name="volume"></param>
         /// <param name="pitch"></param>
         /// <param name="pan"></param>
-        public static void PlaySound(SoundEffect s, SoundCategory cat, bool loop = false, float volume = 1, float pitch = 0, float pan = 0)
+        internal static void PlaySound(SoundEffect s, SoundCategory cat, bool loop = false, float volume = 1, float pitch = 0, float pan = 0)
         {
             if (cat == SoundCategory.Music)
                 volume = Manager.GameSettings.MusicVolume;
@@ -28,12 +28,12 @@ namespace Inlumino_SHARED
             if (loop)
                 looping.Add(s, new SFXData(volume, pitch, pan));
         }
-        public static void StopLoop(SoundEffect s)
+        internal static void StopLoop(SoundEffect s)
         {
             if (looping.ContainsKey(s))
                 looping.Remove(s);
         }
-        public static void Update(GameTime time)
+        internal static void Update(GameTime time)
         {
             foreach (KeyValuePair<SoundEffect, SFXData> p in looping)
             {
@@ -47,8 +47,8 @@ namespace Inlumino_SHARED
     }
     class SFXData
     {
-        public float Elapsed, Volume, Pitch, Pan;
-        public SFXData(float volume = 1, float pitch = 0, float pan = 0, float elapsed = 0)
+        internal float Elapsed, Volume, Pitch, Pan;
+        internal SFXData(float volume = 1, float pitch = 0, float pan = 0, float elapsed = 0)
         {
             Elapsed = elapsed;
             Volume = volume;

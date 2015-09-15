@@ -8,12 +8,12 @@ namespace Inlumino_SHARED
 {
     class Padding
     {
-        public float Top { get; set; }
-        public float Bottom { get; set; }
-        public float Left { get; set; }
-        public float Right { get; set; }
+        internal float Top { get; set; }
+        internal float Bottom { get; set; }
+        internal float Left { get; set; }
+        internal float Right { get; set; }
 
-        public Padding(float left = 0, float right = 0, float top = 0, float bottom = 0)
+        internal Padding(float left = 0, float right = 0, float top = 0, float bottom = 0)
         {
             Top = top; Bottom = bottom; Left = left; Right = right;
         }
