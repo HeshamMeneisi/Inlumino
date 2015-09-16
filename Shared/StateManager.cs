@@ -65,6 +65,7 @@ namespace Inlumino_SHARED
         SaveLevel,
         SelectLevel,
         DeleteLevel,
-        Options
+        Options,
+        PackageSelector
     }
 }

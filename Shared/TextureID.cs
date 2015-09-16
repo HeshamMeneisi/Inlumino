@@ -30,6 +30,7 @@ namespace Inlumino_SHARED
             DataHandler.LoadTexture(name, texture);
             this.RefKey = name;
             this.Index = idx;
+            if (texture == null) return;
             this.WidthUnits = wunits > 0 ? wunits : texture.Width / DataHandler.TextureUnitDim;
             this.HeightUnits = hunits > 0 ? hunits : texture.Height / DataHandler.TextureUnitDim;
         }

@@ -16,8 +16,6 @@ namespace Inlumino_SHARED
 
         public Game()
         {
-            string test = "this is a very long string for testing 123456789 !@#$%^&*()_+";
-
             ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -51,7 +49,14 @@ namespace Inlumino_SHARED
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            Deactivated += exiting;
         }
+
+        private void exiting(object sender, EventArgs e)
+        {
+            Manager.SaveSettings();Manager.SaveUserData();
+        }
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -64,6 +69,10 @@ namespace Inlumino_SHARED
             // TODO: use this.Content to load your game content here
             Manager.init(this);
             graphics.ApplyChanges();
+            //Temp Code
+            //Manager.UserData.PackageAvailability[PackageType.Space] = true;
+            //for (int i = 0; i < Common.SpacePackge.Length; i++)
+            //Manager.UserData.setStars(PackageType.Space, i, 3);
         }
 
         /// <summary>
@@ -110,8 +119,7 @@ namespace Inlumino_SHARED
             spriteBatch.End();
 
             base.Draw(gameTime);
-        }
-
+        }        
         internal Texture2D TakeScreenshot()
         {
             RenderTarget2D screenshot;

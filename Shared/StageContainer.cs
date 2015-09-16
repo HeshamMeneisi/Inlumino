@@ -40,7 +40,7 @@ namespace Inlumino_SHARED
         TextureID border = DataHandler.UIObjectsTextureMap[UIObjectType.Border][0];
         internal void InitEditing()
         {
-            ism = false;
+            pack = PackageType.User;
             editmode = editing = true;
             trans = popup.Visible = false;
             if (CurrentLevel == null)
@@ -108,7 +108,7 @@ namespace Inlumino_SHARED
         bool verified = false;
         private void levelwon()
         {
-            if (loading) return;
+            if (loading || editing) return;
             verified = true;
             trans = true;
             SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
@@ -149,8 +149,8 @@ namespace Inlumino_SHARED
                 float p = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0,
                 ah = Screen.Height - p;
                 bool passed = SetStars();
-                nextbtn.Visible = passed && ism;
-                trybtn.Visible = !passed;
+                nextbtn.Visible = passed && IsCurrentMain;
+                trybtn.Visible = !passed && IsCurrentMain;
                 ropes2.Visible = nextbtn.Visible || trybtn.Visible;
                 popup.setAllSizeRelative(ah / 5 / Screen.Height, Orientation.Landscape);
                 log.FitSiblings();
@@ -174,9 +174,9 @@ namespace Inlumino_SHARED
             int s = (moves <= perfmoves + 10 ? 1 : 0)
             + (moves <= perfmoves + 5 ? 1 : 0)
             + (moves <= perfmoves + 2 ? 1 : 0);
-            Common.SetScore(cln, s);
+            Common.SetScore(pack, cln, s);
             stars.State = s;
-            return Common.GetScore(cln) != 0;
+            return Common.GetScore(pack, cln) != 0;
         }
 
         ObjectType selected = ObjectType.None;
@@ -197,7 +197,7 @@ namespace Inlumino_SHARED
                 case "save":
                     SaveLevel(); break;
                 case "del":
-                    Manager.StateManager.SwitchTo(GameState.DeleteLevel); break;
+                    Manager.StateManager.SwitchTo(GameState.DeleteLevel, null, PackageType.User); break;
                 case "he":
                     CurrentLevel.SetSize(CurrentLevel.Width + 1, CurrentLevel.Height); break;
                 case "hs":
@@ -213,7 +213,7 @@ namespace Inlumino_SHARED
 
         private void NextLevel()
         {
-            Common.NextLevel(cln);
+            Common.NextLevel(cln, pack);
         }
 
         private void SaveLevel()
@@ -227,7 +227,7 @@ namespace Inlumino_SHARED
 
         private void ToggleMode()
         {
-            moves = 0; trans = popup.Visible = ism = false;
+            moves = 0; trans = popup.Visible = false; pack = PackageType.User;
             editing = !editing;
             CurrentLevel.ToggleEditMode();
             interacted = true;
@@ -240,7 +240,7 @@ namespace Inlumino_SHARED
                 CurrentLevel.Clear();
             else
                 if (cln != null)
-                loadLevel(cln, ism);
+                loadLevel(cln, pack);
         }
 
         /// //////////////////////////////////////////////////////////////////////////////////////////////////        
@@ -300,7 +300,7 @@ namespace Inlumino_SHARED
                 if (InputManager.isKeyDown(Keys.Subtract))
                     CurrentLevel.Camera.Zoom(0.02f);
                 CurrentLevel.Update(time);
-                if(interacted)
+                if (interacted)
                 {
                     interacted = false;
                     CurrentLevel.CheckWin();
@@ -318,17 +318,18 @@ namespace Inlumino_SHARED
         private bool editing = false;
 
         string cln = null;
-        bool ism;
-        bool loading = true;
-        internal void loadLevel(string levelname, bool ismainlevel)
+        bool IsCurrentMain { get { return pack != PackageType.User; } }
+        bool loading = false;
+        PackageType pack = PackageType.User;
+        internal void loadLevel(string levelname, PackageType package = PackageType.User)
         {
             loading = true;
-            trans = false; moves = 0;
-            cln = levelname; ism = ismainlevel;
-            CurrentLevel = Common.CreateLevel(levelname, ismainlevel);
+            trans = false; moves = 0; pack = package;
+            cln = levelname;
+            CurrentLevel = Common.CreateLevel(levelname, pack);
             if (CurrentLevel != null)
             {
-                if (!ismainlevel)
+                if (!IsCurrentMain)
                 {
                     InitEditing();
                     editing = false;
@@ -465,7 +466,7 @@ namespace Inlumino_SHARED
         {
             counter.Text = "Moves: 0";
             if (args.Length > 1)
-                loadLevel(args[0].ToString(), (bool)args[1]);
+                loadLevel(args[0].ToString(), (PackageType)args[1]);
             SetupHud();
         }
     }

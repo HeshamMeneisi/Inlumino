@@ -50,7 +50,7 @@ namespace Inlumino_SHARED
 
         private void playpressed(UIButton sender)
         {
-            Manager.StateManager.SwitchTo(GameState.SelectLevel);
+            Manager.StateManager.SwitchTo(GameState.PackageSelector);
         }
 
         public void Update(GameTime time)

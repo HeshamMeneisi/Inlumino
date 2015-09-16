@@ -24,7 +24,7 @@ namespace Inlumino_SHARED
 
         internal bool SnapCameraToCells = false;
 
-        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
+        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; if(snaptarget!=null)cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 
         internal override RectangleF BoundingBox
         {

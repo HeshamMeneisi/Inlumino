@@ -65,6 +65,14 @@ namespace Inlumino_SHARED
 
         private static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
+        internal static Texture2D GetPackageThumb(PackageType pack)
+        {
+            try {
+                return Manager.ContentManager.Load<Texture2D>("Textures\\"+pack.ToString()+"\\Thumb");
+            }
+            catch { return null; }
+        }
+
         internal static List<SpriteFont> Fonts = new List<SpriteFont>();
 
         internal static Dictionary<SoundType, SoundEffect> Sounds = new Dictionary<SoundType, SoundEffect>();
@@ -137,7 +145,7 @@ namespace Inlumino_SHARED
             {
                 if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
             }
-        }
+        }        
         static string getDataFileName(string stagename)
         {
             return "S_" + stagename + ".xml";
@@ -157,10 +165,11 @@ namespace Inlumino_SHARED
             currentLevel.SetMinScreenPadding(new Padding(0, 0, 0, 0));
             Texture2D img = Manager.Parent.TakeScreenshot(currentLevel);
             Screen.MakeReal();
-            img.SaveAsPng(s, img.Width, img.Width);
+            //img.SaveAsPng(s, img.Width, img.Width);
+            img.SaveAsJpeg(s, img.Width, img.Height);
 #if ANDROID
             saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
-#endif
+#endif           
             s.Dispose();
         }
         internal static void DeleteStage(string name)
@@ -174,13 +183,13 @@ namespace Inlumino_SHARED
         {
             return savegameStorage.FileExists(getDataFileName(name));
         }
-        internal static Stage LoadStage(string name, bool mainlevel)
+        internal static Stage LoadStage(string name, PackageType package = PackageType.User)
         {
             LevelData temp;
             string data = "";
-            if (mainlevel)
+            if (package != PackageType.User)
             {
-                data = Manager.ContentManager.Load<string>("MainLevels\\MLS_" + name);
+                data = Manager.ContentManager.Load<string>("MainLevels\\" + package.ToString() + "\\MLS_" + name);
             }
             else
                 data = LoadData<string>(getDataFileName(name));
@@ -189,11 +198,14 @@ namespace Inlumino_SHARED
                 return null;
             return new Stage(temp);
         }
-        internal static Texture2D GetLevelThumb(string name, bool mainlevel)
+        internal static Texture2D GetLevelThumb(string name,PackageType package = PackageType.User)
         {
-            if (mainlevel)
+            if (package != PackageType.User)
             {
-                return Manager.ContentManager.Load<Texture2D>("MainLevels\\T_" + name);
+                try {
+                    return Manager.ContentManager.Load<Texture2D>("MainLevels\\" + package.ToString() + "\\T_" + name);
+                }
+                catch { return null; }
             }
             else
             {

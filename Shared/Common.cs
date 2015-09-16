@@ -13,8 +13,15 @@ namespace Inlumino_SHARED
     static class Common
     {
         internal static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
-        internal static string[] MainLevelNames = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t" }; // For the selector
-        internal static int[] moves = new int[] { 3, 4, 8, 20, 12, 32, 9, 9, 27, 2, 13, 17, 11, 11, 17, 13, 17, 11, 21, 58 };
+        internal static string[] UserPackage = new string[] { };
+        internal static string[] BeachPackage = new string[] { "$ba", "$bb", "$bc", "$bd", "$be", "$bf", "$bg", "$bh", "$bi", "$bj", "$bk", "$bl" };
+        internal static string[] SpacePackge = new string[] { "$sa", "$sb", "$sc", "$sd", "$se", "$sf", "$sg", "$sh" };
+        internal static Dictionary<PackageType, string[]> Packages = new Dictionary<PackageType, string[]>
+        {
+            {PackageType.Beach,BeachPackage },
+            {PackageType.Space,SpacePackge },
+            {PackageType.User,UserPackage }
+        };
         internal static TextureID[] Auxiliaries = GetAux().ToArray();
         private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 5; i++) yield return new TextureID("aux", i); }
         internal static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
@@ -45,9 +52,9 @@ namespace Inlumino_SHARED
             return a;
         }
 
-        internal static Stage CreateLevel(string name, bool ismain)
+        internal static Stage CreateLevel(string name, PackageType package = Inlumino_SHARED.PackageType.User)
         {
-            Stage level = DataHandler.LoadStage(name, ismain);
+            Stage level = DataHandler.LoadStage(name, package);
 
             if (level != null)
                 level.setBackground(DataHandler.getTexture("bg"));
@@ -83,25 +90,20 @@ namespace Inlumino_SHARED
         internal static bool isDirHorizontal(Direction dir)
         { return dir == Direction.East || dir == Direction.West; }
 
-        internal static void NextLevel(string cln)
+        internal static void NextLevel(string cln, PackageType package)
         {
+            if (package == Inlumino_SHARED.PackageType.User) return;
+            string[] MainLevelNames = Packages[package];
             int i = 0;
             for (; i < MainLevelNames.Length; i++)
                 if (MainLevelNames[i] == cln) break;
             i++;
             if (i < MainLevelNames.Length)
-                Manager.Play(MainLevelNames[i], true);
+                Manager.Play(MainLevelNames[i], package);
             else
-                GameFinished();
+                GameFinished(package);
         }
-        internal static int GetMoves(string cln)
-        {
-            for (int i = 0; i < moves.Length; i++)
-                if (MainLevelNames[i] == cln) return moves[i];
-            return -1;
-            throw new Exception("Levele is not recognized.");
-        }
-        private static void GameFinished()
+        private static void GameFinished(PackageType package)
         {
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
@@ -116,36 +118,24 @@ namespace Inlumino_SHARED
                     t.SetAuxiliary(Auxiliaries[ran.Next(Auxiliaries.Length)]);
             }
         }
-        internal static int GetScore(string name)
+        internal static int GetScore(PackageType pack, string name)
         {
+            if (pack == Inlumino_SHARED.PackageType.User) return 0;
             int i = 0;
-            for (; i < MainLevelNames.Length; i++)
-                if (MainLevelNames[i] == name)
-                {
-                    int[] stars = Manager.UserData.Stars;
-                    return i < stars.Length ? stars[i] : 0;
-                }
+            for (; i < Packages[pack].Length; i++)
+                if (Packages[pack][i] == name)
+                    return Manager.UserData.getStars(pack, i);
             return 0;
         }
-        internal static void SetScore(string cln, int score)
+        internal static void SetScore(PackageType pack, string cln, int score)
         {
             int i = 0;
+            string[] MainLevelNames = Packages[pack];
             for (; i < MainLevelNames.Length; i++)
                 if (MainLevelNames[i] == cln)
-                {
-                    int[] stars = Manager.UserData.Stars;
-                    int s = Math.Max(stars[i], score);
-                    if (i < stars.Length)
-                    { stars[i] = s; Manager.UserData.Stars = stars; }
-                    else
-                    {
-                        int[] nstars = new int[i+1];
-                        stars.CopyTo(nstars, 0);
-                        Manager.UserData.Stars = nstars;
-                    }                    
-                }
-
+                    Manager.UserData.setStars(pack, i, score);
             Manager.SaveUserData();
-        }        
+        }
     }
+    public enum PackageType { None = -2, User = 0, Beach = 1, Space = 2 }
 }

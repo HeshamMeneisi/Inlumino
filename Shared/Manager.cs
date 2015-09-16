@@ -16,10 +16,11 @@ namespace Inlumino_SHARED
         static ContentManager contentManager;
         static OptionsMenu optionsmenu;
         static DeleteMenu delmenu;
+        static PackageSelector packselector;
         static Game parentGame;
         static Settings settings;
         static UserData userdata;
-        static EncryptionProvider crypto = new EncryptionProvider();
+        //static EncryptionProvider crypto = new EncryptionProvider();
         static bool initd = false;
         const string settingsfile = "GameSettings.xml";
         const string datafile = "UserData.xml";
@@ -35,6 +36,7 @@ namespace Inlumino_SHARED
         }
         internal static void SaveUserData()
         {
+            userdata.PrepareForSaving();
             DataHandler.SaveData<UserData>(userdata, datafile);
         }
         internal static void LoadUserData()
@@ -42,11 +44,12 @@ namespace Inlumino_SHARED
             UserData temp = DataHandler.LoadData<UserData>(datafile);
             if (temp != null) userdata = temp;
             else userdata = new UserData();
+            userdata.PostLoad();
         }
         internal static StateManager StateManager { get { return stateManager; } }
         internal static ContentManager ContentManager { get { return contentManager; } }
         internal static Settings GameSettings { get { return settings; } set { settings = value; } }
-        internal static EncryptionProvider Cipher { get { return crypto; } set { crypto = value; } }
+        //internal static EncryptionProvider Cipher { get { return crypto; } set { crypto = value; } }
         internal static Game Parent { get { return parentGame; } }
         public static UserData UserData { get { return userdata; } set { userdata = value; } }
 
@@ -64,6 +67,7 @@ namespace Inlumino_SHARED
             stagecont = new StageContainer(false);
             selector = new LevelSelector();
             delmenu = new DeleteMenu();
+            packselector = new PackageSelector();
 
             stateManager.AddGameState(GameState.MainMenu, menu);
             stateManager.AddGameState(GameState.SelectLevel, selector);
@@ -72,6 +76,7 @@ namespace Inlumino_SHARED
             StateManager.AddGameState(GameState.EditMode, stagecont);
             stateManager.AddGameState(GameState.DeleteLevel, delmenu);
             stateManager.AddGameState(GameState.Options, optionsmenu);
+            stateManager.AddGameState(GameState.PackageSelector, packselector);
 
             initInput();
 
@@ -87,10 +92,10 @@ namespace Inlumino_SHARED
             stateManager.SwitchTo(GameState.EditMode);
         }
 
-        internal static void Play(string levelname, bool ismainlevel)
+        internal static void Play(string levelname, PackageType package = PackageType.User)
         {
             if (!initd) return;
-            stateManager.SwitchTo(GameState.OnStage, null, levelname, ismainlevel);
+            stateManager.SwitchTo(GameState.OnStage, null, levelname, package);
         }
 
         internal static void HandleEvent(WorldEvent e)

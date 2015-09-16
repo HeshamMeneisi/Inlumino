@@ -19,7 +19,8 @@ namespace ConvertToXNAContent
             Console.WriteLine("Run the script: (y/n)");
             if (Console.ReadLine() == "y")
             {
-                foreach (string filename in Directory.GetFiles(dir))
+                foreach(string sub in Directory.GetDirectories(dir))
+                foreach (string filename in Directory.GetFiles(sub))
                 {
                     if (Path.GetFileName(filename).StartsWith("S_"))
                     {
@@ -32,9 +33,9 @@ namespace ConvertToXNAContent
                             IntermediateSerializer.Serialize<string>(writer, temp, null);
                         }
                         Console.WriteLine("File converted: " + filename);
-                        if (!Directory.Exists(dir + "old")) Directory.CreateDirectory(dir + "old");
-                        if (File.Exists(dir + "old\\" + Path.GetFileName(filename))) File.Delete(dir + "old\\" + Path.GetFileName(filename));
-                        File.Move(filename, dir + "old\\" + Path.GetFileName(filename));
+                        if (!Directory.Exists(sub + "old")) Directory.CreateDirectory(sub + "old");
+                        if (File.Exists(sub + "old\\" + Path.GetFileName(filename))) File.Delete(sub + "old\\" + Path.GetFileName(filename));
+                        File.Move(filename, sub + "old\\" + Path.GetFileName(filename));
                     }
                     else
                         Console.WriteLine("File skipped: " + Path.GetFileName(filename));
