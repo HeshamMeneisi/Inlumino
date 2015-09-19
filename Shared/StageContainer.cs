@@ -35,12 +35,11 @@ namespace Inlumino_SHARED
         UIButton resetbtn;
         UIButton togglebtn;
         UIButton savebtn;
-        UIButton delbtn;
         UITextField counter;
         TextureID border = DataHandler.UIObjectsTextureMap[UIObjectType.Border][0];
         internal void InitEditing()
         {
-            pack = PackageType.User;
+            pack = PackageType.None;
             editmode = editing = true;
             trans = popup.Visible = false;
             if (CurrentLevel == null)
@@ -66,8 +65,7 @@ namespace Inlumino_SHARED
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], hudbtnpressed, 0, "menu");
             resetbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RestartButton], hudbtnpressed, 0, "reset");
             togglebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ToggleButton], hudbtnpressed, 0, "toggle");
-            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");
-            delbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], hudbtnpressed, 0, "del");
+            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");            
             UICell horzexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], "he", null, 0, "", default(Color), hudbtnpressed, 0);
             UICell horzshrink = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], "hs", null, 0, "", default(Color), hudbtnpressed, 0);
             UICell vertexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], "ve", null, 0, "", default(Color), hudbtnpressed, 0);
@@ -88,8 +86,7 @@ namespace Inlumino_SHARED
             genmenu.Add(resetbtn);
             genmenu.Add(counter);
             genmenu.Add(togglebtn);
-            genmenu.Add(savebtn);
-            genmenu.Add(delbtn);
+            genmenu.Add(savebtn);            
             popup = new UIMenu();
             popup.Add(nextbtn);
             popup.Add(trybtn);
@@ -110,6 +107,7 @@ namespace Inlumino_SHARED
         {
             if (loading || editing) return;
             verified = true;
+            if (pack == PackageType.None) return;
             trans = true;
             SoundManager.PlaySound(DataHandler.Sounds[SoundType.AllCrystalsLit], SoundCategory.SFX);
             CurrentLevel.Pause();
@@ -119,8 +117,8 @@ namespace Inlumino_SHARED
         private void SetupHud()
         {
             togglebtn.Visible = editmode;
-            counter.Visible = !editmode;
-            savebtn.Visible = delbtn.Visible = editing;
+            counter.Visible = !editing && pack != PackageType.None;
+            savebtn.Visible = editing;
             genmenu.setAllSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             counter.Size = menubtn.Size;
             genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
@@ -196,8 +194,6 @@ namespace Inlumino_SHARED
                     ToggleMode(); break;
                 case "save":
                     SaveLevel(); break;
-                case "del":
-                    Manager.StateManager.SwitchTo(GameState.DeleteLevel, null, PackageType.User); break;
                 case "he":
                     CurrentLevel.SetSize(CurrentLevel.Width + 1, CurrentLevel.Height); break;
                 case "hs":
@@ -227,7 +223,7 @@ namespace Inlumino_SHARED
 
         private void ToggleMode()
         {
-            moves = 0; trans = popup.Visible = false; pack = PackageType.User;
+            moves = 0; trans = popup.Visible = false; pack = PackageType.None;
             editing = !editing;
             CurrentLevel.ToggleEditMode();
             interacted = true;
@@ -332,6 +328,7 @@ namespace Inlumino_SHARED
                 if (!IsCurrentMain)
                 {
                     InitEditing();
+                    pack = package;
                     editing = false;
                 }
                 else
@@ -364,7 +361,7 @@ namespace Inlumino_SHARED
                     }
             return mv;
         }
-
+        bool dragging = false;
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             genmenu.HandleEvent(e);
@@ -379,10 +376,13 @@ namespace Inlumino_SHARED
                 SetupHud();
             if (CurrentLevel == null) return;
             if (trans) return;
-            if (e.Handled && !forcehandle) return;
+            if (e.Handled && !forcehandle)
+                return;
+
             if (e is TouchPinchEvent)
             {
                 CurrentLevel.Camera.Zoom((e as TouchPinchEvent).Delta);
+                return;
             }
 
             if (e is TouchTapEvent)
@@ -409,6 +409,7 @@ namespace Inlumino_SHARED
                         counter.Text = "Moves: " + moves;
                     }
                 }
+                return;
             }
 
             if (e is TouchFreeDragEvent)
@@ -416,6 +417,7 @@ namespace Inlumino_SHARED
                 Vector2 delta = (e as TouchFreeDragEvent).Delta;
                 CurrentLevel.Camera.StepHorizontal(-delta.X);
                 CurrentLevel.Camera.StepVertical(-delta.Y);
+                return;
             }
 
             if (e is MouseMovedEvent)
@@ -423,19 +425,23 @@ namespace Inlumino_SHARED
                 if (editing && InputManager.isMouseVisible()) CurrentLevel.HighlightTileAt(CurrentLevel.Camera.DeTransform(InputManager.getMousePos().ToVector2()));
                 if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                 {
+                    dragging = true;
                     Point offset = (e as MouseMovedEvent).Offset;
                     CurrentLevel.Camera.StepHorizontal(offset.X);
                     CurrentLevel.Camera.StepVertical(offset.Y);
                 }
+                return;
             }
 
             if (e is MouseScrollEvent)
             {
                 CurrentLevel.Camera.Zoom((e as MouseScrollEvent).Value / (float)Screen.Height);
+                return;
             }
 
             if (e is MouseUpEvent)
             {
+                if (dragging) { dragging = false; return; }
                 MouseUpEvent ev = (e as MouseUpEvent);
                 Tile target = CurrentLevel.getTileAt(CurrentLevel.Camera.DeTransform(ev.Position.ToVector2()));
                 StaticObject obj = target == default(Tile) ? null : target.getObject();

@@ -18,8 +18,8 @@ namespace Inlumino_SHARED
         internal SaveMenu()
         {
             menu = new UIMenu();
-
-            nametext = new UITextField(16, Color.White, Color.Blue, "Enter Name Here");
+            nametext = new UITextField(10, Color.White, Color.Black, "Enter Name Here");
+            nametext.AllowedCharTypes = CharType.Lower | CharType.Upper;
             savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton]);
             backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton]);
 
@@ -29,9 +29,7 @@ namespace Inlumino_SHARED
             nametext.Size = new Vector2(nametext.Width, nametext.Height * 0.5f);
             //menu.Add(nametext);
             menu.Add(savebtn);
-            menu.Add(backbtn);            
-
-            VirtualKeyboard.KeyPressed += keypressed;
+            menu.Add(backbtn);
         }
 
         private void backpressed(UIButton sender)
@@ -58,32 +56,21 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            VirtualKeyboard.Show(Orientation.Landscape, 0.1f * Screen.BigDim, Screen.Width, Screen.Height, k => ((int)k >= 65 && (int)k <= 90) || k == Keys.Back || k == Keys.LeftShift);
-            menu.setAllSizeRelative(0.3f * VirtualKeyboard.BoundingBox.Height/Screen.Height, Screen.Mode);
-            menu.ArrangeInForm(Screen.Mode);
-            nametext.setSizeRelative(0.3f * VirtualKeyboard.BoundingBox.Height / Screen.Height, Orientation.Landscape);
-            nametext.Position = new Vector2((Screen.Width - nametext.Width) / 2, VirtualKeyboard.BoundingBox.Bottom);
+            nametext.setSizeRelative(0.2f, Orientation.Landscape);
+            menu.setAllSizeRelative(0.2f, Orientation.Landscape);
+            menu.ArrangeInForm(Orientation.Landscape);
+            nametext.Position = new Vector2((Screen.Width - nametext.Width) / 2, 0);
             menu.Position = new Vector2((Screen.Width - menu.Width) / 2, nametext.BoundingBox.Bottom);
-        }
-
-        private void keypressed(Keys key)
-        {
-            if (key == Keys.Back)
-                nametext.Text = nametext.Text.Substring(0, MathHelper.Max(0, nametext.Text.Length - 1));
-            else if (key != Keys.LeftShift)
-                nametext.Text += (VirtualKeyboard.Low ? key.ToString().ToLower() : key.ToString());
         }
 
         public void Update(GameTime time)
         {
-            VirtualKeyboard.Update(time);
             nametext.Update(time);
             menu.Update(time);
         }
 
         public void Draw(SpriteBatch batch)
         {
-            VirtualKeyboard.Draw(batch);
             nametext.Draw(batch);
             menu.Draw(batch);
         }
@@ -92,7 +79,6 @@ namespace Inlumino_SHARED
         {
             if (e is DisplaySizeChangedEvent || e is OrientationChangedEvent)
                 SetupMenu();
-            VirtualKeyboard.HandleEvent(e);
             menu.HandleEvent(e);
             nametext.HandleEvent(e);
         }

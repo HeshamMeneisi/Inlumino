@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using Parse;
+using System.Text;
 
 namespace Inlumino_SHARED
 {
@@ -12,11 +13,20 @@ namespace Inlumino_SHARED
     public class Game : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-
+        SpriteBatch spriteBatch;        
         public Game()
         {
             ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
+            ParseFacebookUtils.Initialize("906591706062304");
+
+            //ParseInstallation.CurrentInstallation.AddUniqueToList("channels", "main");
+            //ParseInstallation.CurrentInstallation.SaveAsync();
+            /*
+            string test = "teststring12345678!@#$%^&*()_+";
+            string enc = SecurityProvider.Encrypt(test, key);        
+            string dec = SecurityProvider.Decrypt(enc,key);
+            MessageBox.Show("Title",enc + "\n" + test +"\n"+dec,new string[]{"Ok"});
+            */            
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
@@ -54,7 +64,7 @@ namespace Inlumino_SHARED
 
         private void exiting(object sender, EventArgs e)
         {
-            Manager.SaveSettings();Manager.SaveUserData();
+            Manager.SaveSettings();Manager.SyncData();
         }
 
         /// <summary>

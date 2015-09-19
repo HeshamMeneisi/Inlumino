@@ -134,6 +134,7 @@ namespace Inlumino_SHARED
             {UIObjectType.Lock,new TextureID[] {new TextureID("ui",38,2,2)} },
             {UIObjectType.Border,new TextureID[] {new TextureID("ui",24,2,1)} },
             {UIObjectType.TopLog,new TextureID[] {new TextureID("ui",30,2,1),new TextureID("ui",28,2,1)} },
+            {UIObjectType.ShareBtn,new TextureID[] {new TextureID("ui",32,1,1)} },
             {UIObjectType.Ropes,new TextureID[] {new TextureID("ui",34,2,1)} },
             {UIObjectType.Frame,new TextureID[] {new TextureID("ui",36,2,2)} }
         };

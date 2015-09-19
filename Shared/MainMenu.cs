@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Parse;
+using Microsoft.Xna.Framework.Input;
+using System.Threading.Tasks;
 
 namespace Inlumino_SHARED
 {
@@ -24,7 +27,7 @@ namespace Inlumino_SHARED
 
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
-            //mainmenu.Add(optionsButton);
+            mainmenu.Add(optionsButton);
 
             SoundManager.PlaySound(DataHandler.Sounds[SoundType.Background], SoundCategory.Music, true);
         }
@@ -32,7 +35,7 @@ namespace Inlumino_SHARED
         private void SetupMenu()
         {
             float logo = Screen.Height * 0.25f;
-            mainmenu.setAllSizeRelative(0.25f, Orientation.Landscape);
+            mainmenu.setAllSizeRelative(0.25f * 0.75f, Orientation.Landscape);
             mainmenu.Position = new Vector2(0, logo + Screen.Height * 0.1f);
             mainmenu.ArrangeInForm(Orientation.Portrait);
             mainmenu.Position = new Vector2((Screen.Width - mainmenu.Size.X) / 2, mainmenu.GlobalPosition.Y);
@@ -76,10 +79,28 @@ namespace Inlumino_SHARED
                 SetupMenu();
             mainmenu.HandleEvent(e);
         }
-
+        bool suppressmessage = false, first = true;
         public void OnActivated(params object[] args)
         {
             SetupMenu();
+            Task t = new Task(() => CheckOnline());
+            t.Start();
+        }
+
+        private async Task CheckOnline()
+        {            
+            while (!Manager.IsIdle) { }
+            if (!suppressmessage && ParseUser.CurrentUser == null)
+            {
+                int? r = await MessageBox.Show("Hello", "It looks like you are not syncing your data online. Would you like to setup your account?", new string[] { "Take me there", "Remind me later" });
+                if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);
+                suppressmessage = true;
+            }
+            else if(first && !Manager.Connected)
+            {
+                first = false;
+                await MessageBox.Show("ERROR", "Could not retreive your online profile. Please check your connection.", new string[] { "OK" });
+            }
         }
     }
 }

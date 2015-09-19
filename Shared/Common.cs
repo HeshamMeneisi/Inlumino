@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 
 namespace Inlumino_SHARED
 {
@@ -105,6 +106,12 @@ namespace Inlumino_SHARED
         }
         private static void GameFinished(PackageType package)
         {
+            if(package == PackageType.Beach)
+            {
+                Manager.UserData.MakeAvailable(PackageType.Space);
+                Manager.SaveUserDataLocal();
+                MessageBox.Show("Congratulations!", "You have unlocked the Space package!", new string[] { "OK" });
+            }
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
 
@@ -134,8 +141,138 @@ namespace Inlumino_SHARED
             for (; i < MainLevelNames.Length; i++)
                 if (MainLevelNames[i] == cln)
                     Manager.UserData.setStars(pack, i, score);
-            Manager.SaveUserData();
+            Manager.SaveUserDataLocal();
         }
     }
     public enum PackageType { None = -2, User = 0, Beach = 1, Space = 2 }
+
+    static class CommonData
+    {
+        public static Dictionary<Keys, char[]> KeyCharMap = new Dictionary<Keys, char[]>()
+        {
+            { Keys.OemTilde,new char[] {'`','~' } },
+
+            { Keys.OemMinus,new char[] {'-','_' } },
+
+            { Keys.OemPlus,new char[] {'=','+' } },
+
+            { Keys.Divide,new char[] {'/','\0' } },
+
+            { Keys.Multiply,new char[] {'*','\0' } },
+
+            { Keys.Subtract,new char[] {'-','\0' } },
+
+            { Keys.Add,new char[] {'+','\0' } },
+
+            { Keys.OemSemicolon,new char[] {';',':' } },
+
+            { Keys.OemQuotes,new char[] {'\'','\"' } },
+
+            { Keys.OemPipe,new char[] {'\\','|' } },
+
+            { Keys.OemBackslash,new char[] {'\\','|' } },
+
+            { Keys.OemComma,new char[] {',','<' } },
+
+            { Keys.OemPeriod,new char[] {'.','>' } },
+
+            { Keys.OemQuestion,new char[] {'/','?' } },
+
+            { Keys.Space,new char[] {' ','\0' } },
+
+            { Keys.Decimal,new char[] {'.','\0' } },
+
+            { Keys.D0, new char[] { '0', ')' } },
+
+            { Keys.D1, new char[] { '1', '!' } },
+
+            { Keys.D2, new char[] { '2', '@' } },
+
+            { Keys.D3, new char[] { '3', '#' } },
+
+            { Keys.D4, new char[] { '4', '$' } },
+
+            { Keys.D5, new char[] { '5', '%' } },
+
+            { Keys.D6, new char[] { '6', '^' } },
+
+            { Keys.D7, new char[] { '7', '&' } },
+
+            { Keys.D8, new char[] { '8', '*' } },
+
+            { Keys.D9, new char[] { '9', '(' } },
+
+            { Keys.A, new char[] { 'a', 'A' } },
+
+            { Keys.B, new char[] { 'b', 'B' } },
+
+            { Keys.C, new char[] { 'c', 'C' } },
+
+            { Keys.D, new char[] { 'd', 'D' } },
+
+            { Keys.E, new char[] { 'e', 'E' } },
+
+            { Keys.F, new char[] { 'f', 'F' } },
+
+            { Keys.G, new char[] { 'g', 'G' } },
+
+            { Keys.H, new char[] { 'h', 'H' } },
+
+            { Keys.I, new char[] { 'i', 'I' } },
+
+            { Keys.J, new char[] { 'j', 'J' } },
+
+            { Keys.K, new char[] { 'k', 'K' } },
+
+            { Keys.L, new char[] { 'l', 'L' } },
+
+            { Keys.M, new char[] { 'm', 'M' } },
+
+            { Keys.N, new char[] { 'n', 'N' } },
+
+            { Keys.O, new char[] { 'o', 'O' } },
+
+            { Keys.P, new char[] { 'p', 'P' } },
+
+            { Keys.Q, new char[] { 'q', 'Q' } },
+
+            { Keys.R, new char[] { 'r', 'R' } },
+
+            { Keys.S, new char[] { 's', 'S' } },
+
+            { Keys.T, new char[] { 't', 'T' } },
+
+            { Keys.U, new char[] { 'u', 'U' } },
+
+            { Keys.V, new char[] { 'v', 'V' } },
+
+            { Keys.W, new char[] { 'w', 'W' } },
+
+            { Keys.X, new char[] { 'x', 'X' } },
+
+            { Keys.Y, new char[] { 'y', 'Y' } },
+
+            { Keys.Z, new char[] { 'z', 'Z' } },
+
+            { Keys.NumPad0, new char[] { '0', '\0' } },
+
+            { Keys.NumPad1, new char[] { '1', '\0' } },
+
+            { Keys.NumPad2, new char[] { '2', '\0' } },
+
+            { Keys.NumPad3, new char[] { '3', '\0' } },
+
+            { Keys.NumPad4, new char[] { '4', '\0' } },
+
+            { Keys.NumPad5, new char[] { '5', '\0' } },
+
+            { Keys.NumPad6, new char[] { '6', '\0' } },
+
+            { Keys.NumPad7, new char[] { '7', '\0' } },
+
+            { Keys.NumPad8, new char[] { '8', '\0' } },
+
+            { Keys.NumPad9, new char[] { '9', '\0' } }
+        };
+    }
 }

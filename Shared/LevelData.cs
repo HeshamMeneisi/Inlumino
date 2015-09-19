@@ -21,11 +21,11 @@ namespace Inlumino_SHARED
         internal string Data {
             get
             {
-                return width + "$" + tmap + "$" + omap + "$" + rmap;
+                return SecurityProvider.Encrypt(width + "|" + tmap + "|" + omap + "|" + rmap);
             }
             private set
             {
-                string[] data = value.Split('$');
+                string[] data = SecurityProvider.Decrypt(value).Split('|');
                 width = int.Parse(data[0]);
                 tmap = data[1];
                 omap = data[2];
@@ -35,19 +35,19 @@ namespace Inlumino_SHARED
 
         internal int[,] getTileMap()
         {
-            return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(tmap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
+            return getMatrixFromArray(tmap.Split(',').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        internal void setTileMap(int[,] value) { tmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Join("#", getArrayFromMatrix(value)))); }
+        internal void setTileMap(int[,] value) { tmap = String.Join(",", getArrayFromMatrix(value)); }
         internal int[,] getObjMap()
         {
-            return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(omap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
+            return getMatrixFromArray(omap.Split(',').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        internal void setObjMap(int[,] value) { omap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
+        internal void setObjMap(int[,] value) { omap = string.Join(",", getArrayFromMatrix(value)); }
         internal int[,] getRotationMap()
         {
-            return getMatrixFromArray(Encoding.ASCII.GetString(Convert.FromBase64String(rmap)).Split('#').Select((v) => Convert.ToInt32(v)).ToArray(), width);
+            return getMatrixFromArray(rmap.Split(',').Select((v) => Convert.ToInt32(v)).ToArray(), width);
         }
-        internal void setRotationMap(int[,] value) { rmap = Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Join("#", getArrayFromMatrix(value)))); }
+        internal void setRotationMap(int[,] value) { rmap = string.Join(",", getArrayFromMatrix(value)); }
 
         internal static int[] getArrayFromMatrix(int[,] mat)
         {

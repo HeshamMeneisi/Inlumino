@@ -15,20 +15,34 @@ namespace Inlumino_SHARED
         protected UIMenu genmenu;
         protected UIButton menubtn;
         protected UIButton backbtn;
+        protected UIButton sharebtn;
+        protected UIButton deletebtn;
         protected List<UICell> mlcells = new List<UICell>();
         Texture2D background;
         internal LevelSelector()
         {
             background = DataHandler.getTexture("mmb");
-            menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton]);
-            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton]);
-            menubtn.Pressed += menupressed;
-            backbtn.Pressed += backpressed;
+            menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], menupressed);
+            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], backpressed);
+            deletebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], delpressed);
+            sharebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ShareBtn], sharepressed);
+
             genmenu = new UIMenu();
-            genmenu.Add(menubtn); genmenu.Add(backbtn);
+            genmenu.Add(menubtn); genmenu.Add(backbtn); genmenu.Add(deletebtn);
         }
 
-        protected void backpressed(UIButton sender)
+        private async void delpressed(UIButton sender)
+        {
+            if (mainlevels.SnapTarget != null)
+            {
+                string name = mainlevels.SnapTarget.Tag.ToString();
+                int? r = await MessageBox.Show("Deleting", "Are you sure you want to delete this level? \n" + name + " will be deleted from local storage.", new string[] { "No", "Yes" });
+                if (r == 1)
+                    DataHandler.DeleteStage(name);
+            }
+        }
+
+        protected virtual void backpressed(UIButton sender)
         {
             Manager.StateManager.SwitchTo(GameState.PackageSelector);
         }
@@ -55,11 +69,13 @@ namespace Inlumino_SHARED
             batch.Draw(background, new Rectangle((int)(Screen.Width - w) / 2, 0, (int)(w), (int)Screen.Height), Color.White);
             genmenu.Draw(batch);
             mainlevels.Draw(batch);
+            sharebtn.Draw(batch);
         }
 
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
         {
             genmenu.HandleEvent(e);
+            sharebtn.HandleEvent(e);
             mainlevels.HandleEvent(e);
             if (e is OrientationChangedEvent || e is DisplaySizeChangedEvent)
                 SetupHud();
@@ -68,6 +84,7 @@ namespace Inlumino_SHARED
         public void Update(GameTime time)
         {
             genmenu.Update(time);
+            sharebtn.Update(time);
             mainlevels.Update(time);
         }
 
@@ -80,7 +97,8 @@ namespace Inlumino_SHARED
         protected virtual void SetupHud()
         {
             genmenu.setAllSizeRelative(0.2f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));            
+            genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
+            deletebtn.Visible = sharebtn.Visible = false;
             mlcells.Clear();
             bool first = true;
             UICell target = null;
@@ -102,27 +120,42 @@ namespace Inlumino_SHARED
                     UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
                     if (scrollflage) target = cell;
                     cell.AttachSibling(new UIVisibleObject(new TextureID[] { stex }));
-                    cell.FitSiblings();
                     cell.Pressed += mlcellpressed;
                     mlcells.Add(cell);
                 }
             else
+            {
                 foreach (string name in DataHandler.getSavedLevelNames())
                 {
                     UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
-                    cell.FitSiblings();
                     cell.Pressed += mlcellpressed;
                     mlcells.Add(cell);
                 }
+                if (mlcells.Count > 0)
+                {
+                    target = mlcells[0];
+                    sharebtn.Visible = true;
+                    sharebtn.Size = target.Size * 0.25f;
+                }
+                deletebtn.Visible = true;
+            }
             float d = Math.Min(Screen.SmallDim, Screen.BigDim * 0.6f);
-            mainlevels = new UIHud(mlcells.ToArray(), Orientation.Portrait, d, d, d, d);            
+            mainlevels = new UIHud(mlcells.ToArray(), Orientation.Portrait, d, d, d, d);
             mainlevels.SnapCameraToCells = true;
             float tp = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0;
             mainlevels.Position = new Vector2(Screen.Mode == Orientation.Landscape ? genmenu.Width + (Screen.Width - genmenu.Width - d) / 2 : (Screen.Width - d) / 2, (Screen.Height - tp - d) / 2 + tp);
             mainlevels.Setup();
             mainlevels.FitCellSiblings();
             mainlevels.SnapTarget = target;
-            mainlevels.Visible = true;            
+            if (sharebtn.Visible && target != null)
+                sharebtn.Position = target.GlobalPosition + target.Size * 0.1f;
+            mainlevels.Visible = true;
+        }
+
+        private void sharepressed(UIButton sender)
+        {
+            if (mainlevels.SnapTarget != null)
+                Manager.HandleShareReq(mainlevels.SnapTarget.Tag.ToString());
         }
     }
 }

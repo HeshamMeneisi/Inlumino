@@ -12,8 +12,9 @@ namespace Inlumino_SHARED
         protected int layer;
         protected string id;
         protected bool visible;
-        protected List<UIObject> siblings = new List<UIObject>();
-
+        protected List<UIObject> siblings = new List<UIObject>(); // used with huds to enable camera transformation
+        protected List<UIObject> children = new List<UIObject>();
+        internal List<UIObject> Siblings { get { return siblings; } }
         internal UIObject(int layer = 0, string id = "")
         {
             this.layer = layer;
@@ -21,7 +22,16 @@ namespace Inlumino_SHARED
             this.position = Vector2.Zero;
             this.visible = true;
         }
-
+        internal void AttachSibling(UIObject sibling)
+        {
+            sibling.Parent = Parent;
+            siblings.Add(sibling);
+        }
+        internal void AttachChild(UIObject child)
+        {
+            child.Parent = this;
+            children.Add(child);
+        }
         internal virtual void Update(GameTime time)
         {
 
@@ -130,5 +140,6 @@ enum UIObjectType
     TryAgain,
     Frame,
     Ropes,
-    TopLog
+    TopLog,
+    ShareBtn
 }

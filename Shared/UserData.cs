@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +9,11 @@ namespace Inlumino_SHARED
 {
     public class UserData
     {
-        public string _ref = "";
         public DateTime _timestamp = DateTime.Now;
-        public string __S = "";// star data
-        public string __P = "";// package lock state
+        public string SData = "";// star data
+        public string PData = "";// package lock state
         public UserData()
-        {}
+        { Encrypted = true; }
         /// <summary>
         /// Interfacing properties
         /// </summary>      
@@ -24,13 +24,29 @@ namespace Inlumino_SHARED
         {
             {PackageType.Beach,true}
         };
-        public int getStars(PackageType pack, int indx)
+        internal void UpdateFrom(UserData online)
+        {
+            _timestamp = DateTime.Now;
+            foreach (KeyValuePair<PackageType, bool> p in online.PackageAvailability)
+            {
+                if (p.Value)
+                    MakeAvailable(p.Key);
+            }
+            foreach (KeyValuePair<PackageType, List<int>> p in online.PkgStars)
+            {
+                if (!PkgStars.ContainsKey(p.Key)) PkgStars.Add(p.Key, p.Value);
+                else
+                    for (int i = 0; i < p.Value.Count; i++)
+                        setStars(p.Key, i, p.Value[i]);
+            }
+        }
+        internal int getStars(PackageType pack, int indx)
         {
             if (!PkgStars.Keys.Contains(pack)) return 0;
             if (indx < PkgStars[pack].Count) return PkgStars[pack][indx];
             else return 0;
         }
-        public void setStars(PackageType pack, int indx, int s)
+        internal void setStars(PackageType pack, int indx, int s)
         {
             if (!PkgStars.ContainsKey(pack)) PkgStars.Add(pack, new List<int>());
             List<int> temp = PkgStars[pack];
@@ -39,52 +55,72 @@ namespace Inlumino_SHARED
             temp[indx] = Math.Max(temp[indx], s);
             PkgStars[pack] = temp;
         }
-
-        public void PrepareForSaving()
+        internal void MakeAvailable(PackageType pack)
+        {
+            if (!PackageAvailability.ContainsKey(pack)) PackageAvailability.Add(pack, true);
+            else PackageAvailability[pack] = true;
+        }
+        internal void UpdateRawData()
         {
             _timestamp = DateTime.Now;
 
             // package lock state
             List<string> data = new List<string>();
             foreach (PackageType pack in PackageAvailability.Keys)
-                data.Add((int)pack + "|" + (PackageAvailability[pack] ? 1 : 0));
-            __P = string.Join("~", data);
+                data.Add((int)pack + "~" + (PackageAvailability[pack] ? 1 : 0));
+            PData = string.Join("|", data);
             // stars                        
             data = new List<string>();
             foreach (PackageType pack in PkgStars.Keys)
-                data.Add((int)pack + "|" + String.Join("#",PkgStars[pack]));
-            __S = String.Join("~", data);
+                data.Add((int)pack + "~" + String.Join(",", PkgStars[pack]));
+            SData = String.Join("|", data);
 
-            //EncryptStrings();
+            Encrypted = false;
         }
 
-        public void PostLoad()
+        internal void LoadRawData()
         {
-            // DecryptStrings();
-            string[] data = __S.Split('~');
+            if (Encrypted) DecryptStrings();
+            string[] data = SData.Split('|');
             foreach (string s in data)
             {
                 try
                 {
                     if (s == "") continue;
-                    string[] pair = s.Split('|');
+                    string[] pair = s.Split('~');
                     PackageType p = (PackageType)int.Parse(pair[0]);
-                    PkgStars.Add(p, pair[1].Split('#').Select(t => int.Parse(t)).ToList());
+                    PkgStars.Add(p, pair[1].Split(',').Select(t => int.Parse(t)).ToList());
                 }
                 catch { }
             }
-            data = __P.Split('~');
+            data = PData.Split('|');
             foreach (string s in data)
             {
                 try
                 {
                     if (s == "") continue;
-                    string[] pair = s.Split('|');
+                    string[] pair = s.Split('~');
                     PackageType p = (PackageType)int.Parse(pair[0]);
                     PackageAvailability.Add(p, pair[1] == "1");
                 }
                 catch { }
             }
+        }        
+        [XmlIgnore]
+        public bool Encrypted { get; private set; }
+        internal void EncryptStrings()
+        {
+            if (Encrypted) return;
+            SData = SecurityProvider.Encrypt(SData);
+            PData = SecurityProvider.Encrypt(PData);
+            Encrypted = true;
+        }
+        internal void DecryptStrings()
+        {
+            if (!Encrypted) return;
+            SData = SecurityProvider.Decrypt(SData);
+            PData = SecurityProvider.Decrypt(PData);
+            Encrypted = false;
         }
     }
 }

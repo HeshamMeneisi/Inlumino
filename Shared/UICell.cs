@@ -56,8 +56,10 @@ namespace Inlumino_SHARED
                     batch.Draw(DataHandler.getTexture(overlay.RefKey)/*Texture2D from file*/, cropped.Offset(parent.GlobalPosition).ToRectangle()/*on-screen box*/, source.ToRectangle()/*Rectange on the sheet*/, Color.White/*white=no tint*/);
                 }
             }
+            // Siblings
+            foreach (UIVisibleObject obj in siblings.Where(t => t is UIVisibleObject)) obj.Draw(batch, cam);
             // Children
-            foreach (UIVisibleObject obj in siblings) obj.Draw(batch, cam);
+            foreach (UIVisibleObject obj in children.Where(t => t is UIVisibleObject)) obj.Draw(batch, cam);
             // Draw text                        
             Vector2 tsize = font.MeasureString(text);
             if (cam == null)
@@ -68,36 +70,6 @@ namespace Inlumino_SHARED
                 if (cam.isInsideView(pos))
                     batch.DrawString(font, text, cam.Transform(pos) + parent.GlobalPosition, color);
             }
-        }
-
-        internal void CentralizeSiblings()
-        {
-            foreach (UIVisibleObject obj in siblings)
-                obj.Position = new Vector2(position.X + (Width - obj.Width) / 2, position.Y + (Height - obj.Height) / 2);
-        }
-
-        internal void AttachSibling(UIVisibleObject child)
-        {
-            child.Parent = Parent;
-            siblings.Add(child);
-        }
-
-        internal void FitSiblings()
-        {
-            foreach (UIVisibleObject obj in siblings)
-                if (obj.Width > obj.Height)
-                {
-                    float h = Width * obj.Height / obj.Width,
-                          w = Width;
-                    obj.Size = new Vector2(w, h);
-                }
-                else
-                {
-                    float w = Height * obj.Width / obj.Height,
-                          h = Height;
-                    obj.Size = new Vector2(w, h);
-                }
-
         }
     }
 }

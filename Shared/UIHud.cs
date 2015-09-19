@@ -16,6 +16,8 @@ namespace Inlumino_SHARED
         Orientation mode;
         Camera cam;
         UICell snaptarget = null;
+
+        internal List<UICell> Cells { get { return cells; } }
         internal float ActualWidth { get { return Math.Min(TotalWidth, maxwidth); } }
         internal float ActualHeight { get { return Math.Min(TotalHeight, maxheight); } }
 
@@ -24,7 +26,7 @@ namespace Inlumino_SHARED
 
         internal bool SnapCameraToCells = false;
 
-        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; if(snaptarget!=null)cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
+        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; if (snaptarget != null) cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 
         internal override RectangleF BoundingBox
         {
@@ -103,55 +105,61 @@ namespace Inlumino_SHARED
 
         public void Draw(SpriteBatch batch)
         {
-            if (visible)
-                if (cells.Count > 0)
-                    foreach (UIButton b in cells) b.Draw(batch, cam);
-                else
-                {
-                    string s = "Nothing to show.";
-                    Vector2 size = DataHandler.Fonts[0].MeasureString(s);
-                    batch.DrawString(DataHandler.Fonts[0], s, new Vector2(maxwidth / 2, maxheight / 2) - size / 2 + GlobalPosition, Color.White);
-                }
+            if (!visible) return;
+
+            if (cells.Count > 0)
+                foreach (UIButton b in cells) b.Draw(batch, cam);
+            else
+            {
+                string s = "Nothing to show.";
+                Vector2 size = DataHandler.Fonts[0].MeasureString(s);
+                batch.DrawString(DataHandler.Fonts[0], s, new Vector2(maxwidth / 2, maxheight / 2) - size / 2 + GlobalPosition, Color.White);
+            }
         }
 
         internal override void Update(GameTime time)
         {
-            if (visible)
-            {
-                cam.Update(time);
-                foreach (UIButton b in cells) b.Update(time);
-            }
+            if (!visible) return;
+
+            cam.Update(time);
+            foreach (UIButton b in cells) b.Update(time);
+
         }
-        bool dragging = true;
+        bool dragging = false;
         internal override void HandleEvent(WorldEvent e)
         {
-            if (visible)
+            if (!visible || e.Handled) return;
+
+            if (e is MouseUpEvent && dragging)
+            { dragging = false; if (SnapCameraToCells) SnapCam(); return; }
+            foreach (UICell b in cells) b.HandleEvent(e);
+            if (e is TouchFreeDragEvent)
             {
-                if (e is MouseUpEvent && dragging) { dragging = false; if(SnapCameraToCells)SnapCam(); return; }
-                foreach (UICell b in cells) b.HandleEvent(e);
-                if (e is TouchFreeDragEvent)
-                {
-                    TouchFreeDragEvent ev = (e as TouchFreeDragEvent);
-                    if (!BoundingBox.ContainsPoint(ev.Postion)) goto skip;
-                    Vector2 delta = ev.Delta;
-                    cam.StepHorizontal(-delta.X);
-                    cam.StepVertical(-delta.Y);
-                skip:;
-                }
-                if (e is MouseMovedEvent)
-                {
-                    if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
-                    {
-                        if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) return;
-                        dragging = true;
-                        Point offset = (e as MouseMovedEvent).Offset;
-                        cam.StepHorizontal(offset.X);
-                        cam.StepVertical(offset.Y);
-                    }
-                }
-                if (e is TouchAllFingersOffEvent && SnapCameraToCells)
-                    SnapCam();
+                e.Handled = true;
+                TouchFreeDragEvent ev = (e as TouchFreeDragEvent);
+                if (!BoundingBox.ContainsPoint(ev.Postion)) goto skip;
+                Vector2 delta = ev.Delta;
+                cam.StepHorizontal(-delta.X);
+                cam.StepVertical(-delta.Y);
+                return;
+            skip: e.Handled = false; return;
             }
+            if (e is MouseMovedEvent)
+            {
+                if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
+                {
+                    e.Handled = true;
+                    if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) goto skip;
+                    dragging = true;
+                    Point offset = (e as MouseMovedEvent).Offset;
+                    cam.StepHorizontal(offset.X);
+                    cam.StepVertical(offset.Y);
+                    return;
+                skip: e.Handled = false; return;
+                }
+            }
+            if (e is TouchAllFingersOffEvent && SnapCameraToCells)
+                SnapCam();
         }
 
         private void SnapCam()

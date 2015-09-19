@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Inlumino_SHARED
 {
@@ -11,6 +13,7 @@ namespace Inlumino_SHARED
         protected Vector2 size = Vector2.Zero; // I told you the size must be custom, texture size is irrelevant to actual size :P
         protected Vector2 origin = Vector2.Zero;
         protected int state = 0;
+        
 
         internal int State { get { return state; } set { state = value; } }
         internal UIVisibleObject(TextureID[] tid, int layer = 0, string id = "")
@@ -93,13 +96,21 @@ namespace Inlumino_SHARED
         {
             float w = Screen.Width * perc;
             float h = size.Y / size.X * w;
-            size = new Vector2(w, h);
+
+            Vector2 nsize = new Vector2(w, h);
+            foreach (UIVisibleObject obj in children.Where(t => t is UIVisibleObject))
+                obj.Size *= nsize / Size;
+            Size = nsize;
+
         }
         internal void setSizeRelativeToHeight(float perc)
         {
             float h = Screen.Height * perc;
             float w = size.X / size.Y * h;
-            size = new Vector2(w, h);
+            Vector2 nsize = new Vector2(w, h);
+            foreach (UIVisibleObject obj in children.Where(t => t is UIVisibleObject))
+                obj.Size *= nsize / Size;
+            Size = nsize;
         }
 
         internal virtual void setSizeRelative(float perc, Orientation mode)
@@ -111,6 +122,30 @@ namespace Inlumino_SHARED
         }
         internal override void HandleEvent(WorldEvent e)
         {
+        }
+
+        internal void CentralizeSiblings()
+        {
+            foreach (UIVisibleObject obj in siblings.Where(t => t is UIVisibleObject))
+                obj.Position = new Vector2(position.X + (Width - obj.Width) / 2, position.Y + (Height - obj.Height) / 2);
+        }
+
+        internal void FitSiblings()
+        {
+            foreach (UIVisibleObject obj in siblings.Where(t => t is UIVisibleObject))
+                if (obj.Width > obj.Height)
+                {
+                    float h = Width * obj.Height / obj.Width,
+                          w = Width;
+                    obj.Size = new Vector2(w, h);
+                }
+                else
+                {
+                    float w = Height * obj.Width / obj.Height,
+                          h = Height;
+                    obj.Size = new Vector2(w, h);
+                }
+
         }
     }
 }

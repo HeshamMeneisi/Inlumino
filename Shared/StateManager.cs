@@ -30,6 +30,7 @@ namespace Inlumino_SHARED
             State = name;
             if (gameStates.ContainsKey(name))
             {
+                VirtualKeyboard.Hide();
                 if (newstate != null) currentGameState = gameStates[name] = newstate;
                 else currentGameState = gameStates[name];
                 currentGameState.OnActivated(args);
@@ -64,7 +65,6 @@ namespace Inlumino_SHARED
         EditMode,
         SaveLevel,
         SelectLevel,
-        DeleteLevel,
         Options,
         PackageSelector
     }

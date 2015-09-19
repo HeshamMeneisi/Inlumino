@@ -32,18 +32,21 @@ namespace Inlumino_SHARED
         internal delegate void DragCompleteHandler(Vector2 position);
         internal static event DragCompleteHandler DragComplete;
         internal delegate void FingerDownHandler(Vector2 position);
-        internal static event  FingerDownHandler FingerDown;
+        internal static event FingerDownHandler FingerDown;
         internal delegate void FingerOffHandler(Vector2 position);
         internal static event FingerOffHandler FingerOff;
         internal delegate void AllFingersOffHandler();
         internal static event AllFingersOffHandler AllFingersOff;
         internal static void init()
-        {
-            lmx = Mouse.GetState().X;
-            lmy = Mouse.GetState().Y;
-            lwv = Mouse.GetState().ScrollWheelValue;
+        {            
             TouchPanel.EnabledGestures = GestureType.Tap | GestureType.FreeDrag | GestureType.Pinch | GestureType.PinchComplete;
+#if WINDOWS_UAP
+            ms = Mouse.GetState();
+            lmx = ms.X;
+            lmy = ms.Y;
+            lwv = ms.ScrollWheelValue;
             WatchKeys(Keys.GetValues(typeof(Keys)).Cast<Keys>().ToArray());
+#endif
         }
 
         static List<Keys> watchlist = new List<Keys>();
@@ -54,10 +57,12 @@ namespace Inlumino_SHARED
         static bool pinching = false;
         static MouseState ms;
         static KeyboardState ks;
-        static bool fo = false;     
+        static bool fo = false;
         static public void Update(GameTime time)
         {
             ms = Mouse.GetState();
+
+            ks = Keyboard.GetState();
 
             TouchCollection ts = TouchPanel.GetState();
 
@@ -67,9 +72,9 @@ namespace Inlumino_SHARED
             {
                 fo = true;
                 if (tl.State == TouchLocationState.Pressed && FingerDown != null) FingerDown(tl.Position);
-                if (tl.State == TouchLocationState.Released && FingerOff != null) FingerOff(tl.Position);               
+                if (tl.State == TouchLocationState.Released && FingerOff != null) FingerOff(tl.Position);
             }
-            if(fo && ts.Count==0 && AllFingersOff!=null)
+            if (fo && ts.Count == 0 && AllFingersOff != null)
             {
                 fo = false;
                 AllFingersOff();
@@ -197,5 +202,6 @@ namespace Inlumino_SHARED
         {
             return ms.Position;
         }
+        
     }
 }
