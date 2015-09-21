@@ -16,7 +16,7 @@ namespace Inlumino_SHARED
         static SaveMenu savemenu;
         static LevelSelector selector;
         static StageContainer stagecont;
-        static ContentManager contentManager;
+        static SmartContentManager contentManager;
         static OptionsMenu optionsmenu;
         static PackageSelector packselector;
         static LevelSaveOnlineUI levelsavetocloud;
@@ -138,7 +138,7 @@ namespace Inlumino_SHARED
         }
 
         internal static StateManager StateManager { get { return stateManager; } }
-        internal static ContentManager ContentManager { get { return contentManager; } }
+        internal static SmartContentManager RandomAccessContentManager { get { return contentManager; } }
         internal static Settings GameSettings { get { return settings; } set { settings = value; } }
         //internal static EncryptionProvider Cipher { get { return crypto; } set { crypto = value; } }
         internal static Game Parent { get { return parentGame; } }
@@ -149,7 +149,7 @@ namespace Inlumino_SHARED
             LoadUserDataLocal();
             SyncData();
             parentGame = parent;
-            contentManager = parent.Content;
+            contentManager = parent.Content as SmartContentManager;
             LoadSettings();
             DataHandler.LoadCurrentTheme();
             stateManager = new StateManager();
@@ -193,6 +193,15 @@ namespace Inlumino_SHARED
         internal static void HandleEvent(WorldEvent e)
         {
             if (!initd) return;
+            // Debugging commands
+            if(Debugger.IsAttached && e is KeyDownEvent)
+            {
+                if((e as KeyDownEvent).Key == Keys.OemTilde)
+                {
+                    DataHandler.Textures.Clear();
+                    Manager.RandomAccessContentManager.Dispose();
+                }
+            }
             VirtualKeyboard.HandleEvent(e);
             stateManager.CurrentGameState.HandleEvent(e);
         }

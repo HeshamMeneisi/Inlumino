@@ -23,7 +23,7 @@ namespace Inlumino_SHARED
             menu.Add(savebtn);
 
             email = new UITextField(254, Color.White, Color.Black, "Email (Signup/Login)");
-            password = new UITextField(10, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
+            password = new UITextField(12, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 12)" : "Logged in!");
             //password.IsPassword = true;   Password only visible at login/signup no need for this
             //login = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], loginpressed);
 
@@ -71,6 +71,11 @@ namespace Inlumino_SHARED
             }
             else
             {
+                if(password.Text.Length < 6)
+                {
+                    await MessageBox.Show("Password", "Password must be 6-12 letters.", new string[] { "OK" });
+                    goto dontquit;
+                }
                 var user = new ParseUser()
                 {
                     Username = email.Text,

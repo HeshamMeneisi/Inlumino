@@ -121,9 +121,11 @@ namespace Inlumino_SHARED
 
         internal static TextureID GetStarsTex(int s)
         {
-            TextureID[] star = DataHandler.UIObjectsTextureMap[UIObjectType.Star];
-            Texture2D t = Manager.Parent.Concat(star[s > 0 ? 1 : 0], star[s > 1 ? 1 : 0], star[s > 2 ? 1 : 0]);
-            return new TextureID(DataHandler.LoadTexture(s + "stars", t), 0, 3, 1);
+            return new TextureID(() =>
+            {
+                TextureID[] star = DataHandler.UIObjectsTextureMap[UIObjectType.Star];
+                return Manager.Parent.Concat(star[s > 0 ? 1 : 0], star[s > 1 ? 1 : 0], star[s > 2 ? 1 : 0]);
+            }, "_" + s + "stars", 0, 3, 1);
         }
 
         internal static void MatchTheme(PackageType package)

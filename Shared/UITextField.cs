@@ -79,11 +79,7 @@ namespace Inlumino_SHARED
         {
             if (!visible) return;
             // background
-            int w = (int)Width, h = (int)Height;
-            Texture2D rect = new Texture2D(Manager.Parent.GraphicsDevice, w, h);
-            Color[] data = new Color[w * h];
-            for (int i = 0; i < data.Length; ++i) data[i] = background;
-            rect.SetData(data);
+            UpdateBackground();
             batch.Draw(rect, BoundingBox.ToRectangle(), Color.White);
             //
             string t = Padding + (text == "" ? deftext : IsPassword ? string.Join("", Enumerable.Repeat(HashChar, text.Length)) : text);
@@ -96,6 +92,17 @@ namespace Inlumino_SHARED
             batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
         }
+        Texture2D rect = null;
+        private void UpdateBackground()
+        {
+            int w = (int)Width, h = (int)Height;
+            if (rect != null && rect.Width == w && rect.Height == h) return;            
+            rect = new Texture2D(Manager.Parent.GraphicsDevice, w, h);
+            Color[] data = new Color[w * h];
+            for (int i = 0; i < data.Length; ++i) data[i] = background;
+            rect.SetData(data);
+        }
+
         internal void ScaleToDefault()
         {
             Vector2 tsize = font.MeasureString(deftext);

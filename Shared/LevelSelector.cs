@@ -22,9 +22,9 @@ namespace Inlumino_SHARED
         protected UIButton nextbtn;
         protected UITextField searchquery;
         UITextField loading;
-        protected List<UICell> mlcells = new List<UICell>();        
+        protected List<UICell> mlcells = new List<UICell>();
         internal LevelSelector()
-        {            
+        {
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], menupressed);
             backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], backpressed);
             deletebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.DeleteBtn], delpressed);
@@ -49,7 +49,7 @@ namespace Inlumino_SHARED
         private void searchselect(UITextField sender, bool state)
         {
             if (!state)
-            {                
+            {
                 onlinelevelpos = 0;
                 SetupHud();
             }
@@ -133,15 +133,15 @@ namespace Inlumino_SHARED
         bool busy = false;
         protected virtual async Task SetupHud(bool reload = true)
         {
-            busy = true;            
+            busy = true;
             genmenu.setAllSizeRelative(0.16f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             searchquery.ScaleToDefault();
             genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
-            UICell target = mainlevels == null?null:mainlevels.SnapTarget;
+            UICell target = mainlevels == null ? null : mainlevels.SnapTarget;
             if (reload)
             {
                 mlcells.Clear();
-                bool first = true;                
+                bool first = true;
                 if (package == PackageType.Online)
                 {
                 reqeury:
@@ -158,7 +158,7 @@ namespace Inlumino_SHARED
                     {
                         try
                         {
-                            UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], e.Current.ObjectId, e.Current.Get<string>("name"), Color.White, new TextureID(DataHandler.GetLevelThumb(e.Current), e.Current.ObjectId, 0, -1, -1), 0.1f);
+                            UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], e.Current.ObjectId, e.Current.Get<string>("name"), Color.White, new TextureID(() => DataHandler.GetLevelThumb(e.Current), e.Current.ObjectId, 0, -1, -1), 0.1f);
                             cell.Pressed += mlcellpressed;
                             mlcells.Add(cell);
                         }
@@ -170,7 +170,7 @@ namespace Inlumino_SHARED
                 {
                     foreach (string name in DataHandler.getSavedLevelNames())
                     {
-                        UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
+                        UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], name, name, Color.White, new TextureID(() => DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
                         cell.Pressed += mlcellpressed;
                         mlcells.Add(cell);
                     }
@@ -186,7 +186,7 @@ namespace Inlumino_SHARED
                     foreach (string name in Common.Packages[package])
                     {
                         int s = Common.GetScore(package, name);
-                        TextureID stex;
+                        TextureID stex = null;
                         bool flag = false;
                         bool scrollflage = false;
                         if (s > 0 || first)
@@ -197,7 +197,7 @@ namespace Inlumino_SHARED
                             flag = true;
                         }
                         else stex = DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0];
-                        UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
+                        UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], flag ? name : "$$L$$", "", Color.White, new TextureID(() => DataHandler.GetLevelThumb(name, package), name, 0, -1, -1), 0.1f);
                         if (scrollflage) target = cell;
                         cell.AttachSibling(new UIVisibleObject(new TextureID[] { stex }));
                         cell.Pressed += mlcellpressed;
@@ -234,7 +234,7 @@ namespace Inlumino_SHARED
                 Manager.HandleShareReq(mainlevels.SnapTarget.Tag.ToString());
         }
         public void OnActivated(params object[] args)
-        {            
+        {
             onlinelevelpos = 0;
             package = (PackageType)args[0];
             Common.MatchTheme(package);
