@@ -122,7 +122,7 @@ enum UIObjectType
     PlayBtn,EditModeBtn,OptionsBtn,
     Cell,
     MenuButton,
-    RestartButton,
+    ResetButton,
     ToggleButton,
     SaveButton,
     LeftButton,

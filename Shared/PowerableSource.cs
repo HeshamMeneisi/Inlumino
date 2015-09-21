@@ -73,9 +73,9 @@ namespace Inlumino_SHARED
         private void OneSourceDown(Direction side)
         {
             if (allsources[side].Count == 0)
-            { inputstate[side] = false; turnAllDependantsOff(side); updateStatus(); }
+            { inputstate[side] = false; /*Inifnite loop turnAllDependantsOff(side);*/ updateStatus(); }
         }
-
+        /*
         private void turnAllDependantsOff(Direction side)
         {
             Direction rs = Common.RelativeDir(side, rotation);
@@ -85,7 +85,7 @@ namespace Inlumino_SHARED
                 if (map[relativedir].Contains(rs) && outputstate[dir])
                     Common.PulseTile(parenttile.getAdjacentTile(dir), outputstate[dir] = false, Common.ReverseDir(dir), this);
             }
-        }
+        }*/
 
         internal override void Update(GameTime time)
         {
@@ -102,10 +102,12 @@ namespace Inlumino_SHARED
             state = 0;
             foreach (Direction dir in Direction.GetValues(typeof(Direction)))
             {
+                // dir is a screen wise direction
+                // This is the direction regarding the object itself
                 Direction relativedir = Common.RelativeDir(dir, rotation);
                 bool on = false;
-                foreach (int req in map[relativedir])
-                    if (inputstate[Common.NextDirCW(rotation, req)]) on = true;
+                foreach (int requirement in map[relativedir]) // Requirements are "or" logic
+                    if (inputstate[Common.NextDirCW(rotation, requirement)]) on = true;
                 if (on != outputstate[dir])
                     Common.PulseTile(parenttile.getAdjacentTile(dir), outputstate[dir] = on, Common.ReverseDir(dir), this);
                 if (on) state = 1;

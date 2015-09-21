@@ -7,6 +7,8 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System.IO;
+using Parse;
 
 namespace Inlumino_SHARED
 {
@@ -15,16 +17,32 @@ namespace Inlumino_SHARED
     {
         internal static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
         internal static string[] UserPackage = new string[] { };
-        internal static string[] BeachPackage = new string[] { "$ba", "$bb", "$bc", "$bd", "$be", "$bf", "$bg", "$bh", "$bi", "$bj", "$bk", "$bl" };
-        internal static string[] SpacePackge = new string[] { "$sa", "$sb", "$sc", "$sd", "$se", "$sf", "$sg", "$sh" };
+        internal static string[] OnlinePackage = new string[] { };
+        internal static string[] BeachPackage = new string[] { "$BA", "$BB", "$BC", "$BD", "$BE", "$BF", "$BG", "$BH", "$BI", "$BJ", "$BK", "$BL", "$BM", "$BN", "$BO", "$BP", "$BQ", "$BR", "$BS", "$BT", "$BU", "$BV", "$BW", "$BX", "$BY" };
+        internal static string[] SpacePackage = new string[] { "$SZA", "$SZB", "$SZC", "$SZD", "$SZE", "$SZF", "$SZG", "$SZH", "$SZI", "$SZJ", "$SZK", "$SZL", "$SZM", "$SZN", "$SZO", "$SZP", "$SZQ", "$SZR", "$SZS", "$SZT", "$SZU", "$SZV", "$SZW", "$SZX", "$SZY" };
         internal static Dictionary<PackageType, string[]> Packages = new Dictionary<PackageType, string[]>
         {
             {PackageType.Beach,BeachPackage },
-            {PackageType.Space,SpacePackge },
-            {PackageType.User,UserPackage }
+            {PackageType.Space,SpacePackage },
+            {PackageType.User,UserPackage },
+            {PackageType.Online,OnlinePackage }
+        };
+        internal static Dictionary<PackageType, string[]> H = new Dictionary<PackageType, string[]>
+        {
+            {PackageType.Beach,CommonData.BPH },
+            {PackageType.Space,CommonData.SPH }
         };
         internal static TextureID[] Auxiliaries = GetAux().ToArray();
-        private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 5; i++) yield return new TextureID("aux", i); }
+        private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 8; i++) yield return new TextureID(PrimaryTexture._Aux.ToString(), i); }
+
+        internal static bool IsMainLevel(string hash)
+        {
+            foreach (string[] v in Common.H.Values)
+                foreach (string h in v)
+                    if (h.Equals(hash)) return true;
+            return false;
+        }
+
         internal static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
         {
             if (target == default(Tile)) return;
@@ -53,12 +71,12 @@ namespace Inlumino_SHARED
             return a;
         }
 
-        internal static Stage CreateLevel(string name, PackageType package = Inlumino_SHARED.PackageType.User)
+        internal static Stage CreateLevel(string name, PackageType package = PackageType.User)
         {
             Stage level = DataHandler.LoadStage(name, package);
 
             if (level != null)
-                level.setBackground(DataHandler.getTexture("bg"));
+                level.setBackground(DataHandler.getTexture(PrimaryTexture._BG));
 
             return level;
         }
@@ -73,6 +91,26 @@ namespace Inlumino_SHARED
 
         internal static Direction NextDirCW(Direction dir, int count = 1)
         { return count >= 0 ? (Direction)((int)(dir + count) % 4) : NextDirCCW(dir, -count); }
+
+        internal static byte[] Texture2DToBytes(Texture2D thumb)
+        {
+            MemoryStream s = new MemoryStream();
+            thumb.SaveAsJpeg(s, thumb.Width, thumb.Height);
+            byte[] data = new byte[s.Length];
+            s.Position = 0;
+            s.Read(data, 0, data.Length);
+            s.Dispose();
+            return data;
+        }
+        internal static Texture2D Texture2DFromBytes(byte[] data)
+        {
+            MemoryStream s = new MemoryStream();
+            s.Write(data, 0, data.Length);
+            s.Position = 0;
+            Texture2D ret = Texture2D.FromStream(Manager.Parent.GraphicsDevice, s);
+            s.Dispose();
+            return ret;
+        }
         internal static Direction NextDirCCW(Direction dir, int count = 1)
         { return count >= 0 ? (Direction)((int)(dir + 3 * count) % 4) : NextDirCW(dir, -count); }
         internal static Direction RelativeDir(Direction dir, Direction neworigin, Direction origin = Direction.North)
@@ -86,6 +124,21 @@ namespace Inlumino_SHARED
             TextureID[] star = DataHandler.UIObjectsTextureMap[UIObjectType.Star];
             Texture2D t = Manager.Parent.Concat(star[s > 0 ? 1 : 0], star[s > 1 ? 1 : 0], star[s > 2 ? 1 : 0]);
             return new TextureID(DataHandler.LoadTexture(s + "stars", t), 0, 3, 1);
+        }
+
+        internal static void MatchTheme(PackageType package)
+        {
+            bool flag;
+            switch (package)
+            {
+                case PackageType.Beach:
+                    Manager.GameSettings.CurrentTheme = ThemeType.Beach;
+                    DataHandler.LoadCurrentTheme(); break;
+                case PackageType.Space:
+                    Manager.GameSettings.CurrentTheme = ThemeType.Space;
+                    DataHandler.LoadCurrentTheme(); break;
+                default: return;
+            }
         }
 
         internal static bool isDirHorizontal(Direction dir)
@@ -106,13 +159,20 @@ namespace Inlumino_SHARED
         }
         private static void GameFinished(PackageType package)
         {
-            if(package == PackageType.Beach)
+            if (package == PackageType.Beach)
             {
                 Manager.UserData.MakeAvailable(PackageType.Space);
                 Manager.SaveUserDataLocal();
                 MessageBox.Show("Congratulations!", "You have unlocked the Space package!", new string[] { "OK" });
             }
+            else
+            {
+                MessageBox.Show("Congratulations!", "You finisehd the space package! Check for updates soon for more!", new string[] { "OK" });
+            }
+
             Manager.StateManager.SwitchTo(GameState.MainMenu);
+
+            ParseAnalytics.TrackEventAsync("PackFinished", new Dictionary<string, string> { { "name", package.ToString() } });
         }
 
         internal static void SpreadAuxiliaries(Stage currentLevel, float v)
@@ -127,7 +187,7 @@ namespace Inlumino_SHARED
         }
         internal static int GetScore(PackageType pack, string name)
         {
-            if (pack == Inlumino_SHARED.PackageType.User) return 0;
+            if (pack == PackageType.User) return 0;
             int i = 0;
             for (; i < Packages[pack].Length; i++)
                 if (Packages[pack][i] == name)
@@ -143,11 +203,42 @@ namespace Inlumino_SHARED
                     Manager.UserData.setStars(pack, i, score);
             Manager.SaveUserDataLocal();
         }
+
+        internal static async Task SignalPlayed(ParseObject obj)
+        {
+            try
+            {
+                int count = obj.Get<int>("played");
+                obj["played"] = count + 1;
+                obj.SaveAsync();
+            }
+            catch { }
+        }
+
+        internal static bool VerifyLevel(string name, PackageType pack, string data)
+        {
+            int i = 0;
+            string[] MainLevelNames = Packages[pack];
+            for (; i < MainLevelNames.Length; i++)
+                if (MainLevelNames[i] == name)
+                {
+                    string h = SecurityProvider.GetMD5Hash(data);
+                    return h.Equals(Common.H[pack][i]);
+                }
+            return false;
+        }
     }
-    public enum PackageType { None = -2, User = 0, Beach = 1, Space = 2 }
+    public enum PackageType
+    {
+        None = -2, User = 0, Beach = 1, Space = 2,
+        Online = 3
+    }
 
     static class CommonData
     {
+        internal static string[] SPH = new string[] { "8PvAJQUx6J33knnHVaSecA==", "GK+t2sBr4zNwtCUgffFXCw==", "x8tdDAc3r5uCdzp18/EMrQ==", "9QZditpqmYdWC5ChozR5uQ==", "tiifEN0A+FZATZTLdzvRsA==", "0455fMlYN5hUkKZsr1etLQ==", "0ujO099GHYURU2Hgll6i/A==", "ndGBHDg7tu16LuG/FTQqVw==", "2eUQpjOQTCT//PN3qJJPmg==", "36K5WA+iX8gByEJzouQ/jw==", "rSDd5miYZKuhpZV1Kw1Oqw==", "kbb1nQ/loM1ENPzw0QZWXQ==", "Sm0IDwyVkStm0Mj9+IUqkA==", "8xqQRMlwfUi0QVCG7MV+1Q==", "YJvu3yJaJWrTBAgMtx4AmA==", "9oGHYqXnEVCRrKouIu4bVg==", "rJuTocMMrRUOfPPyn5asAA==", "MlWIf6XJNNvODAgqHjvSiQ==", "WR3dIKFly9xCEMk84k5rxQ==", "7Uf8no0Fsk/ElZeane4wgg==", "vOC1zuCcQ0TmahtB45vX0g==", "SSijqUSUSjVkCjzZu1rhKw==", "BaCX9XH+G4HXc5WFX+wGNw==", "xPLOWRZ3YCbIfN8rQDYjBw==", "XYzHNSVulvO1lCYgHIVVaQ==" };
+        internal static string[] BPH = new string[] { "svFMgqgbsNqpGmptucZvew==", "h0vHbNd044njuTV3PCMBrw==", "64FNLHlarDpooGG3PC6NGQ==", "BTA+PIdwsxdqQXxcWirXOQ==", "Pzkb2fBXj1zXcZWaVyf8vw==", "s6arXO5YJ8QEa+fVFjc33A==", "9/osIu3FoERT4+CQFlCjIg==", "wOr16mVtYHGJ0tBcL+y/qw==", "DAHVHCPlaCOXcBPQpSKUQw==", "34Tc5uL85VXCGrxm+il7Vg==", "/jFLCmDBUfWFFH6Lx11sMQ==", "OlYdAkhOPH7Lq4GOQkJ58Q==", "j4ChfnCyvAXdgUkpEO+xKg==", "VxPUKRby+dyB8v26Em3yRA==", "j4ChfnCyvAXdgUkpEO+xKg==", "HvsoXD5/oo+/UlcjdkBUBg==", "PFpSoDfo3BvG2b7ERREijQ==", "hg73AWXT3pVaLCxMKNI1Rw==", "yIU7DX60kP66VAl4lMfBkw==", "RxuHT/3wz4UHuWGFnd92/g==", "PW+XsrsHChhozYFarhaegw==", "myUaVuZXtRGXZ/eNTecSIA==", "G5mD1gQCs2kcLzRYIFM5jg==", "WbMkRKeSRezg789uB0mGnA==", "Veyyb+Jmle6bMn7Q0OhIZA==" };
+
         public static Dictionary<Keys, char[]> KeyCharMap = new Dictionary<Keys, char[]>()
         {
             { Keys.OemTilde,new char[] {'`','~' } },

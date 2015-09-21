@@ -162,6 +162,16 @@ namespace Inlumino_SHARED
                 SnapCam();
         }
 
+        internal void SlideLeft()
+        {
+            cam.StepHorizontal(-minuwidth);SnapCam();
+        }
+
+        internal void SlideRight()
+        {
+            cam.StepHorizontal(minuwidth); SnapCam();
+        }
+
         private void SnapCam()
         {
             snaptarget = null;

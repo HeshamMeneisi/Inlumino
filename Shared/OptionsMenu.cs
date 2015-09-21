@@ -107,8 +107,9 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            email.Size = password.Size = new Vector2(Screen.Width, Screen.Height * 0.2f);
-            loginmenu.ArrangeInForm(Orientation.Portrait);
+            float v = Screen.Height * 0.2f;
+            email.Size = password.Size = new Vector2(Screen.Width, v);
+            loginmenu.ArrangeInForm(Orientation.Portrait);            
             savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, Screen.Height - savebtn.BoundingBox.Height);
         }

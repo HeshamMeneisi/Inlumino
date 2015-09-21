@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Content;
 using System;
 using Parse;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Inlumino_SHARED
 {
@@ -18,6 +19,7 @@ namespace Inlumino_SHARED
         static ContentManager contentManager;
         static OptionsMenu optionsmenu;
         static PackageSelector packselector;
+        static LevelSaveOnlineUI levelsavetocloud;
         static Game parentGame;
         static Settings settings;
         static UserData userdata;
@@ -36,12 +38,12 @@ namespace Inlumino_SHARED
             if (temp != null) GameSettings = temp;
             else settings = new Settings();
         }
-        static bool suppressconnectionwarning = false;
         static bool syncingdata = false, connected = false;
         internal static bool IsIdle { get { return !syncingdata; } }
         internal static async Task<Exception> SyncData()
-        {            
+        {
             while (!IsIdle) { }
+            Debug.WriteLine("Sync started.");
             syncingdata = true;
             if (ParseUser.CurrentUser != null)
             {
@@ -61,17 +63,19 @@ namespace Inlumino_SHARED
                     data["PData"] = userdata.PData;
                     data["SData"] = userdata.SData;
                     SaveUserDataLocal();
-                    await data.SaveAsync();                    
+                    await data.SaveAsync();
                     connected = true;
                 }
                 catch (Exception e)
                 {
                     connected = false;
+                    Debug.WriteLine("Sync failed. Error:"+e.Message);
                     return e;
                 }
             }
             SaveUserDataLocal();
             syncingdata = false;
+            Debug.WriteLine("Sync finished successfully.");
             return null;
         }
 
@@ -88,12 +92,13 @@ namespace Inlumino_SHARED
             UserData temp = DataHandler.LoadData<UserData>(datafile);
             if (temp != null) userdata = temp;
             else userdata = new UserData();
-            userdata.LoadRawData();            
+            userdata.LoadRawData();
             return null;
         }
 
         private static async Task<ParseObject> FetchUserData()
         {
+            Debug.WriteLine("Retrieving user data.");
             await ParseUser.CurrentUser.FetchAsync();
             object nullableobj = null;
             if (ParseUser.CurrentUser.ContainsKey("data"))
@@ -110,20 +115,26 @@ namespace Inlumino_SHARED
                 await ParseUser.CurrentUser.SaveAsync();
                 await ParseUser.CurrentUser.FetchAsync();
                 if (ParseUser.CurrentUser["data"].ToString() == data.ObjectId)
+                {
+                    Debug.WriteLine("User data retrieved!");
                     return data;
+                }
                 else
                 {
                     // something went wrong, retry
+                    Debug.WriteLine("Failed, retrying to retrieve data.");
                     await data.DeleteAsync();
                     return await FetchUserData();
                 }
             }
+            Debug.WriteLine("User data retrieved!");
             return await query.GetAsync(id);
         }
 
         internal static void HandleShareReq(string v)
         {
-            MessageBox.Show("Req", "Request to share " + v, new string[] { "OK" });
+            if (v != null)
+                stateManager.SwitchTo(GameState.SaveLevelCloud, null, v);
         }
 
         internal static StateManager StateManager { get { return stateManager; } }
@@ -146,16 +157,18 @@ namespace Inlumino_SHARED
             optionsmenu = new OptionsMenu();
             savemenu = new SaveMenu();
             stagecont = new StageContainer(false);
-            selector = new LevelSelector();            
+            selector = new LevelSelector();
             packselector = new PackageSelector();
+            levelsavetocloud = new LevelSaveOnlineUI();
 
             stateManager.AddGameState(GameState.MainMenu, menu);
             stateManager.AddGameState(GameState.SelectLevel, selector);
             stateManager.AddGameState(GameState.SaveLevel, savemenu);
             stateManager.AddGameState(GameState.OnStage, stagecont);
-            StateManager.AddGameState(GameState.EditMode, stagecont);            
+            StateManager.AddGameState(GameState.EditMode, stagecont);
             stateManager.AddGameState(GameState.Options, optionsmenu);
             stateManager.AddGameState(GameState.PackageSelector, packselector);
+            stateManager.AddGameState(GameState.SaveLevelCloud, levelsavetocloud);
 
             initInput();
 

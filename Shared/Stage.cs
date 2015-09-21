@@ -36,10 +36,11 @@ namespace Inlumino_SHARED
         internal bool CheckWin()
         {
             Crystal[] crystals = map.AllTiles.Select(t => t.getObject() as Crystal).ToArray();
+            if (crystals.Length == 0) return false;
             foreach (Crystal c in crystals)
                 if (c != default(Crystal))
                     if (!c.IsLit()) return false;
-            // Level Won            
+            // Level Won                        
             if (LevelWon != null) LevelWon();
             return true;
         }
@@ -90,6 +91,8 @@ namespace Inlumino_SHARED
             int stgW = GetTotalStageWidth();
             float cw, ch;
             // Make sure the entire stage can be visible at max zoom
+            /*
+            Algorithm 1
             // 1 set camera to stage size
             cw = stgW; ch = stgH;
             // 2 normalize aspect ratio through expansion only
@@ -102,13 +105,30 @@ namespace Inlumino_SHARED
                 min.Scale(cw / Screen.Width, ch / Screen.Height);
                 pad = new Padding(MathHelper.Max(dif / 2, min.Left), MathHelper.Max(dif / 2, min.Right), min.Top, min.Bottom);
             }
-            else
+            else if (Screen.Width < Screen.Height)
             {
                 ch = cw * Screen.Height / Screen.Width;
                 float dif = Math.Max(cw - stgW, ch - stgH);
                 min.Scale(cw / Screen.Width, ch / Screen.Height);
                 pad = new Padding(min.Left, min.Right, MathHelper.Max(dif / 2, min.Top), MathHelper.Max(dif / 2, min.Bottom));
             }
+            */
+            // Algorithm 2 (better)
+            Padding pad = new Padding();
+            Padding min = minpadding.Clone();            
+            float ar = Screen.Width / Screen.Height;
+            // Set camera width to stage width and update height
+            cw = stgW;
+            ch = cw / ar;
+            // Check current case (one of the three is undesirable)
+            if(ch < stgH) // reverse
+            {
+                ch = stgH;
+                cw = ch * ar;
+            }
+            float xdif = (cw - stgW) / 2, ydif = (ch - stgH) / 2;
+            min.Scale(cw / Screen.Width, ch / Screen.Height);
+            pad = new Padding(Math.Max(min.Left, xdif), Math.Max(min.Right, xdif), Math.Max(min.Top, ydif), Math.Max(min.Bottom, ydif));
 
             maincam = new Camera(-pad.Left, -pad.Top, cw, ch, stgW, stgH, pad);
             updateBackgroundBounds();

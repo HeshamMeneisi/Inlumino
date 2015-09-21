@@ -25,7 +25,7 @@ namespace Inlumino_SHARED
             mindim = minkeydim;
             target = targetfield;
             SimulateKeyDownToManager = target == null;
-            if (target != null) priorpos = target.Position;
+            if (target != null) { priorpos = target.Position; target.ScaleToText(); }
             target.Position = new Vector2(target.Position.X, 0);
             SetupHud();
         }
@@ -67,7 +67,7 @@ namespace Inlumino_SHARED
                 {
                     string t = "";
                     if (k == Keys.LeftShift) t = "Aa";
-                    else if (k == Keys.Enter) t = "GO";
+                    else if (k == Keys.Enter) t = "OK";
                     else if (k == Keys.None) t = "#&";
                     else if (k == Keys.Back) t = "<-";
                     else if (CommonData.KeyCharMap.ContainsKey(k)) t = CommonData.KeyCharMap[k][Low ? 0 : 1].ToString();
@@ -105,7 +105,7 @@ namespace Inlumino_SHARED
         private static void EndInput()
         {
             hud = null;
-            if (target != null) { target.Position = priorpos; target.NotifyVKExit(); }
+            if (target != null) { target.Position = priorpos; target.NotifyVKExit(); target = null; }
         }
 
         private static void OnKeyPressed(Keys k)
@@ -115,6 +115,7 @@ namespace Inlumino_SHARED
                 if (CommonData.KeyCharMap.ContainsKey(k)) target.Input(CommonData.KeyCharMap[k][Low ? 0 : 1]);
                 else Manager.HandleEvent(new KeyDownEvent(k));
             else if (SimulateKeyDownToManager) Manager.HandleEvent(new KeyDownEvent(k));
+            target.ScaleToText();
         }
 
         internal static void Draw(SpriteBatch batch)

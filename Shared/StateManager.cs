@@ -66,6 +66,7 @@ namespace Inlumino_SHARED
         SaveLevel,
         SelectLevel,
         Options,
-        PackageSelector
+        PackageSelector,
+        SaveLevelCloud
     }
 }

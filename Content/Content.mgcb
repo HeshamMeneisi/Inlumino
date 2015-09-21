@@ -43,133 +43,287 @@
 /processorParam:Quality=Best
 /build:Sounds/Beach/TapSound.wav
 
-#begin Textures/Beach/auxiliary.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Beach/auxiliary.png
-
-#begin Textures/Beach/background.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Beach/background.png
-
-#begin Textures/Beach/mmbackground.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Beach/mmbackground.png
-
-#begin Textures/Beach/objects.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Beach/objects.png
-
-#begin Textures/Beach/ui.png
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:Textures/Beach/ui.png
-
 #begin Fonts/Beach/MainFont.spritefont
 /importer:FontDescriptionImporter
 /processor:FontDescriptionProcessor
 /processorParam:TextureFormat=Compressed
 /build:Fonts/Beach/MainFont.spritefont
 
-#begin MainLevels/Beach/MLS_$ba.xml
+#begin Sounds/Space/AllCrystalsLit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Space/AllCrystalsLit.wav
+
+#begin Sounds/Space/CrystalLit.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Space/CrystalLit.wav
+
+#begin Sounds/Space/TapSound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Space/TapSound.wav
+
+#begin Fonts/Space/MainFont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Fonts/Space/MainFont.spritefont
+
+#begin MainLevels/Beach/MLS_$BA.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$ba.xml
+/build:MainLevels/Beach/MLS_$BA.xml
 
-#begin MainLevels/Beach/MLS_$bb.xml
+#begin MainLevels/Beach/MLS_$BB.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bb.xml
+/build:MainLevels/Beach/MLS_$BB.xml
 
-#begin MainLevels/Beach/MLS_$bc.xml
+#begin MainLevels/Beach/MLS_$BC.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bc.xml
+/build:MainLevels/Beach/MLS_$BC.xml
 
-#begin MainLevels/Beach/MLS_$bd.xml
+#begin MainLevels/Beach/MLS_$BD.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bd.xml
+/build:MainLevels/Beach/MLS_$BD.xml
 
-#begin MainLevels/Beach/MLS_$be.xml
+#begin MainLevels/Beach/MLS_$BE.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$be.xml
+/build:MainLevels/Beach/MLS_$BE.xml
 
-#begin MainLevels/Beach/MLS_$bf.xml
+#begin MainLevels/Beach/MLS_$BF.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bf.xml
+/build:MainLevels/Beach/MLS_$BF.xml
 
-#begin MainLevels/Beach/MLS_$bg.xml
+#begin MainLevels/Beach/MLS_$BG.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bg.xml
+/build:MainLevels/Beach/MLS_$BG.xml
 
-#begin MainLevels/Beach/MLS_$bh.xml
+#begin MainLevels/Beach/MLS_$BH.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bh.xml
+/build:MainLevels/Beach/MLS_$BH.xml
 
-#begin MainLevels/Beach/MLS_$bi.xml
+#begin MainLevels/Beach/MLS_$BI.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bi.xml
+/build:MainLevels/Beach/MLS_$BI.xml
 
-#begin MainLevels/Beach/MLS_$bj.xml
+#begin MainLevels/Beach/MLS_$BJ.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bj.xml
+/build:MainLevels/Beach/MLS_$BJ.xml
 
-#begin MainLevels/Beach/MLS_$bk.xml
+#begin MainLevels/Beach/MLS_$BK.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bk.xml
+/build:MainLevels/Beach/MLS_$BK.xml
 
-#begin MainLevels/Beach/MLS_$bl.xml
+#begin MainLevels/Beach/MLS_$BL.xml
 /importer:XmlImporter
 /processor:PassThroughProcessor
-/build:MainLevels/Beach/MLS_$bl.xml
+/build:MainLevels/Beach/MLS_$BL.xml
 
-#begin MainLevels/Beach/T_$ba.png
+#begin MainLevels/Beach/MLS_$BM.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BM.xml
+
+#begin MainLevels/Beach/MLS_$BN.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BN.xml
+
+#begin MainLevels/Beach/MLS_$BO.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BO.xml
+
+#begin MainLevels/Beach/MLS_$BP.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BP.xml
+
+#begin MainLevels/Beach/MLS_$BQ.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BQ.xml
+
+#begin MainLevels/Beach/MLS_$BR.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BR.xml
+
+#begin MainLevels/Beach/MLS_$BS.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BS.xml
+
+#begin MainLevels/Beach/MLS_$BT.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BT.xml
+
+#begin MainLevels/Beach/MLS_$BU.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BU.xml
+
+#begin MainLevels/Beach/MLS_$BV.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BV.xml
+
+#begin MainLevels/Beach/MLS_$BW.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BW.xml
+
+#begin MainLevels/Beach/MLS_$BX.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BX.xml
+
+#begin MainLevels/Beach/MLS_$BY.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Beach/MLS_$BY.xml
+
+#begin MainLevels/Space/MLS_$SZA.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZA.xml
+
+#begin MainLevels/Space/MLS_$SZB.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZB.xml
+
+#begin MainLevels/Space/MLS_$SZC.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZC.xml
+
+#begin MainLevels/Space/MLS_$SZD.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZD.xml
+
+#begin MainLevels/Space/MLS_$SZE.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZE.xml
+
+#begin MainLevels/Space/MLS_$SZF.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZF.xml
+
+#begin MainLevels/Space/MLS_$SZG.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZG.xml
+
+#begin MainLevels/Space/MLS_$SZH.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZH.xml
+
+#begin MainLevels/Space/MLS_$SZI.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZI.xml
+
+#begin MainLevels/Space/MLS_$SZJ.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZJ.xml
+
+#begin MainLevels/Space/MLS_$SZK.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZK.xml
+
+#begin MainLevels/Space/MLS_$SZL.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZL.xml
+
+#begin MainLevels/Space/MLS_$SZM.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZM.xml
+
+#begin MainLevels/Space/MLS_$SZN.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZN.xml
+
+#begin MainLevels/Space/MLS_$SZO.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZO.xml
+
+#begin MainLevels/Space/MLS_$SZP.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZP.xml
+
+#begin MainLevels/Space/MLS_$SZQ.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZQ.xml
+
+#begin MainLevels/Space/MLS_$SZR.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZR.xml
+
+#begin MainLevels/Space/MLS_$SZS.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZS.xml
+
+#begin MainLevels/Space/MLS_$SZT.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZT.xml
+
+#begin MainLevels/Space/MLS_$SZU.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZU.xml
+
+#begin MainLevels/Space/MLS_$SZV.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZV.xml
+
+#begin MainLevels/Space/MLS_$SZW.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZW.xml
+
+#begin MainLevels/Space/MLS_$SZX.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZX.xml
+
+#begin MainLevels/Space/MLS_$SZY.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:MainLevels/Space/MLS_$SZY.xml
+
+#begin MainLevels/Space/T_$SZA.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -179,9 +333,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$ba.png
+/build:MainLevels/Space/T_$SZA.jpg
 
-#begin MainLevels/Beach/T_$bb.png
+#begin MainLevels/Space/T_$SZB.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -191,9 +345,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bb.png
+/build:MainLevels/Space/T_$SZB.jpg
 
-#begin MainLevels/Beach/T_$bc.png
+#begin MainLevels/Space/T_$SZC.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -203,9 +357,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bc.png
+/build:MainLevels/Space/T_$SZC.jpg
 
-#begin MainLevels/Beach/T_$bd.png
+#begin MainLevels/Space/T_$SZD.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -215,9 +369,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bd.png
+/build:MainLevels/Space/T_$SZD.jpg
 
-#begin MainLevels/Beach/T_$be.png
+#begin MainLevels/Space/T_$SZE.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -227,9 +381,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$be.png
+/build:MainLevels/Space/T_$SZE.jpg
 
-#begin MainLevels/Beach/T_$bf.png
+#begin MainLevels/Space/T_$SZF.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -239,9 +393,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bf.png
+/build:MainLevels/Space/T_$SZF.jpg
 
-#begin MainLevels/Beach/T_$bg.png
+#begin MainLevels/Space/T_$SZG.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -251,9 +405,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bg.png
+/build:MainLevels/Space/T_$SZG.jpg
 
-#begin MainLevels/Beach/T_$bh.png
+#begin MainLevels/Space/T_$SZH.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -263,9 +417,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bh.png
+/build:MainLevels/Space/T_$SZH.jpg
 
-#begin MainLevels/Beach/T_$bi.png
+#begin MainLevels/Space/T_$SZI.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -275,9 +429,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bi.png
+/build:MainLevels/Space/T_$SZI.jpg
 
-#begin MainLevels/Beach/T_$bj.png
+#begin MainLevels/Space/T_$SZJ.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -287,9 +441,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bj.png
+/build:MainLevels/Space/T_$SZJ.jpg
 
-#begin MainLevels/Beach/T_$bk.png
+#begin MainLevels/Space/T_$SZK.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -299,9 +453,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bk.png
+/build:MainLevels/Space/T_$SZK.jpg
 
-#begin MainLevels/Beach/T_$bl.png
+#begin MainLevels/Space/T_$SZL.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -311,49 +465,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Beach/T_$bl.png
+/build:MainLevels/Space/T_$SZL.jpg
 
-#begin MainLevels/Space/MLS_$sa.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sa.xml
-
-#begin MainLevels/Space/MLS_$sb.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sb.xml
-
-#begin MainLevels/Space/MLS_$sc.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sc.xml
-
-#begin MainLevels/Space/MLS_$sd.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sd.xml
-
-#begin MainLevels/Space/MLS_$se.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$se.xml
-
-#begin MainLevels/Space/MLS_$sf.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sf.xml
-
-#begin MainLevels/Space/MLS_$sg.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sg.xml
-
-#begin MainLevels/Space/MLS_$sh.xml
-/importer:XmlImporter
-/processor:PassThroughProcessor
-/build:MainLevels/Space/MLS_$sh.xml
-
-#begin MainLevels/Space/T_$sa.png
+#begin MainLevels/Space/T_$SZM.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -363,9 +477,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sa.png
+/build:MainLevels/Space/T_$SZM.jpg
 
-#begin MainLevels/Space/T_$sb.png
+#begin MainLevels/Space/T_$SZN.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -375,9 +489,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sb.png
+/build:MainLevels/Space/T_$SZN.jpg
 
-#begin MainLevels/Space/T_$sc.png
+#begin MainLevels/Space/T_$SZO.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -387,9 +501,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sc.png
+/build:MainLevels/Space/T_$SZO.jpg
 
-#begin MainLevels/Space/T_$sd.png
+#begin MainLevels/Space/T_$SZP.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -399,9 +513,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sd.png
+/build:MainLevels/Space/T_$SZP.jpg
 
-#begin MainLevels/Space/T_$se.png
+#begin MainLevels/Space/T_$SZQ.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -411,9 +525,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$se.png
+/build:MainLevels/Space/T_$SZQ.jpg
 
-#begin MainLevels/Space/T_$sg.png
+#begin MainLevels/Space/T_$SZR.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -423,9 +537,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sg.png
+/build:MainLevels/Space/T_$SZR.jpg
 
-#begin MainLevels/Space/T_$sf.png
+#begin MainLevels/Space/T_$SZS.jpg
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -435,7 +549,391 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:MainLevels/Space/T_$sf.png
+/build:MainLevels/Space/T_$SZS.jpg
+
+#begin MainLevels/Space/T_$SZT.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZT.jpg
+
+#begin MainLevels/Space/T_$SZU.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZU.jpg
+
+#begin MainLevels/Space/T_$SZV.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZV.jpg
+
+#begin MainLevels/Space/T_$SZW.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZW.jpg
+
+#begin MainLevels/Space/T_$SZX.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZX.jpg
+
+#begin MainLevels/Space/T_$SZY.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Space/T_$SZY.jpg
+
+#begin MainLevels/Beach/T_$BA.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BA.jpg
+
+#begin MainLevels/Beach/T_$BB.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BB.jpg
+
+#begin MainLevels/Beach/T_$BC.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BC.jpg
+
+#begin MainLevels/Beach/T_$BD.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BD.jpg
+
+#begin MainLevels/Beach/T_$BE.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BE.jpg
+
+#begin MainLevels/Beach/T_$BF.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BF.jpg
+
+#begin MainLevels/Beach/T_$BG.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BG.jpg
+
+#begin MainLevels/Beach/T_$BH.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BH.jpg
+
+#begin MainLevels/Beach/T_$BI.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BI.jpg
+
+#begin MainLevels/Beach/T_$BJ.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BJ.jpg
+
+#begin MainLevels/Beach/T_$BK.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BK.jpg
+
+#begin MainLevels/Beach/T_$BL.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BL.jpg
+
+#begin MainLevels/Beach/T_$BM.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BM.jpg
+
+#begin MainLevels/Beach/T_$BN.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BN.jpg
+
+#begin MainLevels/Beach/T_$BO.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BO.jpg
+
+#begin MainLevels/Beach/T_$BP.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BP.jpg
+
+#begin MainLevels/Beach/T_$BQ.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BQ.jpg
+
+#begin MainLevels/Beach/T_$BR.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BR.jpg
+
+#begin MainLevels/Beach/T_$BS.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BS.jpg
+
+#begin MainLevels/Beach/T_$BT.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BT.jpg
+
+#begin MainLevels/Beach/T_$BU.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BU.jpg
+
+#begin MainLevels/Beach/T_$BV.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BV.jpg
+
+#begin MainLevels/Beach/T_$BW.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BW.jpg
+
+#begin MainLevels/Beach/T_$BX.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BX.jpg
+
+#begin MainLevels/Beach/T_$BY.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:MainLevels/Beach/T_$BY.jpg
+
+#begin Sounds/Space/Background.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Space/Background.mp3
+
+#begin Sounds/Space/RotateSound.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/Space/RotateSound.mp3
 
 #begin Textures/Beach/Thumb.png
 /importer:TextureImporter
@@ -448,4 +946,160 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Textures/Beach/Thumb.png
+
+#begin Textures/Beach/_Aux.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Beach/_Aux.png
+
+#begin Textures/Beach/_BG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Beach/_BG.png
+
+#begin Textures/Beach/_MMBG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Beach/_MMBG.png
+
+#begin Textures/Beach/_Obj.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Beach/_Obj.png
+
+#begin Textures/Beach/_UI.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Beach/_UI.png
+
+#begin Textures/Online/Thumb.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Online/Thumb.png
+
+#begin Textures/Space/Thumb.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/Thumb.png
+
+#begin Textures/Space/_Aux.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/_Aux.png
+
+#begin Textures/Space/_BG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/_BG.png
+
+#begin Textures/Space/_MMBG.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/_MMBG.png
+
+#begin Textures/Space/_Obj.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/_Obj.png
+
+#begin Textures/Space/_UI.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/Space/_UI.png
+
+#begin Textures/User/Thumb.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Textures/User/Thumb.png
 

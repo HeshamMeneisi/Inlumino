@@ -23,6 +23,7 @@ namespace Inlumino_SHARED
                 float miny = float.MaxValue, maxy = float.MinValue;
                 foreach (UIVisibleObject obj in children)
                 {
+                    if (!obj.Visible) continue;
                     RectangleF temp = obj.BoundingBox;                    
                     miny = Math.Min(miny, temp.Top);
                     maxy = Math.Max(maxy, temp.Bottom);
@@ -37,6 +38,7 @@ namespace Inlumino_SHARED
                 float minx = float.MaxValue, maxx = float.MinValue;
                 foreach (UIVisibleObject obj in children)
                 {
+                    if (!obj.Visible) continue;
                     RectangleF temp = obj.BoundingBox;
                     minx = Math.Min(minx, temp.Left);
                     maxx = Math.Max(maxx, temp.Right);

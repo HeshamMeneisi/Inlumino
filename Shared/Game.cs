@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using Parse;
 using System.Text;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace Inlumino_SHARED
 {
@@ -13,20 +15,17 @@ namespace Inlumino_SHARED
     public class Game : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;        
+        SpriteBatch spriteBatch;
         public Game()
         {
             ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
             ParseFacebookUtils.Initialize("906591706062304");
+            
+            ParseAnalytics.TrackAppOpenedAsync();
 
             //ParseInstallation.CurrentInstallation.AddUniqueToList("channels", "main");
-            //ParseInstallation.CurrentInstallation.SaveAsync();
-            /*
-            string test = "teststring12345678!@#$%^&*()_+";
-            string enc = SecurityProvider.Encrypt(test, key);        
-            string dec = SecurityProvider.Decrypt(enc,key);
-            MessageBox.Show("Title",enc + "\n" + test +"\n"+dec,new string[]{"Ok"});
-            */            
+            //ParseInstallation.CurrentInstallation.SaveAsync();          
+
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
@@ -34,7 +33,7 @@ namespace Inlumino_SHARED
 #if WINDOWS_UAP
             IsMouseVisible = true;
 #endif
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown; //| DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
         }
@@ -64,7 +63,8 @@ namespace Inlumino_SHARED
 
         private void exiting(object sender, EventArgs e)
         {
-            Manager.SaveSettings();Manager.SyncData();
+            Manager.SaveSettings(); 
+            Manager.SyncData();
         }
 
         /// <summary>
@@ -79,12 +79,59 @@ namespace Inlumino_SHARED
             // TODO: use this.Content to load your game content here
             Manager.init(this);
             graphics.ApplyChanges();
+            //UnlockAll();
+            //CheckSolved();
+            //ScreenShotAll();
             //Temp Code
             //Manager.UserData.PackageAvailability[PackageType.Space] = true;
             //for (int i = 0; i < Common.SpacePackge.Length; i++)
             //Manager.UserData.setStars(PackageType.Space, i, 3);
         }
 
+        private async Task CheckSolved()
+        {
+            if (Debugger.IsAttached)
+            {
+                foreach (string name in DataHandler.getSavedLevelNames())
+                {
+                    Stage temp = Common.CreateLevel(name, PackageType.User);
+                    temp.SetSourceStatus(true);
+                    if (!temp.CheckWin())
+                        if(await MessageBox.Show("WARNING", "Level not solved: " + name,new string[] { "Ok", "Stop" })==1)return;
+
+                }
+            }
+        }
+
+        /// <summary>
+        /// Debugging function
+        /// </summary>
+        private void UnlockAll()
+        {
+            if (Debugger.IsAttached)
+            {
+                foreach (PackageType pack in Common.Packages.Keys)
+                {
+                    Manager.UserData.MakeAvailable(pack);
+                    foreach (string s in Common.Packages[pack])
+                        Common.SetScore(pack, s, 3);
+                }
+            }
+        }
+        /// <summary>
+        /// Debugging function
+        /// </summary>
+        private void ScreenShotAll()
+        {
+            if (Debugger.IsAttached)
+            {
+                foreach (string name in DataHandler.getSavedLevelNames())
+                {
+                    Stage temp = Common.CreateLevel(name, PackageType.User);
+                    DataHandler.SaveStage(temp, name);
+                }
+            }
+        }
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.
@@ -129,7 +176,7 @@ namespace Inlumino_SHARED
             spriteBatch.End();
 
             base.Draw(gameTime);
-        }        
+        }
         internal Texture2D TakeScreenshot()
         {
             RenderTarget2D screenshot;

@@ -87,6 +87,7 @@ namespace Inlumino_SHARED
         {
             if (args.Length == 0) Manager.StateManager.SwitchTo(GameState.MainMenu);
             stage = args[0] as Stage;
+            if (args.Length > 1) nametext.Text = args[1].ToString();
             SetupMenu();
         }
     }

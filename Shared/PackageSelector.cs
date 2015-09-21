@@ -13,10 +13,8 @@ namespace Inlumino_SHARED
         protected UIMenu genmenu;
         protected UIButton menubtn;
         protected List<UICell> cells = new List<UICell>();
-        Texture2D background;
         internal PackageSelector()
-        {
-            background = DataHandler.getTexture("mmb");
+        {            
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton]);
             menubtn.Pressed += menupressed;
             genmenu = new UIMenu();
@@ -38,6 +36,7 @@ namespace Inlumino_SHARED
 
         public void Draw(SpriteBatch batch)
         {
+            Texture2D background = DataHandler.getTexture(PrimaryTexture._MMBG);
             float w = Screen.Height * background.Width / background.Height;
             batch.Draw(background, new Rectangle((int)(Screen.Width - w) / 2, 0, (int)(w), (int)Screen.Height), Color.White);
             genmenu.Draw(batch);
@@ -70,7 +69,7 @@ namespace Inlumino_SHARED
             cells.Clear();
             foreach (PackageType pack in Common.Packages.Keys)
             {
-                bool locked = !(pack == PackageType.User || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
+                bool locked = !(pack == PackageType.User || pack == PackageType.Online || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
                 Texture2D tex = DataHandler.GetPackageThumb(pack);
                 UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, tex == null ? pack.ToString() : "", Color.White, new TextureID(tex, pack.ToString(), 0, -1, -1), 0.1f);
                 cell.Pressed += mlcellpressed;

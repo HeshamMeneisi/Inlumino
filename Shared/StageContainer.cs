@@ -47,7 +47,7 @@ namespace Inlumino_SHARED
                 CurrentLevel = new Stage();
                 CurrentLevel.ToggleEditMode();
                 CurrentLevel.SetSize(defaultstagewidth, defaultstagewidth);
-                CurrentLevel.setBackground(DataHandler.getTexture("bg"));
+                CurrentLevel.setBackground(DataHandler.getTexture(PrimaryTexture._BG));
                 CurrentLevel.LevelWon += levelwon;
             }
             else if (!CurrentLevel.EditMode) CurrentLevel.ToggleEditMode();
@@ -63,9 +63,9 @@ namespace Inlumino_SHARED
         private void InitHud()
         {
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton], hudbtnpressed, 0, "menu");
-            resetbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.RestartButton], hudbtnpressed, 0, "reset");
+            resetbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ResetButton], hudbtnpressed, 0, "reset");
             togglebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ToggleButton], hudbtnpressed, 0, "toggle");
-            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");            
+            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], hudbtnpressed, 0, "save");
             UICell horzexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.RightButton], "he", null, 0, "", default(Color), hudbtnpressed, 0);
             UICell horzshrink = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.LeftButton], "hs", null, 0, "", default(Color), hudbtnpressed, 0);
             UICell vertexp = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.DownButton], "ve", null, 0, "", default(Color), hudbtnpressed, 0);
@@ -80,13 +80,13 @@ namespace Inlumino_SHARED
             ropes1 = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Ropes]);
             ropes2 = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.Ropes]);
             toplog = new UIVisibleObject(DataHandler.UIObjectsTextureMap[UIObjectType.TopLog]);
-            counter = new UITextField(16, Color.White, Color.Black);
+            counter = new UITextField(16, Color.Gold, Color.Black);
             genmenu = new UIMenu();
             genmenu.Add(menubtn);
             genmenu.Add(resetbtn);
             genmenu.Add(counter);
             genmenu.Add(togglebtn);
-            genmenu.Add(savebtn);            
+            genmenu.Add(savebtn);
             popup = new UIMenu();
             popup.Add(nextbtn);
             popup.Add(trybtn);
@@ -147,6 +147,7 @@ namespace Inlumino_SHARED
                 float p = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0,
                 ah = Screen.Height - p;
                 bool passed = SetStars();
+                toplog.State = passed ? 0 : 1;
                 nextbtn.Visible = passed && IsCurrentMain;
                 trybtn.Visible = !passed && IsCurrentMain;
                 ropes2.Visible = nextbtn.Visible || trybtn.Visible;
@@ -169,14 +170,19 @@ namespace Inlumino_SHARED
         {
             // For now
             //int perfmoves = Common.GetMoves(cln);
-            int s = (moves <= perfmoves + 10 ? 1 : 0)
-            + (moves <= perfmoves + 5 ? 1 : 0)
-            + (moves <= perfmoves + 2 ? 1 : 0);
+            int s = (moves <= (int)(perfmoves * 1.5) ? 1 : 0)
+            + (moves <= (int)(perfmoves * 1.25) ? 1 : 0)
+            + (moves <= (int)(perfmoves * 1.1) ? 1 : 0);
             Common.SetScore(pack, cln, s);
             stars.State = s;
+            if (!IsCurrentMain) return s != 0;
             return Common.GetScore(pack, cln) != 0;
         }
-
+        private void UpdateCounter()
+        {
+            counter.ForegroundColor = moves <= (int)(perfmoves * 1.1) ? Color.Gold : moves <= (int)(perfmoves * 1.25) ? Color.Silver : moves <= (int)(perfmoves * 1.5) ? Color.Brown: Color.DarkRed;
+            counter.Text = moves + "/" + perfmoves;
+        }
         ObjectType selected = ObjectType.None;
         private void cellpressed(UIButton sender)
         {
@@ -218,18 +224,17 @@ namespace Inlumino_SHARED
             if (!verified) { MessageBox.Show("Proof of concept", "Please solve the level in play mode then switch to edit mode and try again.", new string[] { "OK" }); return; }
             if (!editing) ToggleMode();
             CurrentLevel.DisableGrid();
-            Manager.StateManager.SwitchTo(GameState.SaveLevel, null, CurrentLevel);
+            Manager.StateManager.SwitchTo(GameState.SaveLevel, null, CurrentLevel, IsCurrentMain?"":cln);
         }
 
         private void ToggleMode()
         {
-            moves = 0; trans = popup.Visible = false; pack = PackageType.None;
+            moves = 0; UpdateCounter(); trans = popup.Visible = false; pack = PackageType.None;
             editing = !editing;
             CurrentLevel.ToggleEditMode();
             interacted = true;
             SetupHud();
         }
-
         private void Reset()
         {
             if (editing)
@@ -314,13 +319,13 @@ namespace Inlumino_SHARED
         private bool editing = false;
 
         string cln = null;
-        bool IsCurrentMain { get { return pack != PackageType.User; } }
+        bool IsCurrentMain { get { return pack != PackageType.User && pack != PackageType.Online; } }
         bool loading = false;
         PackageType pack = PackageType.User;
         internal void loadLevel(string levelname, PackageType package = PackageType.User)
         {
             loading = true;
-            trans = false; moves = 0; pack = package;
+            trans = false; moves = 0; UpdateCounter(); pack = package;
             cln = levelname;
             CurrentLevel = Common.CreateLevel(levelname, pack);
             if (CurrentLevel != null)
@@ -336,6 +341,7 @@ namespace Inlumino_SHARED
                 if (!CurrentLevel.EditMode)
                     CurrentLevel.SetSourceStatus(false);
                 perfmoves = ShuffleLevel();
+                UpdateCounter();
                 if (CurrentLevel.EditMode) CurrentLevel.ToggleEditMode();
                 else CurrentLevel.SetSourceStatus(true);
                 CurrentLevel.LevelWon += levelwon;
@@ -401,12 +407,12 @@ namespace Inlumino_SHARED
                 }
                 else
                 {
-                    if (obj != null && obj.IsInteractable)
+                    if (obj != null && (obj.IsInteractable || editing))
                     {
                         verified = false; interacted = true;
                         obj.RotateCW(editing);
                         moves++;
-                        counter.Text = "Moves: " + moves;
+                        UpdateCounter();
                     }
                 }
                 return;
@@ -457,12 +463,12 @@ namespace Inlumino_SHARED
                 }
                 else
                 {
-                    if (obj != null && obj.IsInteractable)
+                    if (obj != null && (obj.IsInteractable || editing))
                     {
                         verified = false; interacted = true;
                         obj.RotateCW(editing);
                         moves++;
-                        counter.Text = "Moves: " + moves;
+                        UpdateCounter();
                     }
                 }
             }
@@ -470,7 +476,6 @@ namespace Inlumino_SHARED
 
         public void OnActivated(params object[] args)
         {
-            counter.Text = "Moves: 0";
             if (args.Length > 1)
                 loadLevel(args[0].ToString(), (PackageType)args[1]);
             SetupHud();

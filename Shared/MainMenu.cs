@@ -11,10 +11,8 @@ namespace Inlumino_SHARED
     {
         protected UIButton playButton, editorButton, optionsButton;
         protected UIMenu mainmenu;
-        Texture2D background;
         internal MainMenu()
-        {
-            background = DataHandler.getTexture("mmb");
+        {            
             mainmenu = new UIMenu();
 
             playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn]);
@@ -27,9 +25,7 @@ namespace Inlumino_SHARED
 
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
-            mainmenu.Add(optionsButton);
-
-            SoundManager.PlaySound(DataHandler.Sounds[SoundType.Background], SoundCategory.Music, true);
+            mainmenu.Add(optionsButton);            
         }
 
         private void SetupMenu()
@@ -57,12 +53,13 @@ namespace Inlumino_SHARED
         }
 
         public void Update(GameTime time)
-        {            
+        {
             mainmenu.Update(time);
         }
 
         public void Draw(SpriteBatch batch)
         {
+            Texture2D background = DataHandler.getTexture(PrimaryTexture._MMBG);
             float w = Screen.Height * background.Width / background.Height;
             batch.Draw(background, new Rectangle((int)(Screen.Width - w) / 2, 0, (int)(w), (int)Screen.Height), Color.White);
             mainmenu.Draw(batch);
@@ -88,7 +85,7 @@ namespace Inlumino_SHARED
         }
 
         private async Task CheckOnline()
-        {            
+        {
             while (!Manager.IsIdle) { }
             if (!suppressmessage && ParseUser.CurrentUser == null)
             {
@@ -96,10 +93,11 @@ namespace Inlumino_SHARED
                 if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);
                 suppressmessage = true;
             }
-            else if(first && !Manager.Connected)
+            else if (first && !Manager.Connected)
             {
                 first = false;
-                await MessageBox.Show("ERROR", "Could not retreive your online profile. Please check your connection.", new string[] { "OK" });
+                if (ParseUser.CurrentUser != null)
+                    await MessageBox.Show("ERROR", "Could not retreive your online profile. Please check your connection.", new string[] { "OK" });
             }
         }
     }

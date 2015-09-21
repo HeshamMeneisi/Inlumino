@@ -22,14 +22,25 @@ namespace Inlumino_SHARED
         internal bool IsPassword = false;
         internal CharType AllowedCharTypes = CharType.Lower | CharType.Upper | CharType.Num | CharType.Symb;
         bool vk = false;
-        internal bool Selected { get { return selected; } set { selected = value; OnSelectedChanged(); } }
+
+        internal Color ForegroundColor { get { return color; } set { color = value; } }
+        internal Color BackgroundColor { get { return background; } set { background = value; } }
+        internal bool Selected
+        {
+            get { return selected; }
+            set
+            {
+                if (value == selected) return;
+                selected = value; OnSelectedChanged();
+            }
+        }
 
         private void OnSelectedChanged()
         {
             if (SelectedChanged != null) SelectedChanged(this, Selected);
             if (selected)
             {
-                vk = true; VirtualKeyboard.Show(Screen.SmallDim * 0.1f, this);
+                vk = true; VirtualKeyboard.Show(Screen.SmallDim * 0.15f, this);
             }
             else vk = false;
         }
@@ -39,7 +50,7 @@ namespace Inlumino_SHARED
         internal string Text
         {
             get { return text; }
-            set { text = value.Substring(0, MathHelper.Min(value.Length, maxl)); }
+            set { if (value != null) text = value.Substring(0, MathHelper.Min(value.Length, maxl)); }
         }
         internal UITextField(int maxl, Color col, Color background, string defaulttext = "", int layer = 0, string id = "", ButtonPressedEventHandler pressed = null) : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], pressed, layer, id)
         {
@@ -73,12 +84,28 @@ namespace Inlumino_SHARED
             Color[] data = new Color[w * h];
             for (int i = 0; i < data.Length; ++i) data[i] = background;
             rect.SetData(data);
-            batch.Draw(rect, BoundingBox.ToRectangle(), Color.White);            
+            batch.Draw(rect, BoundingBox.ToRectangle(), Color.White);
             //
             string t = Padding + (text == "" ? deftext : IsPassword ? string.Join("", Enumerable.Repeat(HashChar, text.Length)) : text);
             Vector2 tsize = font.MeasureString(t);
+            while (tsize.X > Size.X)
+            {
+                t = t.Substring(0, t.Length - 1);
+                tsize = font.MeasureString(t);
+            }
             batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
+        }
+        internal void ScaleToDefault()
+        {
+            Vector2 tsize = font.MeasureString(deftext);
+            Size = tsize;
+        }
+        internal void ScaleToText()
+        {
+            string t = Padding + (text == "" ? deftext : IsPassword ? string.Join("", Enumerable.Repeat(HashChar, text.Length)) : text);
+            Vector2 tsize = font.MeasureString(t);
+            Size = new Vector2(Math.Max(tsize.X, size.X), Math.Max(tsize.Y, size.Y));
         }
         internal override void Update(GameTime time)
         {
@@ -102,6 +129,7 @@ namespace Inlumino_SHARED
         internal void NotifyVKExit()
         {
             vk = false;
+            Selected = false;
         }
         internal void Input(char c)
         {

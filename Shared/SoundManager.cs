@@ -33,6 +33,10 @@ namespace Inlumino_SHARED
             if (looping.ContainsKey(s))
                 looping.Remove(s);
         }
+        internal static void StopAllLoops()
+        {
+            looping.Clear();
+        }
         internal static void Update(GameTime time)
         {
             foreach (KeyValuePair<SoundEffect, SFXData> p in looping)
