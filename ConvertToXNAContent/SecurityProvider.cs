@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using System;
-#if WINDOWS_UAP
+#if WINDOWS_UAP || WP81
 using Windows.Security.Cryptography;
 using Windows.Security.Cryptography.Core;
 using Windows.Storage.Streams;
@@ -16,7 +16,7 @@ namespace Inlumino_SHARED
     class SecurityProvider
     {
         static byte[] Default = new byte[] { 44, 58, 66, 92, 16, 32, 14, 182, 250, 26, 188, 164, 12, 74, 78, 92, 220, 34, 70, 210, 144, 180, 120, 64 };
-#if WINDOWS_UAP                
+#if WINDOWS_UAP || WP81                
         public static string GetMD5Hash(string data)
         {
             // Convert the message string to binary data.        

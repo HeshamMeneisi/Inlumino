@@ -79,7 +79,11 @@ namespace Inlumino_SHARED
         bool suppressmessage = false, first = true;
         public void OnActivated(params object[] args)
         {
+            Manager.LoadUserDataLocal();
             SetupMenu();
+#if WP81
+            Manager.SyncData();
+#endif
             Task t = new Task(() => CheckOnline());
             t.Start();
         }

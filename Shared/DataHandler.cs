@@ -5,12 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+#if WP81
+
+#else
 using System.IO.IsolatedStorage;
+#endif
 using System.Reflection;
 using System.Xml.Serialization;
 using Parse;
-#if WINDOWS_UAP
+#if WINDOWS_UAP || WP81
 using System.Net.Http;
+using Windows.Storage;
 #endif
 
 namespace Inlumino_SHARED
@@ -98,7 +103,7 @@ namespace Inlumino_SHARED
         /// <summary>
         /// We should define new tiles here.
         /// </summary>
-        #region Tile Definition        
+#region Tile Definition        
         internal static Dictionary<TileType, TextureID[]> TileTextureMap = new Dictionary<TileType, TextureID[]>()
         {
             {TileType.Default,new TextureID[] {new TextureID(ObjKey,0) /*Normal*/, new TextureID(ObjKey,1) /*Highlight overlay*/, new TextureID(ObjKey,15) /*Object Board*/} },
@@ -160,13 +165,22 @@ namespace Inlumino_SHARED
 
 
         #endregion
+
+#if WP81
+        static StorageFolder savegameStorage = ApplicationData.Current.LocalFolder;
+#else
         static IsolatedStorageFile savegameStorage = IsolatedStorageFile.GetUserStoreForApplication();
+#endif
+
         internal static IEnumerable<string> getSavedLevelNames()
         {
+#if WP81
+            foreach (StorageFile f in savegameStorage.GetFilesAsync().AsTask().ConfigureAwait(false).GetAwaiter().GetResult())
+                if (f.Name.StartsWith("S_")) yield return f.Name.Split('.')[0].Split('_')[1];
+#else
             foreach (string s in savegameStorage.GetFileNames())
-            {
-                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
-            }
+                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];            
+#endif
         }
         static string getDataFileName(string stagename)
         {
@@ -182,14 +196,18 @@ namespace Inlumino_SHARED
             //name = "$" + name;//Main levels TODO:REMOVE
             LevelData data = new LevelData(currentLevel.getTileMap().getIntMap(), currentLevel.getObjectMap(), currentLevel.getObjectRotationMap());
             SaveData<string>(data.Data, getDataFileName(name));
+#if WP81
+            Stream s = savegameStorage.CreateFileAsync(getThumbFileName(name), CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false).GetAwaiter().GetResult().OpenStreamForWriteAsync().Result;
+#else
             Stream s = savegameStorage.CreateFile(getThumbFileName(name));
+#endif
             /////// Thumb
 
             Texture2D img = GenerateLevelThumb(currentLevel);
             img.SaveAsJpeg(s, img.Width, img.Height);
 #if ANDROID
             saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
-#endif           
+#endif
             s.Dispose();
 
             ParseAnalytics.TrackEventAsync("UserSaveLevel", new Dictionary<string, string> { { "name", name } });
@@ -198,12 +216,23 @@ namespace Inlumino_SHARED
         {
             string data = getDataFileName(name);
             string thumb = getThumbFileName(name);
+#if WP81
+            try { savegameStorage.GetFileAsync(data).AsTask().ConfigureAwait(false).GetAwaiter().GetResult().DeleteAsync().AsTask().ConfigureAwait(false).GetAwaiter().GetResult(); } catch { }
+            try { savegameStorage.GetFileAsync(thumb).AsTask().ConfigureAwait(false).GetAwaiter().GetResult().DeleteAsync().AsTask().ConfigureAwait(false).GetAwaiter().GetResult(); } catch { }
+#else
             if (savegameStorage.FileExists(data)) savegameStorage.DeleteFile(data);
             if (savegameStorage.FileExists(thumb)) savegameStorage.DeleteFile(thumb);
+#endif
         }
         internal static bool LevelExists(string name)
         {
+#if WP81
+            try
+            { StorageFile f = savegameStorage.GetFileAsync(getDataFileName(name)).AsTask().ConfigureAwait(false).GetAwaiter().GetResult(); return f != null; }
+            catch { return false; }
+#else
             return savegameStorage.FileExists(getDataFileName(name));
+#endif
         }
         internal static Stage LoadStage(string name, PackageType package = PackageType.User)
         {
@@ -252,8 +281,14 @@ namespace Inlumino_SHARED
             {
                 try
                 {
+#if WP81
+                    Stream s;
+                    try { s = savegameStorage.GetFileAsync(getThumbFileName(name)).AsTask().ConfigureAwait(false).GetAwaiter().GetResult().OpenStreamForReadAsync().Result; }
+                    catch { return GenerateLevelThumb(name, package); }
+#else
                     if (!savegameStorage.FileExists(getThumbFileName(name))) return GenerateLevelThumb(name, package);
                     Stream s = savegameStorage.OpenFile(getThumbFileName(name), FileMode.Open);
+#endif
                     Texture2D ret = Texture2D.FromStream(Manager.Parent.GraphicsDevice, s);
                     s.Dispose();
                     return ret;
@@ -300,13 +335,13 @@ namespace Inlumino_SHARED
             try
             {
                 string link = current.Get<string>("thumb");
-#if WINDOWS_UAP
+#if WINDOWS_UAP || WP81
                 HttpClient cl = new HttpClient();
                 byte[] data = cl.GetByteArrayAsync(link).Result;
                 return Common.Texture2DFromBytes(data);
 #else
 
-#endif                
+#endif
             }
             catch { }
             return GenerateLevelThumb(current);
@@ -363,7 +398,29 @@ namespace Inlumino_SHARED
         }
         internal static void SaveData<T>(T data, string file)
         {
+#if WP81    
+            StorageFile f;
+            int tries = 0;
+            Stream str;
+            retry:
+            try
+            {
+                f = savegameStorage.CreateFileAsync(file, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
+                str = f.OpenStreamForWriteAsync().Result;
+            }
+            catch
+            {
+                if (tries > 10)
+                {
+                    Debug.WriteLine("__ALERT__: Failed to save file:" + file);
+                    return;
+                }
+                tries++;
+                goto retry;        
+            }
+#else
             IsolatedStorageFileStream str = savegameStorage.CreateFile(file);
+#endif
             string path = "Unkown";
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             serializer.Serialize(str, data);
@@ -375,7 +432,6 @@ namespace Inlumino_SHARED
             path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();
 #endif
             Debug.WriteLine("______ALERT______SavedFileTo: " + path);
-
             str.Dispose();
         }
 
@@ -405,11 +461,17 @@ namespace Inlumino_SHARED
         /// <returns></returns>
         internal static T LoadData<T>(string file)
         {
+#if WP81
+            StorageFile f = null;
+            try { f = savegameStorage.GetFileAsync(file).AsTask().ConfigureAwait(false).GetAwaiter().GetResult(); } catch { return default(T); }
+            if (f == null) return default(T);
+            using (Stream str = f.OpenStreamForReadAsync().Result)
+#else
             if (!savegameStorage.FileExists(file)) return default(T);
 
             using (Stream str = savegameStorage.OpenFile(file, FileMode.Open))
+#endif
             {
-
                 XmlSerializer serializer = new XmlSerializer(typeof(T));
 
                 try

@@ -20,7 +20,7 @@ namespace Inlumino_SHARED
         {
             ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
             ParseFacebookUtils.Initialize("906591706062304");
-            
+
             ParseAnalytics.TrackAppOpenedAsync();
 
             //ParseInstallation.CurrentInstallation.AddUniqueToList("channels", "main");
@@ -30,11 +30,18 @@ namespace Inlumino_SHARED
             Content = new SmartContentManager(Content.ServiceProvider);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
-            Screen.SetFullScreen(true);
+            //Screen.SetFullScreen(true);                      
 #if WINDOWS_UAP
             IsMouseVisible = true;
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;
 #endif
-            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown; //| DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+#if !WP81
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+#endif
+#if WP81
+            graphics.SupportedOrientations = DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+#endif
+
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
         }
@@ -64,7 +71,7 @@ namespace Inlumino_SHARED
 
         private void exiting(object sender, EventArgs e)
         {
-            Manager.SaveSettings(); 
+            Manager.SaveSettings();
             Manager.SyncData();
         }
 
@@ -78,8 +85,22 @@ namespace Inlumino_SHARED
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            DisplayOrientation t = Window.CurrentOrientation;
+            //Screen.MakeVirtual(new Vector2(800, 480));
             Manager.init(this);
+            /*
+            foreach (PackageType p in Manager.UserData.PackageAvailability.Keys)
+            {
+                DataHandler.GetPackageThumb(p);
+                if (Manager.UserData.PackageAvailability[p])
+                    foreach (string l in Common.Packages[p])
+                        DataHandler.GetLevelThumb(l, p);
+            }*/
             graphics.ApplyChanges();
+            // This is to override the bug in monogame
+#if WP81
+            graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
+#endif
             //UnlockAll();
             //CheckSolved();
             //ScreenShotAll();
@@ -98,7 +119,7 @@ namespace Inlumino_SHARED
                     Stage temp = Common.CreateLevel(name, PackageType.User);
                     temp.SetSourceStatus(true);
                     if (!temp.CheckWin())
-                        if(await MessageBox.Show("WARNING", "Level not solved: " + name,new string[] { "Ok", "Stop" })==1)return;
+                        if (await MessageBox.Show("WARNING", "Level not solved: " + name, new string[] { "Ok", "Stop" }) == 1) return;
 
                 }
             }
@@ -149,8 +170,8 @@ namespace Inlumino_SHARED
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                Exit();
+            /*if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                Exit();*/
 
             // TODO: Add your update logic here
 

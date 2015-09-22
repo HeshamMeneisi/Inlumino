@@ -3,6 +3,11 @@ rd %~p1%Inlumino_UAP\Content\obj /s /q
 rd %~p1%Inlumino_UAP\bin /s /q
 rd %~p1%Inlumino_UAP\obj /s /q
 rd %~p1%Inlumino_UAP\AppPackages /s /q
+rd %~p1%Inlumino_WP81\Content\bin /s /q
+rd %~p1%Inlumino_WP81\Content\obj /s /q
+rd %~p1%Inlumino_WP81\bin /s /q
+rd %~p1%Inlumino_WP81\obj /s /q
+rd %~p1%Inlumino_WP81\AppPackages /s /q
 rd %~p1%Inlumino_ANDROID\Content\bin /s /q
 rd %~p1%Inlumino_ANDROID\Content\obj /s /q
 rd %~p1%Inlumino_ANDROID\bin /s /q

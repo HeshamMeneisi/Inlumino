@@ -147,7 +147,9 @@ namespace Inlumino_SHARED
         internal static void init(Game parent)
         {
             LoadUserDataLocal();
-            SyncData();
+#if !WP81
+            SyncData(); // Blocks loading thread on WP 8.1
+#endif
             parentGame = parent;
             contentManager = parent.Content as SmartContentManager;
             LoadSettings();

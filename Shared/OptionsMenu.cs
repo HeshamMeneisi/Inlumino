@@ -85,13 +85,13 @@ namespace Inlumino_SHARED
 
 #if WINDOWS_UAP
                 user["signupsys"] = "WINDOWS";
-#else
+#endif
 #if ANDROID
                 user["signupsys"] = "ANDROID";
-#else
-                user["signupsys"] = "ELSE";
 #endif
-#endif                             
+#if WP81
+                user["signupsys"] = "WP8.1";
+#endif                           
                 try
                 {
                     await user.SignUpAsync();
