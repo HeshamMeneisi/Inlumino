@@ -17,6 +17,8 @@ namespace Inlumino_SHARED
 {
     class DataHandler
     {
+        static SmartContentManager UIContent = null;
+
         internal const int TextureUnitDim = 256;
         // Files
         // The index in this array represents the groupindex used in TextureID
@@ -32,6 +34,15 @@ namespace Inlumino_SHARED
         {
             if (first) first = false;
             else if (loadedtheme == Manager.GameSettings.CurrentTheme) return;
+
+            if (UIContent != null)
+            {
+                UIContent.Unload();
+                UIContent.Dispose();
+                GC.Collect();
+            }
+            UIContent = new SmartContentManager(Manager.RandomAccessContentManager.ServiceProvider);
+            UIContent.RootDirectory = Manager.RandomAccessContentManager.RootDirectory;
             string d = GetCurrentThemeDirectory();
 
             TextureFiles = new Dictionary<PrimaryTexture, string>();
@@ -52,6 +63,8 @@ namespace Inlumino_SHARED
             SoundManager.StopAllLoops();
             SoundManager.PlaySound(DataHandler.Sounds[SoundType.Background], SoundCategory.Music, true);
             Manager.SaveUserDataLocal();
+
+            GC.Collect();
         }
 
         private static string GetCurrentThemeDirectory()
@@ -66,7 +79,7 @@ namespace Inlumino_SHARED
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        private static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
+        internal static Dictionary<string, Texture2D> Textures = new Dictionary<string, Texture2D>();
 
         internal static Dictionary<FontType, SpriteFont> Fonts = new Dictionary<FontType, SpriteFont>();
 
@@ -76,7 +89,7 @@ namespace Inlumino_SHARED
         {
             try
             {
-                return Manager.ContentManager.Load<Texture2D>("Textures\\" + pack.ToString() + "\\Thumb");
+                return Manager.RandomAccessContentManager.Load<Texture2D>("Textures\\" + pack.ToString() + "\\Thumb");
             }
             catch { return null; }
         }
@@ -218,7 +231,7 @@ namespace Inlumino_SHARED
             else if (package != PackageType.None)
             {
                 // Main Levels
-                data = Manager.ContentManager.Load<string>("MainLevels\\" + package.ToString() + "\\MLS_" + name);
+                data = Manager.RandomAccessContentManager.Load<string>("MainLevels\\" + package.ToString() + "\\MLS_" + name);
                 if (!Common.VerifyLevel(name, package, data))
                     return null;
             }
@@ -231,7 +244,7 @@ namespace Inlumino_SHARED
             {
                 try
                 {
-                    return Manager.ContentManager.Load<Texture2D>("MainLevels\\" + package.ToString() + "\\T_" + name);
+                    return Manager.RandomAccessContentManager.Load<Texture2D>("MainLevels\\" + package.ToString() + "\\T_" + name);
                 }
                 catch { return GenerateLevelThumb(name, package); }
             }
@@ -263,6 +276,7 @@ namespace Inlumino_SHARED
         {
             try
             {
+                Debug.WriteLine("Generating thumbnail.");
                 Screen.MakeVirtual(new Vector2(512, 512));
                 level.ShuffleLevel();
                 level.SetMinScreenPadding(new Padding(0, 0, 0, 0));
@@ -270,7 +284,7 @@ namespace Inlumino_SHARED
                 Screen.MakeReal();
                 return img;
             }
-            catch { return null; }
+            catch { Screen.MakeReal(); return null; }
         }
         private static Texture2D GenerateLevelThumb(ParseObject obj)
         {
@@ -303,28 +317,36 @@ namespace Inlumino_SHARED
             {
                 string key = t.ToString();
                 if (!Textures.ContainsKey(key))
-                    Textures.Add(key, Manager.ContentManager.Load<Texture2D>(TextureFiles[t]));
-                else Textures[key] = Manager.ContentManager.Load<Texture2D>(TextureFiles[t]);
+                    Textures.Add(key, UIContent.Load<Texture2D>(TextureFiles[t]));
+                else
+                {
+                    Textures[key] = UIContent.Load<Texture2D>(TextureFiles[t]);
+                }
+                GC.Collect();
             }
         }
         internal static void LoadSounds()
         {
             foreach (SoundType p in SoundFiles.Keys)
                 if (!Sounds.ContainsKey(p))
-                    Sounds.Add(p, Manager.ContentManager.Load<SoundEffect>(SoundFiles[p]));
-                else Sounds[p] = Manager.ContentManager.Load<SoundEffect>(SoundFiles[p]);
+                    Sounds.Add(p, Manager.RandomAccessContentManager.Load<SoundEffect>(SoundFiles[p]));
+                else
+                {
+                    Sounds[p] = Manager.RandomAccessContentManager.Load<SoundEffect>(SoundFiles[p]);
+                }
         }
         internal static void LoadFonts()
         {
             foreach (FontType f in FontFiles.Keys)
                 if (!Fonts.ContainsKey(f))
-                    Fonts.Add(f, Manager.ContentManager.Load<SpriteFont>(FontFiles[f]));
-                else Fonts[f] = Manager.ContentManager.Load<SpriteFont>(FontFiles[f]);
+                    Fonts.Add(f, Manager.RandomAccessContentManager.Load<SpriteFont>(FontFiles[f]));
+                else Fonts[f] = Manager.RandomAccessContentManager.Load<SpriteFont>(FontFiles[f]);
         }
 
         internal static Rectangle getTextureSource(TextureID id)
         {
             // Textures are expected to be square
+            if (Textures[id.RefKey] == null) return new Rectangle(0, 0, 0, 0);
             int unitsperrow = Textures[id.RefKey].Width / TextureUnitDim;
             int texw = (int)(TextureUnitDim * id.WidthUnits);
             int texh = (int)(TextureUnitDim * id.HeightUnits);
@@ -363,7 +385,7 @@ namespace Inlumino_SHARED
             str.Seek(0, SeekOrigin.Begin);
             string pathToFile = Path.Combine(Android.OS.Environment.ExternalStorageDirectory.AbsolutePath, file);
             if (!Directory.Exists(Path.GetDirectoryName(pathToFile))) Directory.CreateDirectory(Path.GetDirectoryName(pathToFile));
-            if(File.Exists(pathToFile))File.Delete(pathToFile);
+            if (File.Exists(pathToFile)) File.Delete(pathToFile);
             using (var fileStream = new FileStream(pathToFile, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None))
             {
                 int read;
@@ -406,14 +428,14 @@ namespace Inlumino_SHARED
         /// </summary>
         /// <param name="name">File name without extension. (e.g "ObjectTex")</param>
         /// <returns></returns>
-        internal static string LoadTexture(string name, Texture2D texture = null)
+        internal static string LoadTexture(string name, Func<Texture2D> textureretriever = null)
         {
             if (Textures.ContainsKey(name)) return name;
-            if (texture != null)
-            { Textures.Add(name, texture); return name; }
+            if (textureretriever != null)
+            { Textures.Add(name, textureretriever()); return name; }
             try
             {
-                Texture2D temp = Manager.ContentManager.Load<Texture2D>(name);
+                Texture2D temp = Manager.RandomAccessContentManager.Load<Texture2D>(name);
                 if (temp != null)
                     Textures.Add(name, temp);
                 return name;
@@ -430,4 +452,4 @@ namespace Inlumino_SHARED
 public enum ThemeType { Beach = 0, Space = 1 }
 public enum FontType { MainFont = 0 }
 
-public enum PrimaryTexture { _UI = 0, _Obj = 1, _Aux = 2, _BG = 3, _MMBG = 4 }
+public enum PrimaryTexture { _UI = 0, _Obj = 1, _BG = 2, _MMBG = 3, _Aux = 4 }

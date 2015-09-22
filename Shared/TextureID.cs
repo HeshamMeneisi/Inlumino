@@ -25,14 +25,14 @@ namespace Inlumino_SHARED
             this.WidthUnits = wunits;
             this.HeightUnits = hunits;
         }
-        internal TextureID(Texture2D texture, string name, int idx, float wunits = 1, float hunits = 1)
+        internal TextureID(Func<Texture2D> texture, string name, int idx, float wunits = 1, float hunits = 1)
         {
             DataHandler.LoadTexture(name, texture);
             this.RefKey = name;
             this.Index = idx;
-            if (texture == null) return;
-            this.WidthUnits = wunits > 0 ? wunits : texture.Width / DataHandler.TextureUnitDim;
-            this.HeightUnits = hunits > 0 ? hunits : texture.Height / DataHandler.TextureUnitDim;
+            Texture2D id = DataHandler.Textures[name];
+            this.WidthUnits = wunits > 0 ? wunits : id.Width / DataHandler.TextureUnitDim;
+            this.HeightUnits = hunits > 0 ? hunits : id.Height / DataHandler.TextureUnitDim;
         }
         internal float TotalHeight { get { return HeightUnits * DataHandler.TextureUnitDim; } }
         internal float TotalWidth { get { return WidthUnits * DataHandler.TextureUnitDim; } }

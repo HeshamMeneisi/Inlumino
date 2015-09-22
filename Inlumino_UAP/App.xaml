@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="Inlumino_SHARED.App"
+    x:Class="Inlumino_UAP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Inlumino_SHARED"
+    xmlns:local="using:Inlumino_UAP"
     RequestedTheme="Light">
 
 </Application>

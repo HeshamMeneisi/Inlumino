@@ -79,32 +79,66 @@ namespace Inlumino_SHARED
         {
             if (!visible) return;
             // background
-            int w = (int)Width, h = (int)Height;
-            Texture2D rect = new Texture2D(Manager.Parent.GraphicsDevice, w, h);
-            Color[] data = new Color[w * h];
-            for (int i = 0; i < data.Length; ++i) data[i] = background;
-            rect.SetData(data);
+            UpdateBackground();
             batch.Draw(rect, BoundingBox.ToRectangle(), Color.White);
             //
-            string t = Padding + (text == "" ? deftext : IsPassword ? string.Join("", Enumerable.Repeat(HashChar, text.Length)) : text);
+            string t = Padding + GetTextToDraw();
+
             Vector2 tsize = font.MeasureString(t);
-            while (tsize.X > Size.X)
-            {
-                t = t.Substring(0, t.Length - 1);
-                tsize = font.MeasureString(t);
-            }
+            if (!Selected)
+                while (tsize.X > Size.X && t != "")
+                {
+                    t = t.Substring(0, t.Length - 1);
+                    tsize = font.MeasureString(t);
+                }
+            else
+                while (tsize.X > size.X && t.Length > 1)
+                {
+                    t = t.Substring(1, t.Length - 1);
+                    tsize = font.MeasureString(t);
+                }
             batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
         }
-        internal void ScaleToDefault()
+
+        private string GetTextToDraw()
+        {
+            if (text == "") return deftext;
+            else if (IsPassword)
+                return string.Join("", Enumerable.Repeat(HashChar, text.Length - (Selected ? 1 : 0))) + (Selected ? text[text.Length - 1].ToString() : "");
+            else return text;
+        }
+
+        Texture2D rect = null;
+        private void UpdateBackground()
+        {
+            int w = (int)Width, h = (int)Height;
+            if (rect != null && rect.Width == w && rect.Height == h) return;
+            rect = new Texture2D(Manager.Parent.GraphicsDevice, w, h);
+            Color[] data = new Color[w * h];
+            for (int i = 0; i < data.Length; ++i) data[i] = background;
+            rect.SetData(data);
+        }
+
+        internal void ScaleToDefault(bool trimtoscreen = true)
         {
             Vector2 tsize = font.MeasureString(deftext);
+            if (trimtoscreen)
+            {
+                tsize.X = Math.Min(tsize.X, Screen.Width - GlobalPosition.X);
+                tsize.Y = Math.Min(tsize.Y, Screen.Height - GlobalPosition.Y);
+            }
             Size = tsize;
         }
-        internal void ScaleToText()
+        internal void ScaleToText(bool trimtoscreen = true)
         {
             string t = Padding + (text == "" ? deftext : IsPassword ? string.Join("", Enumerable.Repeat(HashChar, text.Length)) : text);
             Vector2 tsize = font.MeasureString(t);
+            if (trimtoscreen)
+            {
+                tsize.X = Math.Min(tsize.X, Screen.Width - GlobalPosition.X);
+                tsize.Y = Math.Min(tsize.Y, Screen.Height - GlobalPosition.Y);
+            }
             Size = new Vector2(Math.Max(tsize.X, size.X), Math.Max(tsize.Y, size.Y));
         }
         internal override void Update(GameTime time)

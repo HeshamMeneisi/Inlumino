@@ -23,8 +23,8 @@ namespace Inlumino_SHARED
             menu.Add(savebtn);
 
             email = new UITextField(254, Color.White, Color.Black, "Email (Signup/Login)");
-            password = new UITextField(10, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
-            //password.IsPassword = true;   Password only visible at login/signup no need for this
+            password = new UITextField(12, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
+            password.IsPassword = true;
             //login = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], loginpressed);
 
             loginmenu.Add(email);
@@ -38,8 +38,8 @@ namespace Inlumino_SHARED
         }
 
         private async void savepressed(UIButton sender)
-        {            
-            savebtn.Visible = false;            
+        {
+            savebtn.Visible = false;
             //Manager.GameSettings.MusicVolume =
             //Manager.GameSettings.SFXVolume =
             Manager.SaveSettings();
@@ -60,7 +60,7 @@ namespace Inlumino_SHARED
                 catch (Exception e)
                 {
                     // The login failed. Check the error to see why.
-                    int? r = await MessageBox.Show("Login Failed", e.Message, new string[] { "OK","Forgot password" });
+                    int? r = await MessageBox.Show("Login Failed", e.Message, new string[] { "OK", "Forgot password" });
                     if (r == 1)
                     {
                         await ParseUser.RequestPasswordResetAsync(email.Text);
@@ -71,6 +71,11 @@ namespace Inlumino_SHARED
             }
             else
             {
+                if (password.Text.Length < 6)
+                {
+                    await MessageBox.Show("Password too weak", "Please choose a password 6-12 letters long.", new string[] { "OK" });
+                    goto dontquit;
+                }
                 var user = new ParseUser()
                 {
                     Username = email.Text,
@@ -102,14 +107,15 @@ namespace Inlumino_SHARED
         skip:
             Manager.StateManager.SwitchTo(GameState.MainMenu);
             Manager.SyncData();
-        dontquit:;
+        dontquit:
+            savebtn.Visible = true;
         }
 
         private void SetupMenu()
         {
             float v = Screen.Height * 0.2f;
             email.Size = password.Size = new Vector2(Screen.Width, v);
-            loginmenu.ArrangeInForm(Orientation.Portrait);            
+            loginmenu.ArrangeInForm(Orientation.Portrait);
             savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, Screen.Height - savebtn.BoundingBox.Height);
         }

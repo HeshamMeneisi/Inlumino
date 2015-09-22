@@ -9,3 +9,5 @@ rd %~p1%Inlumino_ANDROID\bin /s /q
 rd %~p1%Inlumino_ANDROID\obj /s /q
 rd %~p1%ConvertToXNAContent\bin /s /q
 rd %~p1%ConvertToXNAContent\obj /s /q
+rd %~p1%Content\bin /s /q
+rd %~p1%Content\obj /s /q

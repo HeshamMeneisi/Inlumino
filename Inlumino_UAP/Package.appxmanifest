@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="50091Nova.Inlumino" Publisher="CN=B300876E-A34D-4630-A5A7-5849BA10E75C" Version="1.1.0.0" />
-  <mp:PhoneIdentity PhoneProductId="b3a1db07-a816-4b32-b973-3b242263bf5a" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
+  <Identity Name="50091Nova.Inlumino" Publisher="CN=B300876E-A34D-4630-A5A7-5849BA10E75C" Version="1.2.1.0" />
+  <mp:PhoneIdentity PhoneProductId="96297759-df7f-4af4-8c49-7412eff463b6" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Inlumino</DisplayName>
     <PublisherDisplayName>Nova</PublisherDisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="Inlumino_UAP.App">
-      <uap:VisualElements DisplayName="Inlumino" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\SmallLogo.png" Description="Inlumino_UAP" BackgroundColor="#464646">
+      <uap:VisualElements DisplayName="Inlumino" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Inlumino, light them all up!" BackgroundColor="#464646">
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
         <uap:DefaultTile Square71x71Logo="Assets\Square71x71Logo.png">
           <uap:ShowNameOnTiles>

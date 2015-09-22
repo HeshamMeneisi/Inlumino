@@ -20,11 +20,12 @@ namespace Inlumino_SHARED
         /// <param name="pan"></param>
         internal static void PlaySound(SoundEffect s, SoundCategory cat, bool loop = false, float volume = 1, float pitch = 0, float pan = 0)
         {
+            if (s==null || s.IsDisposed) return;
             if (cat == SoundCategory.Music)
                 volume = Manager.GameSettings.MusicVolume;
             if (cat == SoundCategory.SFX)
-                volume = Manager.GameSettings.SFXVolume;
-            s.Play(volume, pitch, pan);
+                volume = Manager.GameSettings.SFXVolume;            
+            s.Play(volume, pitch, pan);            
             if (loop)
                 looping.Add(s, new SFXData(volume, pitch, pan));
         }
@@ -44,7 +45,7 @@ namespace Inlumino_SHARED
                 SFXData data = looping[p.Key];
                 data.Elapsed += (float)time.ElapsedGameTime.TotalMilliseconds;
                 if (data.Elapsed >= p.Key.Duration.TotalMilliseconds)
-                { p.Key.Play(data.Volume, data.Pitch, data.Pan); data.Elapsed = 0; }
+                { if(!p.Key.IsDisposed)p.Key.Play(data.Volume, data.Pitch, data.Pan); data.Elapsed = 0; }
                 looping[p.Key].CopyFrom(data);
             }
         }

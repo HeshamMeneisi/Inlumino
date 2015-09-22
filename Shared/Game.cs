@@ -27,6 +27,7 @@ namespace Inlumino_SHARED
             //ParseInstallation.CurrentInstallation.SaveAsync();          
 
             graphics = new GraphicsDeviceManager(this);
+            Content = new SmartContentManager(Content.ServiceProvider);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
             Screen.SetFullScreen(true);

@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Screen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SecurityProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SmartContentManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SoundManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Splitter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Stage.cs" />

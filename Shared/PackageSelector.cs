@@ -70,8 +70,7 @@ namespace Inlumino_SHARED
             foreach (PackageType pack in Common.Packages.Keys)
             {
                 bool locked = !(pack == PackageType.User || pack == PackageType.Online || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
-                Texture2D tex = DataHandler.GetPackageThumb(pack);
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, tex == null ? pack.ToString() : "", Color.White, new TextureID(tex, pack.ToString(), 0, -1, -1), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, "", Color.White, new TextureID(()=>DataHandler.GetPackageThumb(pack), pack.ToString(), 0, -1, -1), 0.1f);
                 cell.Pressed += mlcellpressed;
                 if (locked) cell.AttachSibling(new UIVisibleObject(new TextureID[] { DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0] }));
                 cell.FitSiblings();

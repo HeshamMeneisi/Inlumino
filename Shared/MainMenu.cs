@@ -94,11 +94,11 @@ namespace Inlumino_SHARED
                 suppressmessage = true;
             }
             else if (first && !Manager.Connected)
-            {
-                first = false;
+            {                
                 if (ParseUser.CurrentUser != null)
-                    await MessageBox.Show("ERROR", "Could not retreive your online profile. Please check your connection.", new string[] { "OK" });
+                    await MessageBox.Show("ERROR", "Failed to sync your data to the cloud.", new string[] { "OK" });
             }
+            first = false;
         }
     }
 }
