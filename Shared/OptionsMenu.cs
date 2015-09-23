@@ -105,8 +105,7 @@ namespace Inlumino_SHARED
                 }
             }
         skip:
-            Manager.StateManager.SwitchTo(GameState.MainMenu);
-            Manager.SyncData();
+            Manager.StateManager.SwitchTo(GameState.MainMenu,null,true);
         dontquit:
             savebtn.Visible = true;
         }

@@ -155,13 +155,15 @@ namespace Inlumino_SHARED
                 log.FitSiblings();
                 //  Element positions
                 toplog.Position = new Vector2(0, 0);
-                ropes1.Position = new Vector2(0, toplog.BoundingBox.Bottom - toplog.Height * 0.2f);
-                log.Position = new Vector2(0, ropes1.BoundingBox.Bottom - ropes1.Height * 0.4f);
-                ropes2.Position = new Vector2(0, log.BoundingBox.Bottom - log.Height * 0.2f);
-                nextbtn.Position = trybtn.Position = new Vector2(0, ropes2.BoundingBox.Bottom - ropes2.Height * 0.2f);
+                ropes1.Position = new Vector2(0, toplog.LocalBoundingBox.Bottom - toplog.Height * 0.2f);
+                log.Position = new Vector2(0, ropes1.LocalBoundingBox.Bottom - ropes1.Height * 0.4f);
+                ropes2.Position = new Vector2(0, log.LocalBoundingBox.Bottom - log.Height * 0.2f);
+                nextbtn.Position = trybtn.Position = new Vector2(0, ropes2.LocalBoundingBox.Bottom - ropes2.Height * 0.2f);
                 log.CentralizeSiblings();
                 ///
-                popup.Position = new Vector2((Screen.Width - popup.Width) / 2, 0);
+                if (Screen.Mode == Orientation.Landscape)
+                    popup.Position = new Vector2((Screen.Width - genmenu.Width - popup.Width) / 2 + genmenu.Width, 0);
+                else popup.Position = new Vector2((Screen.Width - popup.Width) / 2, genmenu.Height);
                 popup.Visible = true;
             }
         }

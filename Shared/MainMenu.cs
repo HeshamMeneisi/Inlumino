@@ -78,31 +78,29 @@ namespace Inlumino_SHARED
         }
         bool suppressmessage = false, first = true;
         public void OnActivated(params object[] args)
-        {
-            Manager.LoadUserDataLocal();
+        {                        
             SetupMenu();
-#if WP81
-            Manager.SyncData();
-#endif
+            if (args.Length > 0)
+                Manager.SyncData();
             Task t = new Task(() => CheckOnline());
             t.Start();
         }
 
         private async Task CheckOnline()
         {
-            while (!Manager.IsIdle) { }
             if (!suppressmessage && ParseUser.CurrentUser == null)
             {
                 int? r = await MessageBox.Show("Hello", "It looks like you are not syncing your data online. Would you like to setup your account?", new string[] { "Take me there", "Remind me later" });
                 if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);
                 suppressmessage = true;
             }
+            /*
             else if (first && !Manager.Connected)
             {                
                 if (ParseUser.CurrentUser != null)
                     await MessageBox.Show("ERROR", "Failed to sync your data to the cloud.", new string[] { "OK" });
             }
-            first = false;
+            first = false;*/
         }
     }
 }

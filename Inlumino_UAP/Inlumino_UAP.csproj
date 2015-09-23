@@ -22,7 +22,7 @@
     <MonoGameContentBuilderExe>
     </MonoGameContentBuilderExe>
     <PackageCertificateThumbprint>576FE712B48E84CC834D48C8ED18D050512DCCBD</PackageCertificateThumbprint>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
   </PropertyGroup>

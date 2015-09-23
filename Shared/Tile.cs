@@ -94,7 +94,7 @@ namespace Inlumino_SHARED
             bool grid = (ActiveEffect & OverlayEffect.Grid) > 0;
             batch.Draw(DataHandler.getTexture(TextureID[0].RefKey), cam.Transform(Bounds2D).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(TextureID[0]), highlight ? HighlightColor : Color.White);//White for no tinting            
             if (Auxiliary != null)
-                batch.Draw(DataHandler.getTexture(Auxiliary.RefKey), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), highlight ? HighlightColor : Color.White, auxrot, AuxRect.Center - AuxRect.Location, SpriteEffects.None, 0);//White for no tinting            
+                batch.Draw(DataHandler.getTexture(Auxiliary.RefKey), cam.Transform(AuxRect.Offset(Bounds2D.Location)).getSmoothRectangle(cam.GetRecommendedDrawingFuzz() / 2 /*on both sides*/), DataHandler.getTextureSource(Auxiliary), highlight ? HighlightColor : Color.White, auxrot, Auxiliary.Center, SpriteEffects.None, 0);//White for no tinting            
             if (hasObject())
                 obj.Draw(batch, cam, coordOrigin);
             if (grid)
@@ -130,9 +130,12 @@ namespace Inlumino_SHARED
             if (bounds != null) AuxRect = bounds;
             else
             {
-                float v = (float)(MathHelper.Clamp((float)ran.NextDouble(), 0.2f, 0.8f) * Bounds2D.Width / Math.Sqrt(2));
+                float v = (float)MathHelper.Clamp((float)ran.NextDouble(), 0.2f, 1/(float)Math.Sqrt(2));
+                Vector2 size = Bounds2D.Size * v;
+                float maxw = size.X * (float)Math.Sqrt(2);
+                Vector2 pos = new Vector2(ran.Next((int)(maxw / 2), (int)(Bounds2D.Width - maxw / 2)), ran.Next((int)(maxw / 2), (int)(Bounds2D.Height - maxw / 2)));
                 auxrot = (float)(Math.PI * 2 * ran.NextDouble());
-                AuxRect = new RectangleF((float)ran.NextDouble() * Bounds2D.Width / 5, (float)ran.NextDouble() * Bounds2D.Height / 5, v, v);
+                AuxRect = new RectangleF(pos,size);
             }
         }
     }

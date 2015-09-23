@@ -428,7 +428,7 @@ namespace Inlumino_SHARED
             path = "temp/Inlumino/" + file;
             saveExternal(str, path);
 #endif
-#if WINDOWS_UAP
+#if WINDOWS_UAP && DEBUG // Causes crashes after release
             path = str.GetType().GetField("m_FullPath", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(str).ToString();
 #endif
             Debug.WriteLine("______ALERT______SavedFileTo: " + path);

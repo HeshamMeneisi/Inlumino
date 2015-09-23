@@ -42,7 +42,7 @@ namespace Inlumino_SHARED
         internal static bool IsIdle { get { return !syncingdata; } }
         internal static async Task<Exception> SyncData()
         {
-            while (!IsIdle) { }
+            if (!IsIdle) return null;
             Debug.WriteLine("Sync started.");
             syncingdata = true;
             if (ParseUser.CurrentUser != null)
@@ -88,7 +88,7 @@ namespace Inlumino_SHARED
 
         internal static Task<Exception> LoadUserDataLocal()
         {
-            while (!IsIdle) { }
+            if (!IsIdle) return null;
             UserData temp = DataHandler.LoadData<UserData>(datafile);
             if (temp != null) userdata = temp;
             else userdata = new UserData();
