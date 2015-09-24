@@ -119,9 +119,9 @@ namespace Inlumino_SHARED
             savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, password.BoundingBox.Bottom);
         }
         public void Draw(SpriteBatch batch)
-        {
-            loginmenu.Draw(batch);
+        {            
             menu.Draw(batch);
+            loginmenu.Draw(batch);
         }
 
         public void HandleEvent(WorldEvent e, bool forcehandle = false)

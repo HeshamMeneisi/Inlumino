@@ -27,7 +27,7 @@ namespace Inlumino_SHARED
             target = targetfield;
             priolayer = target.Layer;
             target.Layer = int.MaxValue;
-            priorpos = target.Position;              
+            priorpos = target.Position;
             SimulateKeyDownToManager = target == null;
             SetupHud();
             visible = true;
@@ -62,9 +62,9 @@ namespace Inlumino_SHARED
         };
         static Keys[][] defsymb = new Keys[][]
         {
-            new Keys[] { Keys.OemTilde,Keys.D1,Keys.D2,Keys.D3,Keys.D4,Keys.D5,Keys.D6,Keys.D7,Keys.D8,Keys.D9,Keys.D0,Keys.OemMinus,Keys.OemPlus },
-            new Keys[] { Keys.OemSemicolon,Keys.OemQuotes,Keys.OemPipe,Keys.OemComma,Keys.OemPeriod,Keys.OemQuestion },
-            new Keys[] {Keys.Back,Keys.LeftShift,Keys.None,Keys.Enter }
+            new Keys[] { Keys.D1,Keys.D2,Keys.D3,Keys.D4,Keys.D5,Keys.D6,Keys.D7,Keys.D8,Keys.D9,Keys.D0 },
+            new Keys[] { Keys.OemTilde,Keys.OemSemicolon,Keys.OemQuotes,Keys.OemPipe,Keys.OemMinus,Keys.OemPlus },
+            new Keys[] {Keys.Back,Keys.LeftShift, Keys.OemComma, Keys.OemPeriod, Keys.OemQuestion,Keys.None,Keys.Enter }
 
         };
         static int state = 0;
@@ -78,9 +78,9 @@ namespace Inlumino_SHARED
                     if (filterfunc == null || filterfunc(k))
                     {
                         string t = "";
-                        if (k == Keys.LeftShift) t = state == 0 ? "Aa" : "@2";
+                        if (k == Keys.LeftShift) t = state == 0 ? "Aa" : "0#";
                         else if (k == Keys.Enter) t = "Go";
-                        else if (k == Keys.None) t = state == 0 ? "0#" : "Az";
+                        else if (k == Keys.None) t = state == 0 ? "1?" : "AZ";
                         else if (k == Keys.Back) t = "<-";
                         else if (CommonData.KeyCharMap.ContainsKey(k)) t = CommonData.KeyCharMap[k][Low ? 0 : 1].ToString();
                         else t = k.ToString();
@@ -89,7 +89,7 @@ namespace Inlumino_SHARED
                         keys.Add(key);
                     }
                 float h = (Screen.Height - (target == null ? 0 : target.Height)) / pool.Length;
-                UIGrid rhud = new UIGrid(keys, Orientation.Landscape, Screen.Width, h,row.Length);
+                UIGrid rhud = new UIGrid(keys, Orientation.Landscape, Screen.Width, h, row.Length);
                 rhud.ShowEntireRowCol();
                 rhud.TrimGridToVisible();
                 rhud.TrimAllToGrid();
@@ -121,7 +121,7 @@ namespace Inlumino_SHARED
         }
 
         private static void EndInput()
-        {            
+        {
             if (target != null) { target.NotifyVKExit(); target.Position = priorpos; target.Layer = priolayer; target = null; }
             keyboard = null;
             visible = false;

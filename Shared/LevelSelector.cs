@@ -85,7 +85,7 @@ namespace Inlumino_SHARED
             string name = (string)(sender as UICell).Tag;
             if (name == "$$L$$")
             {
-                MessageBox.Show("Locked", "Solve more levels to unlcok this level!", new string[] { "Ok" });
+                MessageBox.Show("Locked", "Solve more levels to unlock this level!", new string[] { "Ok" });
                 return;
             }
             Manager.Play(name, package);

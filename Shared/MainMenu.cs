@@ -91,8 +91,8 @@ namespace Inlumino_SHARED
             if (!suppressmessage && ParseUser.CurrentUser == null)
             {
                 int? r = await MessageBox.Show("Hello", "It looks like you are not syncing your data online. Would you like to setup your account?", new string[] { "Take me there", "Remind me later" });
-                if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);
                 suppressmessage = true;
+                if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);                
             }
             /*
             else if (first && !Manager.Connected)

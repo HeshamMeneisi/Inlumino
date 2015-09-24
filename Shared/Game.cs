@@ -101,7 +101,7 @@ namespace Inlumino_SHARED
 #if WP81
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
-            //UnlockAll();
+            UnlockAll();
             //CheckSolved();
             //ScreenShotAll();
             //Temp Code
