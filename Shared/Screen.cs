@@ -17,7 +17,14 @@ namespace Inlumino_SHARED
         //internal static int Width{get{return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;}}
         //internal static int Height { get { return GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height; } }
         internal static float Width { get { return isVirtual ? virtualbounds.X : window.ClientBounds.Width; } }
-        internal static float Height { get { return isVirtual ? virtualbounds.Y : window.ClientBounds.Height; } }
+        internal static float Height { get {
+                return isVirtual ? virtualbounds.Y :
+#if WP81
+                    window.ClientBounds.Height * (Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsFullScreen ? 1 : 0.94f);
+#else
+                    window.ClientBounds.Height;
+#endif
+                    } }
         // window.CurrentOrientation also works, but this is more literal representation of the concept.
         internal static Orientation Mode { get { return Width > Height ? Orientation.Landscape : Orientation.Portrait; } }
 

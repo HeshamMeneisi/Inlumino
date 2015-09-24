@@ -432,11 +432,11 @@ namespace Inlumino_SHARED
 
             if (e is MouseMovedEvent)
             {
-                if (editing && InputManager.isMouseVisible()) CurrentLevel.HighlightTileAt(CurrentLevel.Camera.DeTransform(InputManager.getMousePos().ToVector2()));
+                if (editing && InputManager.isMouseVisible()) CurrentLevel.HighlightTileAt(CurrentLevel.Camera.DeTransform(InputManager.getMousePos()));
                 if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                 {
                     dragging = true;
-                    Point offset = (e as MouseMovedEvent).Offset;
+                    Vector2 offset = (e as MouseMovedEvent).Offset;
                     CurrentLevel.Camera.StepHorizontal(offset.X);
                     CurrentLevel.Camera.StepVertical(offset.Y);
                 }
@@ -453,7 +453,7 @@ namespace Inlumino_SHARED
             {
                 if (dragging) { dragging = false; return; }
                 MouseUpEvent ev = (e as MouseUpEvent);
-                Tile target = CurrentLevel.getTileAt(CurrentLevel.Camera.DeTransform(ev.Position.ToVector2()));
+                Tile target = CurrentLevel.getTileAt(CurrentLevel.Camera.DeTransform(ev.Position));
                 StaticObject obj = target == default(Tile) ? null : target.getObject();
                 if (target != default(Tile) && editing && selected != ObjectType.None && (obj == null || obj.getType() != selected))
                 {

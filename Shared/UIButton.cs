@@ -32,7 +32,7 @@ namespace Inlumino_SHARED
             if (e.Handled) return;
             Vector2 pos;
             if (e is MouseUpEvent)
-                pos = (e as MouseUpEvent).Position.ToVector2();
+                pos = (e as MouseUpEvent).Position;
             else if (e is TouchTapEvent)
                 pos = (e as TouchTapEvent).Position;
             else return;

@@ -59,13 +59,11 @@ namespace Inlumino_SHARED
             // Children
             foreach (UIVisibleObject obj in children.Where(t => t is UIVisibleObject)) obj.Draw(batch, cam);
             // Draw text      
-            if (text != "")
+            if (text != "" && text != "\0")
             {
-                if (text == "q")
-                { }
                 Vector2 tsize = font.MeasureString(text);
                 if (cam == null || cam.isInsideView(LocalCenter))
-                    batch.DrawString(font, text, GlobalCenter - tsize / 2, color);
+                    batch.DrawString(font, text, GlobalCenter - tsize / 2 - cam.ActualView.Location, color);
             }
         }
     }

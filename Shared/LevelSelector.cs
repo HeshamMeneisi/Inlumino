@@ -221,6 +221,7 @@ namespace Inlumino_SHARED
                 float lt = Screen.Mode == Orientation.Landscape ? genmenu.Width : 0;
                 mainlevels = new UIGrid(mlcells.ToArray(), Orientation.Landscape, Screen.Width - lt, Screen.Height - tp, 4);
                 mainlevels.ShowEntireRowCol();
+                mainlevels.TrimGridToVisible();
                 mainlevels.Position = new Vector2(lt, tp);
             }
             mainlevels.FitCellSiblings();

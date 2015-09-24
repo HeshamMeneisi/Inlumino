@@ -140,9 +140,9 @@ namespace Inlumino_SHARED
                 {
                     e.Handled = true;
                     if (LockCamera) return;
-                    if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) goto skip;
+                    if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position)) goto skip;
                     dragging = true;
-                    Point offset = (e as MouseMovedEvent).Offset;
+                    Vector2 offset = (e as MouseMovedEvent).Offset;
                     cam.StepHorizontal(offset.X);
                     cam.StepVertical(offset.Y);
                     return;

@@ -14,46 +14,46 @@ namespace Inlumino_SHARED
     class MouseDownEvent : WorldEvent
     {
         private InputManager.MouseKey k;
-        private Point pos;
+        private Vector2 pos;
 
-        internal MouseDownEvent(InputManager.MouseKey k, Point pos)
+        internal MouseDownEvent(InputManager.MouseKey k, Vector2 pos)
         {
             this.k = k;
             this.pos = pos;
         }
 
-        internal Point Position { get { return pos; } }
+        internal Vector2 Position { get { return pos; } }
         internal InputManager.MouseKey Key { get { return k; } }
     }
     class MouseUpEvent : WorldEvent
     {
         private InputManager.MouseKey k;
-        private Point pos;
+        private Vector2 pos;
 
-        internal MouseUpEvent(InputManager.MouseKey k, Point pos)
+        internal MouseUpEvent(InputManager.MouseKey k, Vector2 pos)
         {
             this.k = k;
             this.pos = pos;
         }
 
-        internal Point Position { get { return pos; } }
+        internal Vector2 Position { get { return pos; } }
 
         internal InputManager.MouseKey Key { get { return k; } }
     }
     class MouseMovedEvent : WorldEvent
     {
-        private Point position;
-        private Point offset;
+        private Vector2 position;
+        private Vector2 offset;
 
-        internal MouseMovedEvent(Point position, Point offset)
+        internal MouseMovedEvent(Vector2 position, Vector2 offset)
         {
             this.position = position;
             this.offset = offset;
         }
 
-        internal Point Position
+        internal Vector2 Position
         { get { return position; } }
-        internal Point Offset
+        internal Vector2 Offset
         { get { return offset; } }
     }
     class MouseScrollEvent : WorldEvent

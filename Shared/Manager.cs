@@ -252,7 +252,7 @@ namespace Inlumino_SHARED
             HandleEvent(new KeyUpEvent(k));
         }
 
-        private static void mdown(InputManager.MouseKey k, Point position)
+        private static void mdown(InputManager.MouseKey k, Vector2 position)
         {
             HandleEvent(new MouseDownEvent(k, position));
         }
@@ -272,7 +272,7 @@ namespace Inlumino_SHARED
             HandleEvent(new TouchFreeDragEvent(delta, pos));
         }
 
-        private static void mmoved(Point position, Point offset)
+        private static void mmoved(Vector2 position, Vector2 offset)
         {
             HandleEvent(new MouseMovedEvent(position, offset));
         }
@@ -282,7 +282,7 @@ namespace Inlumino_SHARED
             HandleEvent(new MouseScrollEvent(value));
         }
 
-        private static void mup(InputManager.MouseKey k, Point pos)
+        private static void mup(InputManager.MouseKey k, Vector2 pos)
         {
             HandleEvent(new MouseUpEvent(k, pos));
         }
