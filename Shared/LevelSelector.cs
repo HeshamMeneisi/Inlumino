@@ -13,7 +13,7 @@ namespace Inlumino_SHARED
 {
     class LevelSelector : IState
     {
-        protected UIHud mainlevels;
+        protected UIGrid mainlevels;
         protected UIMenu genmenu;
         protected UIButton menubtn;
         protected UIButton backbtn;
@@ -34,6 +34,7 @@ namespace Inlumino_SHARED
             searchquery = new UITextField(10, Color.Black, Color.White, "Search...");
             searchquery.AllowedCharTypes = CharType.Lower | CharType.Upper;
             loading.Text = "Loading...";
+            loading.ScaleToText();
             searchquery.SelectedChanged += searchselect;
             genmenu = new UIMenu();
             genmenu.Add(menubtn); genmenu.Add(backbtn); genmenu.Add(nextbtn); genmenu.Add(deletebtn); genmenu.Add(searchquery);
@@ -140,7 +141,7 @@ namespace Inlumino_SHARED
             genmenu.setAllSizeRelative(0.16f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             searchquery.ScaleToDefault();
             genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
-            UICell target = mainlevels == null ? null : mainlevels.SnapTarget;
+            UIVisibleObject target = mainlevels == null ? null : mainlevels.SnapTarget;
             if (reload)
             {
                 mlcells.Clear();
@@ -211,17 +212,17 @@ namespace Inlumino_SHARED
             if (package != PackageType.Online)
             {
                 float d = Math.Min(Screen.SmallDim, Screen.BigDim * 0.6f);
-                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Portrait, d, d, d, d);
+                mainlevels = new UIGrid(mlcells.ToArray(), Orientation.Portrait, d, d, 1, true, d, d);
                 mainlevels.SnapCameraToCells = true;
                 mainlevels.Position = new Vector2(Screen.Mode == Orientation.Landscape ? genmenu.Width + (Screen.Width - genmenu.Width - d) / 2 : (Screen.Width - d) / 2, (Screen.Height - tp - d) / 2 + tp);
             }
             else
             {
                 float lt = Screen.Mode == Orientation.Landscape ? genmenu.Width : 0;
-                mainlevels = new UIHud(mlcells.ToArray(), Orientation.Landscape, Screen.SmallDim * 0.2f, Screen.SmallDim * 0.2f, Screen.Width - lt, Screen.Height - tp);
+                mainlevels = new UIGrid(mlcells.ToArray(), Orientation.Landscape, Screen.Width - lt, Screen.Height - tp, 4);
+                mainlevels.ShowEntireRowCol();
                 mainlevels.Position = new Vector2(lt, tp);
             }
-            mainlevels.Setup();
             mainlevels.FitCellSiblings();
             if (sharebtn.Visible && target != null)
                 sharebtn.Position = target.GlobalPosition + target.Size * 0.1f;

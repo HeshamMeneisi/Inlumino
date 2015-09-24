@@ -498,7 +498,9 @@
 /copy:Textures/Beach/_MMBG.png
 
 #begin Textures/Beach/_Obj.png
-/copy:Textures/Beach/_Obj.png
+/importer:
+/processor:
+/build:Textures/Beach/_Obj.png
 
 #begin Textures/Beach/_UI.png
 /copy:Textures/Beach/_UI.png
@@ -519,7 +521,9 @@
 /copy:Textures/Space/_MMBG.png
 
 #begin Textures/Space/_Obj.png
-/copy:Textures/Space/_Obj.png
+/importer:
+/processor:
+/build:Textures/Space/_Obj.png
 
 #begin Textures/Space/_UI.png
 /copy:Textures/Space/_UI.png

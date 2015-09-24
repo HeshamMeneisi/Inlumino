@@ -105,7 +105,7 @@ namespace Inlumino_SHARED
                 }
             }
         skip:
-            Manager.StateManager.SwitchTo(GameState.MainMenu,null,true);
+            Manager.StateManager.SwitchTo(GameState.MainMenu, null, true);
         dontquit:
             savebtn.Visible = true;
         }
@@ -116,7 +116,7 @@ namespace Inlumino_SHARED
             email.Size = password.Size = new Vector2(Screen.Width, v);
             loginmenu.ArrangeInForm(Orientation.Portrait);
             savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, Screen.Height - savebtn.BoundingBox.Height);
+            savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, password.BoundingBox.Bottom);
         }
         public void Draw(SpriteBatch batch)
         {

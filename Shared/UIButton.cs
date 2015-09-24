@@ -15,7 +15,7 @@ namespace Inlumino_SHARED
         internal event ButtonPressedEventHandler Pressed;
 
         internal UIButton(TextureID[] tid, ButtonPressedEventHandler pressed = null, int layer = 0, string id = "")
-            : base(tid, layer, id)
+            : base(tid, id, layer)
         {
             Pressed += pressed;
         }
@@ -29,14 +29,14 @@ namespace Inlumino_SHARED
         {
             if (!visible || e.Handled) return;
             foreach (UIObject obj in siblings) obj.HandleEvent(e);
-            if (e.Handled) return;            
+            if (e.Handled) return;
             Vector2 pos;
             if (e is MouseUpEvent)
                 pos = (e as MouseUpEvent).Position.ToVector2();
             else if (e is TouchTapEvent)
                 pos = (e as TouchTapEvent).Position;
             else return;
-            UIHud p = parent as UIHud;
+            UIGrid p = parent as UIGrid;
             if (p != null) pos = p.Camera.DeTransform(pos);
             if (BoundingBox.ContainsPoint(pos))
             {

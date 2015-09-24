@@ -13,77 +13,95 @@ namespace Inlumino_SHARED
         internal static bool SimulateKeyDownToManager = true;
         internal static bool ShiftEnabled = true;
         internal static bool SymbolsEnabled = true;
-        static UIHud hud;
+        static UIMenu keyboard;
         static Func<Keys, bool> filterfunc;
         static UITextField target;
-        static float mindim;
         static Vector2 priorpos;
-        internal static void Show(float minkeydim, UITextField targetfield = null, Func<Keys, bool> filter = null, float x = 0, float y = 0)
+        static int priolayer = 0;
+        static bool visible = false;
+        internal static void Show(UITextField targetfield = null, Func<Keys, bool> filter = null, float x = 0, float y = 0)
         {
+            if (target == targetfield) return;
             if (target != null) EndInput();
             filterfunc = filter;
-            mindim = minkeydim;
             target = targetfield;
+            priolayer = target.Layer;
+            target.Layer = int.MaxValue;
+            priorpos = target.Position;              
             SimulateKeyDownToManager = target == null;
-            if (target != null) { priorpos = target.Position; target.ScaleToText(); }
-            target.Position = new Vector2(target.Position.X, 0);
             SetupHud();
+            visible = true;
         }
-
         private static void SetupHud()
         {
-            hud = new UIHud(getcontent(), Orientation.Landscape, mindim, mindim, Screen.Width, Screen.Height - (target == null ? 0 : target.Height));
-            if (target != null)
-                hud.Position = new Vector2(0, target.BoundingBox.Bottom);
-            hud.SnapCameraToCells = false;
-            hud.Setup();
+            keyboard = new UIMenu("VK");
+            keyboard.Add(getcontent());
+            keyboard.ArrangeInForm(Orientation.Portrait);
+            keyboard.Position = new Vector2(0, Screen.Height - keyboard.Height);
+            changingtarget = true;
+            target.GlobalPosition = new Vector2(0, keyboard.Position.Y - target.Height);
+            changingtarget = false;
         }
-
-        static UICell[] allkeys = null;
-        static Keys[] defkeys = new Keys[] {
-
-        Keys.Q, Keys.W, Keys.E, Keys.R, Keys.T, Keys.Y, Keys.U, Keys.I, Keys.O, Keys.P,
-        Keys.A, Keys.S, Keys.D, Keys.F, Keys.G, Keys.H, Keys.J, Keys.K, Keys.L,
-        Keys.Z, Keys.X, Keys.C, Keys.V, Keys.B, Keys.N, Keys.M,Keys.Back,Keys.LeftShift,Keys.None,Keys.Enter
-        };
-        static Keys[] defsymb = new Keys[]
+        static bool changingtarget = false;
+        internal static void NotifyPosChanged()
         {
-            Keys.OemTilde,Keys.D1,Keys.D2,Keys.D3,Keys.D4,Keys.D5,Keys.D6,Keys.D7,Keys.D8,Keys.D9,Keys.D0,Keys.OemMinus,Keys.OemPlus,
-            Keys.OemSemicolon,Keys.OemQuotes,Keys.OemPipe,Keys.OemComma,Keys.OemPeriod,Keys.OemQuestion,
-            Keys.Back,Keys.LeftShift,Keys.None,Keys.Enter
+            if (target != null && !changingtarget)
+            {
+                priorpos = target.Position;
+                changingtarget = true;
+                target.GlobalPosition = new Vector2(0, keyboard.GlobalPosition.Y - target.Height);
+                changingtarget = false;
+            }
+        }
+        static Keys[][] defkeys = new Keys[][] {
+
+        new Keys[] { Keys.Q, Keys.W, Keys.E, Keys.R, Keys.T, Keys.Y, Keys.U, Keys.I, Keys.O, Keys.P },
+        new Keys[] { Keys.A, Keys.S, Keys.D, Keys.F, Keys.G, Keys.H, Keys.J, Keys.K, Keys.L },
+        new Keys[] { Keys.Z, Keys.X, Keys.C, Keys.V, Keys.B, Keys.N, Keys.M },
+        new Keys[] { Keys.Back, Keys.LeftShift,Keys.Space, Keys.None, Keys.Enter }
+        };
+        static Keys[][] defsymb = new Keys[][]
+        {
+            new Keys[] { Keys.OemTilde,Keys.D1,Keys.D2,Keys.D3,Keys.D4,Keys.D5,Keys.D6,Keys.D7,Keys.D8,Keys.D9,Keys.D0,Keys.OemMinus,Keys.OemPlus },
+            new Keys[] { Keys.OemSemicolon,Keys.OemQuotes,Keys.OemPipe,Keys.OemComma,Keys.OemPeriod,Keys.OemQuestion },
+            new Keys[] {Keys.Back,Keys.LeftShift,Keys.None,Keys.Enter }
 
         };
         static int state = 0;
-        private static UICell[] getcontent()
+        private static IEnumerable<UIGrid> getcontent()
         {
-            List<UICell> keys = new List<UICell>();
-            Keys[] pool;
-            if (filterfunc == null) pool = state == 0 ? defkeys : defsymb;
-            else
-                pool = (Keys[])Keys.GetValues(typeof(Keys));
-            foreach (Keys k in pool)
+            Keys[][] pool = state == 0 ? defkeys : defsymb;
+            foreach (Keys[] row in pool)
             {
-                if (filterfunc == null || filterfunc(k))
-                {
-                    string t = "";
-                    if (k == Keys.LeftShift) t = "Aa";
-                    else if (k == Keys.Enter) t = "OK";
-                    else if (k == Keys.None) t = "#&";
-                    else if (k == Keys.Back) t = "<-";
-                    else if (CommonData.KeyCharMap.ContainsKey(k)) t = CommonData.KeyCharMap[k][Low ? 0 : 1].ToString();
-                    else t = k.ToString();
-                    UICell key = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], k, t, Color.White);
-                    key.Pressed += keypressed;
-                    keys.Add(key);
-                }
+                List<UICell> keys = new List<UICell>();
+                foreach (Keys k in row)
+                    if (filterfunc == null || filterfunc(k))
+                    {
+                        string t = "";
+                        if (k == Keys.LeftShift) t = state == 0 ? "Aa" : "@2";
+                        else if (k == Keys.Enter) t = "Go";
+                        else if (k == Keys.None) t = state == 0 ? "0#" : "Az";
+                        else if (k == Keys.Back) t = "<-";
+                        else if (CommonData.KeyCharMap.ContainsKey(k)) t = CommonData.KeyCharMap[k][Low ? 0 : 1].ToString();
+                        else t = k.ToString();
+                        UICell key = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Cell], k, t, Color.White);
+                        key.Pressed += keypressed;
+                        keys.Add(key);
+                    }
+                float h = (Screen.Height - (target == null ? 0 : target.Height)) / pool.Length;
+                UIGrid rhud = new UIGrid(keys, Orientation.Landscape, Screen.Width, h,row.Length);
+                rhud.ShowEntireRowCol();
+                rhud.TrimGridToVisible();
+                rhud.TrimAllToGrid();
+                //rhud.LockCamera = true;
+                yield return rhud;
             }
-            return allkeys = keys.ToArray();
         }
         internal static bool Low = true;
 
         internal static RectangleF BoundingBox
         {
-            get { return hud == null ? null : hud.BoundingBox; }
+            get { return keyboard == null ? null : keyboard.BoundingBox; }
         }
 
         private static void keypressed(UIButton sender)
@@ -103,9 +121,10 @@ namespace Inlumino_SHARED
         }
 
         private static void EndInput()
-        {
-            hud = null;
-            if (target != null) { target.Position = priorpos; target.NotifyVKExit(); target = null; }
+        {            
+            if (target != null) { target.NotifyVKExit(); target.Position = priorpos; target.Layer = priolayer; target = null; }
+            keyboard = null;
+            visible = false;
         }
 
         private static void OnKeyPressed(Keys k)
@@ -120,18 +139,22 @@ namespace Inlumino_SHARED
 
         internal static void Draw(SpriteBatch batch)
         {
-            if (hud != null)
-                hud.Draw(batch);
+            if (keyboard != null)
+                keyboard.Draw(batch);
         }
         internal static void Update(GameTime time)
         {
-            if (hud != null)
-                hud.Update(time);
+            if (keyboard != null)
+                keyboard.Update(time);
         }
         internal static void HandleEvent(WorldEvent e)
         {
-            if (hud != null)
-                hud.HandleEvent(e);
+            if (keyboard != null)
+            {
+                keyboard.HandleEvent(e);
+                if (e is DisplaySizeChangedEvent || e is OrientationChangedEvent)
+                    SetupHud();
+            }
         }
 
         internal static void Hide()

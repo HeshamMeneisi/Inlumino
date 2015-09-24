@@ -22,7 +22,19 @@ namespace Inlumino_SHARED
         internal bool IsPassword = false;
         internal CharType AllowedCharTypes = CharType.Lower | CharType.Upper | CharType.Num | CharType.Symb;
         bool vk = false;
+        internal override Vector2 Position
+        {
+            get
+            {
+                return base.Position;
+            }
 
+            set
+            {
+                base.Position = value;
+                if (vk) VirtualKeyboard.NotifyPosChanged();
+            }
+        }
         internal Color ForegroundColor { get { return color; } set { color = value; } }
         internal Color BackgroundColor { get { return background; } set { background = value; } }
         internal bool Selected
@@ -40,7 +52,7 @@ namespace Inlumino_SHARED
             if (SelectedChanged != null) SelectedChanged(this, Selected);
             if (selected)
             {
-                vk = true; VirtualKeyboard.Show(Screen.SmallDim * 0.15f, this);
+                vk = true; VirtualKeyboard.Show(this);
             }
             else vk = false;
         }
@@ -52,13 +64,14 @@ namespace Inlumino_SHARED
             get { return text; }
             set { if (value != null) text = value.Substring(0, MathHelper.Min(value.Length, maxl)); }
         }
-        internal UITextField(int maxl, Color col, Color background, string defaulttext = "", int layer = 0, string id = "", ButtonPressedEventHandler pressed = null) : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], pressed, layer, id)
+        internal UITextField(int maxl, Color col, Color background, string defaulttext = "", int layer = 0, string id = "", ButtonPressedEventHandler pressed = null) : base(null, pressed, layer, id)
         {
             this.maxl = maxl;
             this.font = DataHandler.Fonts[0];
             this.color = col;
             this.deftext = defaulttext;
             this.background = background;
+            ScaleToDefault();
             active.Add(this);
         }
         protected override void OnPressed()
@@ -97,7 +110,7 @@ namespace Inlumino_SHARED
                     t = t.Substring(1, t.Length - 1);
                     tsize = font.MeasureString(t);
                 }
-            batch.DrawString(font, t, cam == null ? this.Center - tsize / 2 : cam.Transform(this.Center - tsize / 2), text == "" ? Color.Gray : color);
+            batch.DrawString(font, t, cam == null ? this.GlobalCenter - tsize / 2 : cam.Transform(this.GlobalCenter - tsize / 2), text == "" ? Color.Gray : color);
             base.Draw(batch, cam);
         }
 
@@ -108,11 +121,11 @@ namespace Inlumino_SHARED
                 return string.Join("", Enumerable.Repeat(HashChar, text.Length - (Selected ? 1 : 0))) + (Selected ? text[text.Length - 1].ToString() : "");
             else return text;
         }
-
         Texture2D rect = null;
         private void UpdateBackground()
         {
             int w = (int)Width, h = (int)Height;
+            if (w < 1 || h == 1) return;
             if (rect != null && rect.Width == w && rect.Height == h) return;
             rect = new Texture2D(Manager.Parent.GraphicsDevice, w, h);
             Color[] data = new Color[w * h];
@@ -122,6 +135,7 @@ namespace Inlumino_SHARED
 
         internal void ScaleToDefault(bool trimtoscreen = true)
         {
+            if (deftext == "") size = new Vector2(1, 1);
             Vector2 tsize = font.MeasureString(deftext);
             if (trimtoscreen)
             {

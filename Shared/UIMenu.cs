@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Linq;
 
 namespace Inlumino_SHARED
 {
@@ -9,13 +10,8 @@ namespace Inlumino_SHARED
     {
         protected List<UIVisibleObject> children;
 
-        internal override Vector2 Size
-        {
-            get
-            {
-                return new Vector2(Width, Height);
-            }
-        }
+        internal override Vector2 Size { get { return new Vector2(Width, Height); } }
+
         internal override float Height
         {
             get
@@ -24,11 +20,11 @@ namespace Inlumino_SHARED
                 foreach (UIVisibleObject obj in children)
                 {
                     if (!obj.Visible) continue;
-                    RectangleF temp = obj.BoundingBox;                    
+                    RectangleF temp = obj.BoundingBox;
                     miny = Math.Min(miny, temp.Top);
                     maxy = Math.Max(maxy, temp.Bottom);
                 }
-                return maxy - miny;                    
+                return maxy - miny;
             }
         }
         internal override float Width
@@ -46,7 +42,7 @@ namespace Inlumino_SHARED
                 return maxx - minx;
             }
         }
-        internal UIMenu(int layer = 0, string id = "") : base(DataHandler.ObjectTextureMap[ObjectType.Invisible], layer, id)
+        internal UIMenu(string id = "", int layer = 0) : base(null, id, layer)
         {
             children = new List<UIVisibleObject>();
         }
@@ -63,6 +59,11 @@ namespace Inlumino_SHARED
                 }
             }
             children.Add(obj);
+        }
+        internal void Add(IEnumerable<UIVisibleObject> objects)
+        {
+            foreach (UIVisibleObject obj in objects)
+                Add(obj);
         }
 
         internal void Remove(UIVisibleObject obj)
@@ -117,10 +118,8 @@ namespace Inlumino_SHARED
         internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible)
-                return;
-            List<UIVisibleObject>.Enumerator e = children.GetEnumerator();
-            while (e.MoveNext())
-                if (e.Current is UIVisibleObject) (e.Current as UIVisibleObject).Draw(batch);
+                return;            
+            foreach(var obj in children.OrderBy(t => t.Layer)) obj.Draw(batch);
         }
 
         internal override void Clear()
@@ -134,11 +133,13 @@ namespace Inlumino_SHARED
             maxwidth = maxwidth > 0 ? maxwidth : Screen.Width - GlobalPosition.X;
             maxheight = maxheight > 0 ? maxheight : Screen.Height - GlobalPosition.Y;
             float x = 0, y = 0;
+            foreach (UIVisibleObject obj in children)
+                obj.Position = Vector2.Zero;
             if (mode == Orientation.Landscape)
                 foreach (UIVisibleObject obj in children)
                 {
                     if (!obj.Visible) continue;
-                    if (x + obj.Width > maxwidth) { x = 0; y += obj.Height; }
+                    if (x + obj.Width > maxwidth) { x = 0; y += Height; }
                     obj.Position = new Vector2(x, y);
                     x += obj.Width;
                 }
@@ -146,7 +147,7 @@ namespace Inlumino_SHARED
                 foreach (UIVisibleObject obj in children)
                 {
                     if (!obj.Visible) continue;
-                    if (y + obj.Height > maxheight) { y = 0; x += obj.Width; }
+                    if (y + obj.Height > maxheight) { y = 0; x += Width; }
                     obj.Position = new Vector2(x, y);
                     y += obj.Height;
                 }

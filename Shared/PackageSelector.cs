@@ -9,12 +9,13 @@ namespace Inlumino_SHARED
 {
     class PackageSelector : IState
     {
-        protected UIHud packages;
+        UIVisibleObject mem = null;
+        protected UIGrid packages;
         protected UIMenu genmenu;
         protected UIButton menubtn;
         protected List<UICell> cells = new List<UICell>();
         internal PackageSelector()
-        {            
+        {
             menubtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.MenuButton]);
             menubtn.Pressed += menupressed;
             genmenu = new UIMenu();
@@ -31,6 +32,7 @@ namespace Inlumino_SHARED
             PackageType name = (PackageType)(sender as UICell).Tag;
             if (name == PackageType.None)
             { MessageBox.Show("Locked", "Finish other packages to unlock this package!", new string[] { "Ok" }); return; }
+            mem = packages.SnapTarget;
             Manager.StateManager.SwitchTo(GameState.SelectLevel, null, name);
         }
 
@@ -70,20 +72,20 @@ namespace Inlumino_SHARED
             foreach (PackageType pack in Common.Packages.Keys)
             {
                 bool locked = !(pack == PackageType.User || pack == PackageType.Online || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, "", Color.White, new TextureID(()=>DataHandler.GetPackageThumb(pack), pack.ToString(), 0, -1, -1), 0.1f);
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, "", Color.White, new TextureID(() => DataHandler.GetPackageThumb(pack), pack.ToString(), 0, -1, -1), 0.1f);
                 cell.Pressed += mlcellpressed;
                 if (locked) cell.AttachSibling(new UIVisibleObject(new TextureID[] { DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0] }));
                 cell.FitSiblings();
                 cells.Add(cell);
             }
             float d = Math.Min(Screen.SmallDim, Screen.BigDim * 0.6f);
-            packages = new UIHud(cells.ToArray(), Orientation.Portrait, d, d, d, d);
+            packages = new UIGrid(cells.ToArray(), Orientation.Portrait, d, d, 1, true, d, d);
             float tp = Screen.Mode == Orientation.Portrait ? genmenu.Height : 0;
             packages.Position = new Vector2(Screen.Mode == Orientation.Landscape ? genmenu.Width + (Screen.Width - genmenu.Width - d) / 2 : (Screen.Width - d) / 2, (Screen.Height - tp - d) / 2 + tp);
-            packages.Setup();
             packages.FitCellSiblings();
             packages.SnapCameraToCells = true;
             packages.Visible = true;
+            packages.SnapTarget = mem;
         }
     }
 }

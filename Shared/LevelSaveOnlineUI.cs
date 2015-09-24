@@ -26,7 +26,6 @@ namespace Inlumino_SHARED
             savebtn.Pressed += savepressed;
             backbtn.Pressed += backpressed;
 
-            nametext.Size = new Vector2(nametext.Width, nametext.Height * 0.5f);
             //menu.Add(nametext);
             menu.Add(savebtn);
             menu.Add(backbtn);
@@ -49,13 +48,13 @@ namespace Inlumino_SHARED
             {
                 LevelData data = DataHandler.GetLevelData(levelname);
                 string hash = SecurityProvider.GetMD5Hash(data.Data);
-                if(Common.IsMainLevel(hash))
+                if (Common.IsMainLevel(hash))
                 {
                     await MessageBox.Show("Oh oh!", "You can't share a level that already exists in an official package.", new string[] { "OK" });
                     return;
                 }
                 Texture2D thumb = DataHandler.GetLevelThumb(levelname);
-                string name = nametext.Text;                
+                string name = nametext.Text;
 
                 ParseObject obj = default(ParseObject);
                 try
@@ -97,11 +96,11 @@ namespace Inlumino_SHARED
                     ParseConfig config = null;
                     try
                     {
-                       config = await ParseConfig.GetAsync();                        
+                        config = await ParseConfig.GetAsync();
                     }
                     catch (Exception e)
                     {
-                        config = ParseConfig.CurrentConfig;                        
+                        config = ParseConfig.CurrentConfig;
                     }
                     config.TryGetValue("uploadthumb", out savethumb);
                     if (savethumb)
@@ -112,7 +111,7 @@ namespace Inlumino_SHARED
                         ParseFile file = new ParseFile(filename, thumbytes);
                         await file.SaveAsync();
                         obj["thumb"] = file.Url.ToString();
-                    }                    
+                    }
                     await obj.SaveAsync();
                     if (created)
                         await MessageBox.Show("Saved", "Level saved with ID: \n" + hash, new string[] { "Ok" });
@@ -126,7 +125,7 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            nametext.setSizeRelative(0.2f, Orientation.Landscape);
+            nametext.Size = new Vector2(Screen.Width, Screen.Height * 0.2f);
             menu.setAllSizeRelative(0.2f, Orientation.Landscape);
             menu.ArrangeInForm(Orientation.Landscape);
             nametext.Position = new Vector2((Screen.Width - nametext.Width) / 2, 0);
@@ -140,9 +139,9 @@ namespace Inlumino_SHARED
         }
 
         public void Draw(SpriteBatch batch)
-        {
-            nametext.Draw(batch);
+        {            
             menu.Draw(batch);
+            nametext.Draw(batch);
         }
 
         public void HandleEvent(WorldEvent e, bool forcehandle = false)
@@ -152,7 +151,7 @@ namespace Inlumino_SHARED
             menu.HandleEvent(e);
             nametext.HandleEvent(e);
         }
-        string levelname="";
+        string levelname = "";
         public void OnActivated(params object[] args)
         {
             if (args.Length == 0) Manager.StateManager.SwitchTo(GameState.MainMenu);

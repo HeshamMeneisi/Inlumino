@@ -22,8 +22,8 @@ namespace Inlumino_SHARED
         UICell[] borderbuttons = null;
         UIMenu genmenu;
         UIMenu popup;
-        UIHud edithud;
-        UIHud borderhud;
+        UIGrid edithud;
+        UIGrid borderhud;
         UIButton nextbtn;
         UIVisibleObject toplog;
         UICell log;
@@ -125,18 +125,20 @@ namespace Inlumino_SHARED
             Padding minpad;
             if (editing)
             {
-                float d = Screen.SmallDim * 0.1f;
-                edithud = new UIHud(cells.ToArray(), Common.ReverseOrientation(Screen.Mode), d, d, Screen.Mode == Orientation.Landscape ? 2 * d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : 2 * d);
-                edithud.Setup();
-                edithud.Position = Screen.Mode == Orientation.Landscape ? new Vector2(Screen.Width - edithud.ActualWidth, 0) : new Vector2(0, Screen.Height - edithud.ActualHeight);
-                borderhud = new UIHud(borderbuttons, Screen.Mode, d, d, Screen.Mode == Orientation.Landscape ? d : Screen.Width, Screen.Mode == Orientation.Landscape ? Screen.Height : d);
-                borderhud.Setup();
+                float d = Screen.SmallDim / 6;
+                edithud = new UIGrid(cells.ToArray(), Common.ReverseOrientation(Screen.Mode), Screen.Width, Screen.Height, 8,true,d,d);
+                //edithud.ShowEntireRowCol();
+                edithud.TrimGridToVisible();
+                edithud.Position = Screen.Mode == Orientation.Landscape ? new Vector2(Screen.Width - edithud.Width, 0) : new Vector2(0, Screen.Height - edithud.Height);
+                d = Screen.SmallDim / 8;
+                borderhud = new UIGrid(borderbuttons, Common.ReverseOrientation(Screen.Mode), Screen.Width, Screen.Height, 4, true, d, d);
+                borderhud.TrimGridToVisible();
                 borderhud.Position = Screen.Mode == Orientation.Landscape ?
-                    new Vector2(edithud.BoundingBox.Left - borderhud.ActualWidth, (Screen.Height - borderhud.ActualHeight) / 2)
-                    : new Vector2((Screen.Width - borderhud.ActualWidth) / 2, edithud.BoundingBox.Top - borderhud.ActualHeight);
+                    new Vector2(edithud.BoundingBox.Left - borderhud.Width, (Screen.Height - borderhud.Height) / 2)
+                    : new Vector2((Screen.Width - borderhud.Width) / 2, edithud.BoundingBox.Top - borderhud.Height);
                 minpad = Screen.Mode == Orientation.Landscape ?
-                    new Padding(genmenu.Width, edithud.ActualWidth + borderhud.ActualWidth, 0, 0)
-                    : new Padding(0, 0, genmenu.Height, edithud.ActualHeight + borderhud.ActualHeight);
+                    new Padding(genmenu.Width, edithud.Width + borderhud.Width, 0, 0)
+                    : new Padding(0, 0, genmenu.Height, edithud.Height + borderhud.Height);
             }
             else
                 minpad = new Padding(Screen.Mode == Orientation.Landscape ? genmenu.Width : 0, 0, Screen.Mode == Orientation.Landscape ? 0 : genmenu.Height, 0);
@@ -182,7 +184,7 @@ namespace Inlumino_SHARED
         }
         private void UpdateCounter()
         {
-            counter.ForegroundColor = moves <= (int)(perfmoves * 1.1) ? Color.Gold : moves <= (int)(perfmoves * 1.25) ? Color.Silver : moves <= (int)(perfmoves * 1.5) ? Color.Brown: Color.DarkRed;
+            counter.ForegroundColor = moves <= (int)(perfmoves * 1.1) ? Color.Gold : moves <= (int)(perfmoves * 1.25) ? Color.Silver : moves <= (int)(perfmoves * 1.5) ? Color.Brown : Color.DarkRed;
             counter.Text = moves + "/" + perfmoves;
         }
         ObjectType selected = ObjectType.None;
@@ -226,7 +228,7 @@ namespace Inlumino_SHARED
             if (!verified) { MessageBox.Show("Proof of concept", "Please solve the level in play mode then switch to edit mode and try again.", new string[] { "OK" }); return; }
             if (!editing) ToggleMode();
             CurrentLevel.DisableGrid();
-            Manager.StateManager.SwitchTo(GameState.SaveLevel, null, CurrentLevel, IsCurrentMain?"":cln);
+            Manager.StateManager.SwitchTo(GameState.SaveLevel, null, CurrentLevel, IsCurrentMain ? "" : cln);
         }
 
         private void ToggleMode()

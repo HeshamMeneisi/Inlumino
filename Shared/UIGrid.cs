@@ -8,80 +8,52 @@ using System.Threading.Tasks;
 
 namespace Inlumino_SHARED
 {
-    class UIHud : UIObject
+    class UIGrid : UIVisibleObject
     {
-        float minuwidth, minuheight, maxwidth, maxheight, unitwidth, unitheight, aspect;
+        float maxwidth, maxheight, unitwidth, unitheight;
+        bool dragging = false;
         int cellsperrowcol, rowcolcount;
-        List<UICell> cells = new List<UICell>();
+        List<UIVisibleObject> cells = new List<UIVisibleObject>();
         Orientation mode;
         Camera cam;
-        UICell snaptarget = null;
+        UIVisibleObject snaptarget = null;
 
-        internal List<UICell> Cells { get { return cells; } }
-        internal float ActualWidth { get { return Math.Min(TotalWidth, maxwidth); } }
-        internal float ActualHeight { get { return Math.Min(TotalHeight, maxheight); } }
+        internal List<UIVisibleObject> Cells { get { return cells; } }
+        internal override float Width { get { return Math.Min(TotalWidth, maxwidth); } }
+        internal override float Height { get { return Math.Min(TotalHeight, maxheight); } }
 
         internal float TotalWidth { get { return mode == Orientation.Landscape ? unitwidth * cellsperrowcol : unitwidth * rowcolcount; } }
         internal float TotalHeight { get { return mode == Orientation.Portrait ? unitheight * cellsperrowcol : unitheight * rowcolcount; } }
 
         internal bool SnapCameraToCells = false;
 
-        internal UICell SnapTarget { get { return snaptarget; } set { snaptarget = value; if (snaptarget != null) cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
-
-        internal override RectangleF BoundingBox
-        {
-            get
-            {
-                return new RectangleF(GlobalPosition, new Vector2(ActualWidth, ActualHeight));
-            }
-        }
+        internal UIVisibleObject SnapTarget { get { return snaptarget; } set { snaptarget = value; if (snaptarget != null) cam.EnsureVisible(snaptarget.LocalBoundingBox); } }
 
         internal Camera Camera { get { return cam; } }
 
-        internal UIHud(IEnumerable<UICell> content, Orientation mode, float minuwidth, float minuheight, float maxwidth, float maxheight)
+        internal override Vector2 Size { get { return new Vector2(Width, Height); } }
+
+        internal bool LockCamera = false;
+
+        internal UIGrid(IEnumerable<UIVisibleObject> content, Orientation drawingmode, float maxwidth, float maxheight, int cellsperrowcol, bool setup = false, float unitwidth = 256, float unitheight = 256) : base(null)
         {
             cells.AddRange(content);
-            foreach (UIButton b in content) b.Parent = this;
-            this.mode = mode;
-            this.minuwidth = minuwidth;
-            this.minuheight = minuheight;
-            this.maxwidth = maxwidth;
+            foreach (UIVisibleObject b in content) b.Parent = this;
+            this.mode = drawingmode;
             this.maxheight = maxheight;
-            this.aspect = minuwidth / minuheight;
-            Setup();
+            this.maxwidth = maxwidth;
+            this.unitwidth = unitwidth;
+            this.unitheight = unitheight;
+            this.cellsperrowcol = cellsperrowcol;
+            rowcolcount = (int)Math.Ceiling((float)cells.Count / cellsperrowcol);
+            if (setup) Setup();
         }
 
         internal void Setup()
         {
-            int c = cells.Count;
-            float cw = maxwidth, ch = maxheight;
-            if (mode == Orientation.Landscape)
-            {
-                do
-                {
-                    unitwidth = maxwidth / c;
-                    c--;
-                }
-                while (unitwidth < minuwidth);
-                unitheight = unitwidth / aspect;
-                ch = ActualHeight * cw / ActualWidth;
-            }
-            else
-            {
-                do
-                {
-                    unitheight = maxheight / c;
-                    c--;
-                }
-                while (unitheight < minuheight);
-                unitwidth = unitheight * aspect;
-                cw = ActualWidth * ch / ActualHeight;
-            }
-            cellsperrowcol = c + 1;
-            rowcolcount = (int)Math.Ceiling((float)cells.Count / cellsperrowcol);
             int i = 0;
             float x = 0, y = 0;
-            foreach (UICell cell in cells)
+            foreach (UIVisibleObject cell in cells)
             {
                 cell.Size = new Vector2(unitwidth, unitheight);
                 cell.Position = new Vector2(x, y);
@@ -99,16 +71,30 @@ namespace Inlumino_SHARED
                     y += mode == Orientation.Portrait ? unitheight : 0;
                 }
             }
-            cam = new Camera(0, 0, cw, ch, TotalWidth, TotalHeight);
+            cam = new Camera(0, 0, maxwidth, maxheight, TotalWidth, TotalHeight);
             cam.FitToScreen = false;
         }
-
-        public void Draw(SpriteBatch batch)
+        internal void ShowEntireRowCol()
+        {
+            float temp;
+            if (mode == Orientation.Landscape)
+            {
+                temp = unitwidth; unitwidth = maxwidth / cellsperrowcol;
+                unitheight = unitheight * unitwidth / temp;
+            }
+            else
+            {
+                temp = unitheight; unitheight = maxheight / cellsperrowcol;
+                unitwidth = unitwidth * unitheight / temp;
+            }
+            Setup();
+        }
+        internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible) return;
 
             if (cells.Count > 0)
-                foreach (UIButton b in cells) b.Draw(batch, cam);
+                foreach (UIVisibleObject b in cells) b.Draw(batch, this.cam);   //TODO: Implement camera inside camera scenario (Camera.Parent)
             else
             {
                 string s = "Nothing to show.";
@@ -116,26 +102,30 @@ namespace Inlumino_SHARED
                 batch.DrawString(DataHandler.Fonts[0], s, new Vector2(maxwidth / 2, maxheight / 2) - size / 2 + GlobalPosition, Color.White);
             }
         }
-
+        internal void ScaleAllRelative(float p, Orientation mode)
+        {
+            foreach (UIVisibleObject obj in children) obj.setSizeRelative(p, mode);
+        }
         internal override void Update(GameTime time)
         {
             if (!visible) return;
 
             cam.Update(time);
-            foreach (UIButton b in cells) b.Update(time);
+            foreach (UIVisibleObject b in cells) b.Update(time);
 
         }
-        bool dragging = false;
+
         internal override void HandleEvent(WorldEvent e)
         {
             if (!visible || e.Handled) return;
 
             if (e is MouseUpEvent && dragging)
-            { dragging = false; if (SnapCameraToCells) SnapCam(); return; }
-            foreach (UICell b in cells) b.HandleEvent(e);
+            { e.Handled = true; dragging = false; if (SnapCameraToCells) SnapCam(); return; }
+            foreach (UIVisibleObject b in cells) b.HandleEvent(e);
             if (e is TouchFreeDragEvent)
             {
                 e.Handled = true;
+                if (LockCamera) return;
                 TouchFreeDragEvent ev = (e as TouchFreeDragEvent);
                 if (!BoundingBox.ContainsPoint(ev.Postion)) goto skip;
                 Vector2 delta = ev.Delta;
@@ -149,6 +139,7 @@ namespace Inlumino_SHARED
                 if (InputManager.isMouseDown(InputManager.MouseKey.LeftKey))
                 {
                     e.Handled = true;
+                    if (LockCamera) return;
                     if (!dragging && !BoundingBox.ContainsPoint((e as MouseMovedEvent).Position.ToVector2())) goto skip;
                     dragging = true;
                     Point offset = (e as MouseMovedEvent).Offset;
@@ -164,19 +155,31 @@ namespace Inlumino_SHARED
 
         internal void SlideLeft()
         {
-            cam.StepHorizontal(-minuwidth);SnapCam();
+            cam.StepHorizontal(-unitwidth); SnapCam();
         }
 
         internal void SlideRight()
         {
-            cam.StepHorizontal(minuwidth); SnapCam();
+            cam.StepHorizontal(unitwidth); SnapCam();
         }
 
+        internal void TrimGridToVisible()
+        {
+            maxwidth = Math.Min(Screen.Width, Width); maxheight = Math.Min(Screen.Height, Height);            
+            cam = new Camera(0, 0, maxwidth, maxheight, TotalWidth, TotalHeight);
+            cam.FitToScreen = false;
+        }
+        internal void TrimAllToGrid()
+        {
+            float w = Width, h = Height;
+            foreach (UIVisibleObject obj in cells)
+                obj.Size = new Vector2(Math.Min(w, obj.Width), Math.Min(h, obj.Height));
+        }
         private void SnapCam()
         {
             snaptarget = null;
             float intersize = 0;
-            foreach (UICell cell in cells)
+            foreach (UIVisibleObject cell in cells)
             {
                 if (cell.LocalBoundingBox.Intersects(cam.TargetView))
                 {
@@ -194,7 +197,7 @@ namespace Inlumino_SHARED
 
         internal void FitCellSiblings()
         {
-            foreach (UICell cell in cells)
+            foreach (UIVisibleObject cell in cells)
             { cell.FitSiblings(); cell.CentralizeSiblings(); }
         }
     }

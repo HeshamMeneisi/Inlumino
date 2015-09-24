@@ -10,13 +10,11 @@ namespace Inlumino_SHARED
 {
     class UICell : UIButton
     {
-        object tag;
         SpriteFont font;
         Color color;
         TextureID overlay;
         float border;
         string text = "";
-        internal object Tag { get { return tag; } }
 
         internal UICell(TextureID[] tid, object tag, string text = "", Color textcol = default(Color), TextureID overlay = null, float border = 0, ButtonPressedEventHandler pressed = null, int layer = 0) : base(tid, pressed, layer, tag.ToString())
         {
@@ -60,15 +58,14 @@ namespace Inlumino_SHARED
             foreach (UIVisibleObject obj in siblings.Where(t => t is UIVisibleObject)) obj.Draw(batch, cam);
             // Children
             foreach (UIVisibleObject obj in children.Where(t => t is UIVisibleObject)) obj.Draw(batch, cam);
-            // Draw text                        
-            Vector2 tsize = font.MeasureString(text);
-            if (cam == null)
-                batch.DrawString(font, text, Center - tsize / 2 + parent.GlobalPosition, color);
-            else
+            // Draw text      
+            if (text != "")
             {
-                Vector2 pos = LocalBoundingBox.Center - tsize / 2;
-                if (cam.isInsideView(pos))
-                    batch.DrawString(font, text, cam.Transform(pos) + parent.GlobalPosition, color);
+                if (text == "q")
+                { }
+                Vector2 tsize = font.MeasureString(text);
+                if (cam == null || cam.isInsideView(LocalCenter))
+                    batch.DrawString(font, text, GlobalCenter - tsize / 2, color);
             }
         }
     }

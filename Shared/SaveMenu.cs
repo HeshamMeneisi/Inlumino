@@ -25,8 +25,6 @@ namespace Inlumino_SHARED
 
             savebtn.Pressed += savepressed;
             backbtn.Pressed += backpressed;
-
-            nametext.Size = new Vector2(nametext.Width, nametext.Height * 0.5f);
             //menu.Add(nametext);
             menu.Add(savebtn);
             menu.Add(backbtn);
@@ -56,7 +54,7 @@ namespace Inlumino_SHARED
 
         private void SetupMenu()
         {
-            nametext.setSizeRelative(0.2f, Orientation.Landscape);
+            nametext.Size = new Vector2(Screen.Width, Screen.Height * 0.2f);
             menu.setAllSizeRelative(0.2f, Orientation.Landscape);
             menu.ArrangeInForm(Orientation.Landscape);
             nametext.Position = new Vector2((Screen.Width - nametext.Width) / 2, 0);
@@ -71,8 +69,8 @@ namespace Inlumino_SHARED
 
         public void Draw(SpriteBatch batch)
         {
-            nametext.Draw(batch);
             menu.Draw(batch);
+            nametext.Draw(batch);
         }
 
         public void HandleEvent(WorldEvent e, bool forcehandle = false)

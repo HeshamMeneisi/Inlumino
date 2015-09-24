@@ -13,18 +13,20 @@ namespace Inlumino_SHARED
         protected Vector2 size = Vector2.Zero; // I told you the size must be custom, texture size is irrelevant to actual size :P
         protected Vector2 origin = Vector2.Zero;
         protected int state = 0;
-        
+        protected object tag;
+        internal virtual object Tag { get { return tag; } }
 
-        internal int State { get { return state; } set { state = value; } }
-        internal UIVisibleObject(TextureID[] tid, int layer = 0, string id = "")
-        : base(layer, id)
+
+        internal virtual int State { get { return state; } set { state = value; } }
+        internal UIVisibleObject(TextureID[] tid, string id = "", int layer = 0)
+        : base(id, layer)
         {
             // Use TextureID to describe the texture.   new VisibleUIObject(new TextureID(
             // int groupIndex   // Filename index in the array Datahandler.TextureFiles
             // , int idx        // Index in the sheet
             //  , int wunits=1, int hunits=1  width and hight units, default 1*1))
 
-            if (!DataHandler.isValid(tid[0])) sprite = null;
+            if (tid == null || tid.Length == 0 || !DataHandler.isValid(tid[0])) sprite = null;
             else
             {
                 sprite = tid;
@@ -55,17 +57,18 @@ namespace Inlumino_SHARED
             }
         }
 
-        internal Vector2 Center
+        internal Vector2 GlobalCenter
         {
             // Real center is found this way (on screen)
             get { return BoundingBox.Center; }
         }
-
-        internal virtual float Width { get { return Size.X; } }
-        internal virtual float Height { get { return Size.Y; } }
+        internal Vector2 LocalCenter
+        { get { return LocalBoundingBox.Center; } }
+        internal virtual float Width { get { return size.X; } }
+        internal virtual float Height { get { return size.Y; } }
         internal virtual Vector2 Size
         {
-            get { return size; }
+            get { return new Vector2(Width, Height); }
             set { size = value; }
         }
 
@@ -79,7 +82,7 @@ namespace Inlumino_SHARED
         {
             get
             {
-                return new RectangleF(Position.X - Origin.X, Position.Y - Origin.Y, Size.X, Size.Y);
+                return new RectangleF(Position.X - Origin.X, Position.Y - Origin.Y, Width, Height);
             }
         }
         internal override RectangleF BoundingBox
@@ -88,7 +91,7 @@ namespace Inlumino_SHARED
             {
                 float left = (int)(GlobalPosition.X - origin.X);
                 float top = (int)(GlobalPosition.Y - origin.Y);
-                return new RectangleF(new Vector2(left, top), size);
+                return new RectangleF(new Vector2(left, top), Size);
             }
         }
 
@@ -145,7 +148,11 @@ namespace Inlumino_SHARED
                           h = Height;
                     obj.Size = new Vector2(w, h);
                 }
+        }
 
+        public override string ToString()
+        {
+            return (this.GetType() + ":" + id + "\nLocal:" + LocalBoundingBox.ToString() + "\nGlobal:" + BoundingBox.ToString());
         }
     }
 }

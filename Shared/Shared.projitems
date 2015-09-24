@@ -51,7 +51,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)TileMap.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UICell.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UIHud.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIMenu.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UIObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UITextField.cs" />

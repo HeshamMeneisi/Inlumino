@@ -15,7 +15,7 @@ namespace Inlumino_SHARED
         protected List<UIObject> siblings = new List<UIObject>(); // used with huds to enable camera transformation
         protected List<UIObject> children = new List<UIObject>();
         internal List<UIObject> Siblings { get { return siblings; } }
-        internal UIObject(int layer = 0, string id = "")
+        internal UIObject(string id = "", int layer = 0)
         {
             this.layer = layer;
             this.id = id;
@@ -56,6 +56,15 @@ namespace Inlumino_SHARED
                     return parent.GlobalPosition + this.Position;
                 else
                     return this.Position;
+            }
+            set
+            {
+                if (parent == null)
+                    Position = value;
+                else
+                {
+                    Position = value - parent.GlobalPosition;
+                }
             }
         }
 
