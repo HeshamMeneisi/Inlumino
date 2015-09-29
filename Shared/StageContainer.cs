@@ -126,8 +126,8 @@ namespace Inlumino_SHARED
             if (editing)
             {
                 float d = Screen.SmallDim / 6;
-                edithud = new UIGrid(cells.ToArray(), Common.ReverseOrientation(Screen.Mode), Screen.Width, Screen.Height, 8,true,d,d);
-                //edithud.ShowEntireRowCol();
+                edithud = new UIGrid(cells.ToArray(), Common.ReverseOrientation(Screen.Mode), Screen.Width, Screen.Height, 5,true,d,d);
+                edithud.ShowEntireRowCol();
                 edithud.TrimGridToVisible();
                 edithud.Position = Screen.Mode == Orientation.Landscape ? new Vector2(Screen.Width - edithud.Width, 0) : new Vector2(0, Screen.Height - edithud.Height);
                 d = Screen.SmallDim / 8;

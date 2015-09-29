@@ -15,7 +15,7 @@ namespace Inlumino_SHARED
     // Common gampelay code affecting multiple classes is kept here
     static class Common
     {
-        internal static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.Portal };
+        internal static ObjectType[] EditorObjects = new ObjectType[] { ObjectType.None, ObjectType.Delete, ObjectType.LightSource, ObjectType.Crystal, ObjectType.Prism, ObjectType.Block, ObjectType.Splitter, ObjectType.FourWay, ObjectType.Portal };
         internal static string[] UserPackage = new string[] { };
         internal static string[] OnlinePackage = new string[] { };
         internal static string[] BeachPackage = new string[] { "$BA", "$BB", "$BC", "$BD", "$BE", "$BF", "$BG", "$BH", "$BI", "$BJ", "$BK", "$BL", "$BM", "$BN", "$BO", "$BP", "$BQ", "$BR", "$BS", "$BT", "$BU", "$BV", "$BW", "$BX", "$BY" };

@@ -30,7 +30,7 @@ namespace Inlumino_SHARED
             Content = new SmartContentManager(Content.ServiceProvider);
             Content.RootDirectory = "Content";
             Screen.SetUp(Window, graphics);
-            //Screen.SetFullScreen(true);                      
+            Screen.SetFullScreen(true);
 #if WINDOWS_UAP
             IsMouseVisible = true;
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown;
@@ -101,15 +101,13 @@ namespace Inlumino_SHARED
 #if WP81
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
-            UnlockAll();
+#if DEBUG
+            //UnlockAll();
             //CheckSolved();
             //ScreenShotAll();
-            //Temp Code
-            //Manager.UserData.PackageAvailability[PackageType.Space] = true;
-            //for (int i = 0; i < Common.SpacePackge.Length; i++)
-            //Manager.UserData.setStars(PackageType.Space, i, 3);
+#endif
         }
-
+#if DEBUG
         private async Task CheckSolved()
         {
             if (Debugger.IsAttached)
@@ -154,6 +152,7 @@ namespace Inlumino_SHARED
                 }
             }
         }
+#endif
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// game-specific content.

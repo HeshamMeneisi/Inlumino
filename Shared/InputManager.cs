@@ -37,12 +37,17 @@ namespace Inlumino_SHARED
         internal static event FingerOffHandler FingerOff;
         internal delegate void AllFingersOffHandler();
         internal static event AllFingersOffHandler AllFingersOff;
-        private static float dislocation =
+        private static Func<Vector2, Vector2> adjust = (v) =>
+         {
+             return
 #if WP81
-            Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsFullScreen ? 1 : 0.94f;
-#else
-        1;
-#endif
+            !Windows.UI.ViewManagement.ApplicationView.GetForCurrentView().IsFullScreen ? new Vector2(
+                v.X*Screen.XAdjustRatio, v.Y * Screen.YAdjustRatio
+                )
+            :
+#endif 
+            v;
+         };
         internal static void init()
         {
             TouchPanel.EnabledGestures = GestureType.Tap | GestureType.FreeDrag | GestureType.Pinch | GestureType.PinchComplete;
@@ -77,8 +82,8 @@ namespace Inlumino_SHARED
             foreach (TouchLocation tl in ts)
             {
                 fo = true;
-                if (tl.State == TouchLocationState.Pressed && FingerDown != null) FingerDown(tl.Position*dislocation);
-                if (tl.State == TouchLocationState.Released && FingerOff != null) FingerOff(tl.Position*dislocation);
+                if (tl.State == TouchLocationState.Pressed && FingerDown != null) FingerDown(adjust(tl.Position));
+                if (tl.State == TouchLocationState.Released && FingerOff != null) FingerOff(adjust(tl.Position));
             }
             if (fo && ts.Count == 0 && AllFingersOff != null)
             {
@@ -89,9 +94,9 @@ namespace Inlumino_SHARED
             {
                 gesture = TouchPanel.ReadGesture();
                 if (gesture.GestureType == GestureType.Tap)
-                    Tapped(gesture.Position*dislocation);
+                    Tapped(adjust(gesture.Position));
                 else if (gesture.GestureType == GestureType.FreeDrag)
-                    Dragged(gesture.Delta, gesture.Position*dislocation);
+                    Dragged(gesture.Delta, adjust(gesture.Position));
                 else if (gesture.GestureType == GestureType.Pinch)
                 {
                     if (!pinching) { pinching = true; lpg = gesture; }
@@ -109,7 +114,7 @@ namespace Inlumino_SHARED
             if (ms.X != lmx || ms.Y != lmy)
             {
                 if (MouseMoved != null)
-                    MouseMoved(ms.Position.ToVector2()*dislocation, new Vector2(lmx - ms.X, lmy - ms.Y));
+                    MouseMoved(adjust(ms.Position.ToVector2()), new Vector2(lmx - ms.X, lmy - ms.Y));
             }
             if (ms.ScrollWheelValue != lwv)
             {
@@ -119,32 +124,32 @@ namespace Inlumino_SHARED
             if (ms.LeftButton == ButtonState.Pressed && !mousepressed[0])
             {
                 if (MouseDown != null)
-                    MouseDown(MouseKey.LeftKey, ms.Position.ToVector2()*dislocation);
+                    MouseDown(MouseKey.LeftKey, adjust(ms.Position.ToVector2()));
             }
             if (ms.LeftButton == ButtonState.Released && mousepressed[0])
             {
                 if (MouseUp != null)
-                    MouseUp(MouseKey.LeftKey, ms.Position.ToVector2()*dislocation);
+                    MouseUp(MouseKey.LeftKey, adjust(ms.Position.ToVector2()));
             }
             if (ms.MiddleButton == ButtonState.Pressed && !mousepressed[1])
             {
                 if (MouseDown != null)
-                    MouseDown(MouseKey.MiddleKey, ms.Position.ToVector2()*dislocation);
+                    MouseDown(MouseKey.MiddleKey, adjust(ms.Position.ToVector2()));
             }
             if (ms.MiddleButton == ButtonState.Released && mousepressed[1])
             {
                 if (MouseUp != null)
-                    MouseUp(MouseKey.MiddleKey, ms.Position.ToVector2()*dislocation);
+                    MouseUp(MouseKey.MiddleKey, adjust(ms.Position.ToVector2()));
             }
             if (ms.RightButton == ButtonState.Pressed && !mousepressed[2])
             {
                 if (MouseDown != null)
-                    MouseDown(MouseKey.RightKey, ms.Position.ToVector2()*dislocation);
+                    MouseDown(MouseKey.RightKey, adjust(ms.Position.ToVector2()));
             }
             if (ms.RightButton == ButtonState.Released && mousepressed[2])
             {
                 if (MouseUp != null)
-                    MouseUp(MouseKey.RightKey, ms.Position.ToVector2()*dislocation);
+                    MouseUp(MouseKey.RightKey, adjust(ms.Position.ToVector2()));
             }
             foreach (Keys k in watchlist)
             {
@@ -206,7 +211,7 @@ namespace Inlumino_SHARED
 
         internal static Vector2 getMousePos()
         {
-            return ms.Position.ToVector2()*dislocation;
+            return adjust(ms.Position.ToVector2());
         }
 
     }

@@ -21,6 +21,8 @@ namespace Inlumino_SHARED
                 case ObjectType.Splitter: return new Splitter(DataHandler.ObjectTextureMap[ObjectType.Splitter], parent);
 
                 case ObjectType.Portal:return new Portal(DataHandler.ObjectTextureMap[ObjectType.Portal], parent);
+
+                case ObjectType.FourWay:return new FourWay(DataHandler.ObjectTextureMap[ObjectType.FourWay], parent);
             }
         }
     }

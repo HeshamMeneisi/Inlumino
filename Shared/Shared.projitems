@@ -15,6 +15,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Crystal.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FourWay.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Game.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ILightSource.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)InputManager.cs" />

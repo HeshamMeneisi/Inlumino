@@ -98,6 +98,7 @@ internal enum ObjectType
     Crystal = 4,
     Splitter = 5,
     Invisible = 6,
-    Portal = 7
+    Portal = 7,
+    FourWay = 8
 }
 enum Direction { North = 0, East = 1, South = 2, West = 3 }

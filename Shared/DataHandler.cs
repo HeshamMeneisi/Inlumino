@@ -127,7 +127,8 @@ namespace Inlumino_SHARED
             {ObjectType.LightBeam, new TextureID[] { new TextureID(ObjKey,7),new TextureID(ObjKey,6)} },
             {ObjectType.Crystal, new TextureID[] { new TextureID(ObjKey, 3), new TextureID(ObjKey, 2) } },
             {ObjectType.Splitter, new TextureID[] {new TextureID(ObjKey,11),new TextureID(ObjKey,10)} },
-            {ObjectType.Portal, new TextureID[] {new TextureID(ObjKey,14),new TextureID(ObjKey,5)} }
+            {ObjectType.Portal, new TextureID[] {new TextureID(ObjKey,14),new TextureID(ObjKey,5)} },
+            {ObjectType.FourWay, new TextureID[] {new TextureID(ObjKey,16),new TextureID(ObjKey,17)} },
         };
         #endregion
         /// <summary>
