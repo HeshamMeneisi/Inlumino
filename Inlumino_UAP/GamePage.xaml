@@ -5,8 +5,40 @@
     xmlns:local="using:Inlumino_UAP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:facebookControls="using:Facebook.Client.Controls"
     mc:Ignorable="d">
 
-  <SwapChainPanel x:Name="swapChainPanel" />
+    <SwapChainPanel x:Name="swapChainPanel">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--user information-->
+            <StackPanel HorizontalAlignment="Right">
+                <TextBlock 
+                    HorizontalAlignment="Center"
+                    Text="{Binding CurrentUser.Name, ElementName=loginButton}" />
+            </StackPanel>
+
+            <!--ContentPanel - place additional content here-->
+            <Grid x:Name="ContentPanel" 
+                    Grid.Row="1"
+                    Visibility="Collapsed">
+                <TextBlock FontSize="48" 
+                                HorizontalAlignment="Left" 
+                                VerticalAlignment="Center" 
+                                Text="welcome"/>
+            </Grid>
+
+            <!-- login control -->
+            <facebookControls:LoginButton 
+                x:Name="loginButton" 
+                Grid.Row="2" 
+                HorizontalAlignment="Right" />
+        </Grid>
+    </SwapChainPanel>
 
 </Page>

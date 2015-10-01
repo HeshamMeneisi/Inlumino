@@ -26,11 +26,11 @@ namespace Inlumino_SHARED
             password = new UITextField(12, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
             fbbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.FBBtn], fbpressed);
             password.IsPassword = true;
-            //login = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], loginpressed);
 
 #if ANDROID
             loginmenu.Add(fbbtn);
-#else
+#endif
+#if DEBUG // Direct login only available on debugging
             loginmenu.Add(email);
             loginmenu.Add(password);
 #endif
@@ -43,6 +43,9 @@ namespace Inlumino_SHARED
 
         private async void savepressed(UIButton sender)
         {
+#if !DEBUG
+            goto skip;
+#endif
             savebtn.Visible = false;
             //Manager.GameSettings.MusicVolume =
             //Manager.GameSettings.SFXVolume =

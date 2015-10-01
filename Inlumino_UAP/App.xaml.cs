@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Facebook.Client;
+using Inlumino_SHARED;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,7 +35,8 @@ namespace Inlumino_UAP
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
-
+        bool fbinitd = false;
+        Frame rootFrame;
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -49,8 +52,7 @@ namespace Inlumino_UAP
             }
 #endif
 
-            Frame rootFrame = Window.Current.Content as Frame;
-
+            rootFrame = Window.Current.Content as Frame;
             // Do not repeat app initialization when the Window already has content,
             // just ensure that the window is active
             if (rootFrame == null)
@@ -78,6 +80,7 @@ namespace Inlumino_UAP
             }
             // Ensure the current window is active
             Window.Current.Activate();
+            Session.OnFacebookAuthenticationFinished += OnFacebookAuthenticationFinished;
         }
 
         /// <summary>
@@ -102,6 +105,10 @@ namespace Inlumino_UAP
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+        private void OnFacebookAuthenticationFinished(AccessTokenData session)
+        {
+            Common.FBLoggedIn(session.FacebookId, session.AccessToken, session.Expires);            
         }
     }
 }

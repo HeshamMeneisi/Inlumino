@@ -18,7 +18,7 @@ namespace Inlumino_SHARED
         static UITextField target;
         static Vector2 priorpos;
         static int priolayer = 0;
-        static bool visible = false;
+
         internal static void Show(UITextField targetfield = null, Func<Keys, bool> filter = null, float x = 0, float y = 0)
         {
             if (target == targetfield) return;
@@ -30,7 +30,6 @@ namespace Inlumino_SHARED
             priorpos = target.Position;
             SimulateKeyDownToManager = target == null;
             SetupHud();
-            visible = true;
         }
         private static void SetupHud()
         {
@@ -124,7 +123,6 @@ namespace Inlumino_SHARED
         {
             if (target != null) { target.NotifyVKExit(); target.Position = priorpos; target.Layer = priolayer; target = null; }
             keyboard = null;
-            visible = false;
         }
 
         private static void OnKeyPressed(Keys k)

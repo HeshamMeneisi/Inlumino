@@ -28,6 +28,11 @@
           <uap:Rotation Preference="portraitFlipped" />
         </uap:InitialRotationPreference>
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="fb906591706062304" />
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

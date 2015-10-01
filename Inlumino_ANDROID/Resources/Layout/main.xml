@@ -9,7 +9,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#FFF"
+        android:background="#000"
         android:id="@+id/main_ui_container">
         <com.facebook.login.widget.LoginButton
             android:layout_width="wrap_content"
@@ -28,9 +28,9 @@
                 android:id="@+id/greeting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
                 android:layout_gravity="center"
-                android:textColor="#333"
+                android:textColor="#FFF"
                 android:textSize="18sp" />
             <com.facebook.login.widget.ProfilePictureView
                 android:id="@+id/profilePicture"

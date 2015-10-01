@@ -121,6 +121,7 @@
     <None Include="Inlumino_UAP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FacebookConfig.xml" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
     <Content Include="Assets\SplashScreen.scale-100.png" />

@@ -13,6 +13,7 @@ using System.IO.IsolatedStorage;
 using System.Reflection;
 using System.Xml.Serialization;
 using Parse;
+using System.Net;
 #if WINDOWS_UAP || WP81
 using System.Net.Http;
 using Windows.Storage;
@@ -340,12 +341,13 @@ namespace Inlumino_SHARED
 #if WINDOWS_UAP || WP81
                 HttpClient cl = new HttpClient();
                 byte[] data = cl.GetByteArrayAsync(link).Result;
-                return Common.Texture2DFromBytes(data);
 #else
-
+                WebClient wc = new WebClient();
+                byte[] data = wc.DownloadData(link);
 #endif
+                return Common.Texture2DFromBytes(data);
             }
-            catch { }
+            catch(Exception e) { Debug.WriteLine(e.Message); }
             return GenerateLevelThumb(current);
         }
         internal static void LoadTextures()
