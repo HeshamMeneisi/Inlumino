@@ -160,8 +160,9 @@ namespace Inlumino_SHARED
             {UIObjectType.Border,new TextureID[] {new TextureID(UIKey,24,2,1)} },
             {UIObjectType.TopLog,new TextureID[] {new TextureID(UIKey,30,2,1),new TextureID(UIKey,28,2,1)} },
             {UIObjectType.ShareBtn,new TextureID[] {new TextureID(UIKey,32,1,1)} },
-            {UIObjectType.Ropes,new TextureID[] {new TextureID(UIKey,34,2,1)} },
-            {UIObjectType.Frame,new TextureID[] {new TextureID(UIKey,36,2,2)} }
+            {UIObjectType.Ropes,new TextureID[] {new TextureID(UIKey,34,2,1)} },            
+            {UIObjectType.Frame,new TextureID[] {new TextureID(UIKey,36,2,2)} },
+            {UIObjectType.FBBtn,new TextureID[] {new TextureID(UIKey,44,4,1)} }
         };
 
 

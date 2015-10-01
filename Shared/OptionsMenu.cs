@@ -13,7 +13,7 @@ namespace Inlumino_SHARED
         UIMenu loginmenu;
         UITextField email;
         UITextField password;
-        UIButton login;
+        UIButton fbbtn;
         internal OptionsMenu()
         {
             menu = new UIMenu();
@@ -24,17 +24,21 @@ namespace Inlumino_SHARED
 
             email = new UITextField(254, Color.White, Color.Black, "Email (Signup/Login)");
             password = new UITextField(12, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
+            fbbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.FBBtn], fbpressed);
             password.IsPassword = true;
             //login = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], loginpressed);
 
+#if ANDROID
+            loginmenu.Add(fbbtn);
+#else
             loginmenu.Add(email);
             loginmenu.Add(password);
-            //loginmenu.Add(login);
+#endif
         }
 
-        private void loginpressed(UIButton sender)
+        private void fbpressed(UIButton sender)
         {
-            throw new NotImplementedException();
+            Common.HandleFacebookPressed();
         }
 
         private async void savepressed(UIButton sender)
@@ -91,7 +95,7 @@ namespace Inlumino_SHARED
 #endif
 #if WP81
                 user["signupsys"] = "WP8.1";
-#endif                           
+#endif
                 try
                 {
                     await user.SignUpAsync();

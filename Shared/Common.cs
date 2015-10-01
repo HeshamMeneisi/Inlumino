@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using Parse;
+#if ANDROID
+using Java.Util;
+#endif
 
 namespace Inlumino_SHARED
 {
@@ -27,6 +27,13 @@ namespace Inlumino_SHARED
             {PackageType.User,UserPackage },
             {PackageType.Online,OnlinePackage }
         };
+        public delegate void HandleFBLogin();
+        public static event HandleFBLogin HandleFB;
+        internal static void HandleFacebookPressed()
+        {
+            HandleFB();
+        }
+
         internal static Dictionary<PackageType, string[]> H = new Dictionary<PackageType, string[]>
         {
             {PackageType.Beach,CommonData.BPH },
@@ -52,6 +59,17 @@ namespace Inlumino_SHARED
                 if (!target.hasObject()) target.SetObject(new LightBeam(DataHandler.ObjectTextureMap[ObjectType.LightBeam], target, side == Direction.East || side == Direction.West ? BeamType.Horizontal : BeamType.Vertical));
                 (target.getObject() as LightBeam).CarryPulse(charge, Common.ReverseDir(side), source);
             }
+        }
+#if ANDROID
+        internal static DateTime JavaDateToDateTime(Date d)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return epoch.AddMilliseconds(d.Time);
+        }
+#endif
+        internal static void FBLoggedIn(string id, string token, DateTime expires)
+        {
+            ParseFacebookUtils.LogInAsync(id, token, expires);
         }
 
         internal static bool isSameAngle(double a, double b, double tolerance = 1e-9)
@@ -180,7 +198,7 @@ namespace Inlumino_SHARED
         internal static void SpreadAuxiliaries(Stage currentLevel, float v)
         {
             if (Auxiliaries.Length == 0) return;
-            Random ran = new Random();
+            var ran = new System.Random();
             foreach (Tile t in currentLevel.getTileMap().AllTiles)
             {
                 if (ran.NextDouble() < v)

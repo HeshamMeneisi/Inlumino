@@ -150,5 +150,6 @@ enum UIObjectType
     Frame,
     Ropes,
     TopLog,
-    ShareBtn
+    ShareBtn,
+    FBBtn
 }
