@@ -72,7 +72,7 @@ namespace Inlumino_SHARED
 
         protected virtual void backpressed(UIButton sender)
         {
-            Manager.StateManager.SwitchTo(GameState.PackageSelector);
+            Manager.StateManager.SwitchBack();
         }
 
         protected virtual void menupressed(UIButton sender)

@@ -163,7 +163,7 @@ namespace Inlumino_SHARED
             {UIObjectType.ShareBtn,new TextureID[] {new TextureID(UIKey,32,1,1)} },
             {UIObjectType.Ropes,new TextureID[] {new TextureID(UIKey,34,2,1)} },            
             {UIObjectType.Frame,new TextureID[] {new TextureID(UIKey,36,2,2)} },
-            {UIObjectType.FBBtn,new TextureID[] {new TextureID(UIKey,44,4,1)} }
+            {UIObjectType.FBBtn,new TextureID[] {new TextureID(UIKey,44,2,1)} }
         };
 
 

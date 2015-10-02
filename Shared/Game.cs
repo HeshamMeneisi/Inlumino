@@ -45,14 +45,17 @@ namespace Inlumino_SHARED
             Window.ClientSizeChanged += sizechanged;
             Window.OrientationChanged += orientationchanged;
         }
+        bool Loaded = false;
         private void orientationchanged(object sender, EventArgs e)
         {
+            if (!Loaded) return;
             OrientationChangedEvent ev = new OrientationChangedEvent(Window.CurrentOrientation);
             Manager.HandleEvent(ev);
         }
 
         private void sizechanged(object sender, EventArgs e)
         {
+            if (!Loaded) return;
             Manager.HandleEvent(new DisplaySizeChangedEvent(Window.ClientBounds.Size.ToVector2()));
         }
         /// <summary>
@@ -71,6 +74,7 @@ namespace Inlumino_SHARED
 
         private void exiting(object sender, EventArgs e)
         {
+            if (!Loaded) return;
             Manager.SaveSettings();
             Manager.SyncData();
         }
@@ -88,6 +92,7 @@ namespace Inlumino_SHARED
             DisplayOrientation t = Window.CurrentOrientation;
             //Screen.MakeVirtual(new Vector2(800, 480));
             Manager.init(this);
+            Loaded = true;
             /*
             foreach (PackageType p in Manager.UserData.PackageAvailability.Keys)
             {

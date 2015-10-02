@@ -7,7 +7,11 @@ using Microsoft.Xna.Framework.Input;
 using System.IO;
 using Parse;
 #if ANDROID
+using Android.OS;
 using Java.Util;
+using Xamarin.Facebook;
+#else
+using Facebook;
 #endif
 
 namespace Inlumino_SHARED
@@ -40,6 +44,23 @@ namespace Inlumino_SHARED
             {PackageType.Space,CommonData.SPH }
         };
         internal static TextureID[] Auxiliaries = GetAux().ToArray();
+
+        public static string CurrentSystem
+        {
+            get
+            {
+#if ANDROID
+                return "ANDROID";
+#elif WINDOWS_UAP
+                return "UAP";
+#elif WP81
+                return "WP81";
+#else
+                return "Unknown";
+#endif
+            }
+        }
+
         private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 8; i++) yield return new TextureID(PrimaryTexture._Aux.ToString(), i); }
 
         internal static bool IsMainLevel(string hash)
@@ -69,7 +90,46 @@ namespace Inlumino_SHARED
 #endif
         internal static void FBLoggedIn(string id, string token, DateTime expires)
         {
-            ParseFacebookUtils.LogInAsync(id, token, expires);
+            ParseFacebookUtils.LogInAsync(id, token, expires).ConfigureAwait(false).GetAwaiter().GetResult();
+            try
+            {
+                string name = "", email = "";
+#if ANDROID
+                var callback = new GraphCallback();
+
+                callback.RequestCompleted += (GraphResponse r) =>
+                {
+                    var j = r.JSONObject;
+                    name = j.Get("name").ToString();
+                    email = j.Get("email").ToString();
+                };
+                var parm = new Bundle();
+                parm.PutString("fields", "name,email");
+                var request = new GraphRequest(AccessToken.CurrentAccessToken, "/" + id, parm, HttpMethod.Get, callback);
+                var t = new Task(() => request.ExecuteAndWait());
+                t.Start();
+                t.ConfigureAwait(false).GetAwaiter().GetResult();
+#elif WP81 || WINDOWS_UAP
+                FacebookClient fc = new FacebookClient(token);
+                var obj = fc.GetTaskAsync<IDictionary<string, object>>("me?fields=id").ConfigureAwait(false).GetAwaiter().GetResult();
+                object n, e;
+                if (obj.TryGetValue("name", out n))
+                    name = n.ToString();
+                if (obj.TryGetValue("email", out e))
+                    email = e.ToString();
+#endif
+                if (email != "")
+                    ParseUser.CurrentUser["email"] = email;
+                if (name != "")
+                    ParseUser.CurrentUser["username"] = name;
+                if (ParseUser.CurrentUser.IsNew)
+                    ParseUser.CurrentUser["signupsys"] = CurrentSystem;
+                ParseUser.CurrentUser.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Failed to update user info from facebook: " + ex.Message);
+            }
         }
 
         internal static bool isSameAngle(double a, double b, double tolerance = 1e-9)
@@ -253,7 +313,19 @@ namespace Inlumino_SHARED
         None = -2, User = 0, Beach = 1, Space = 2,
         Online = 3
     }
+#if ANDROID
+    class GraphCallback : Java.Lang.Object, GraphRequest.ICallback
+    {
+        public delegate void RequestCompletedEventHandler(GraphResponse r);
+        // Event to pass the response when it's completed
+        public event RequestCompletedEventHandler RequestCompleted;
 
+        public void OnCompleted(GraphResponse response)
+        {
+            RequestCompleted(response);
+        }
+    }
+#endif
     static class CommonData
     {
         internal static string[] SPH = new string[] { "8PvAJQUx6J33knnHVaSecA==", "GK+t2sBr4zNwtCUgffFXCw==", "x8tdDAc3r5uCdzp18/EMrQ==", "9QZditpqmYdWC5ChozR5uQ==", "tiifEN0A+FZATZTLdzvRsA==", "0455fMlYN5hUkKZsr1etLQ==", "0ujO099GHYURU2Hgll6i/A==", "ndGBHDg7tu16LuG/FTQqVw==", "2eUQpjOQTCT//PN3qJJPmg==", "36K5WA+iX8gByEJzouQ/jw==", "rSDd5miYZKuhpZV1Kw1Oqw==", "kbb1nQ/loM1ENPzw0QZWXQ==", "Sm0IDwyVkStm0Mj9+IUqkA==", "8xqQRMlwfUi0QVCG7MV+1Q==", "YJvu3yJaJWrTBAgMtx4AmA==", "9oGHYqXnEVCRrKouIu4bVg==", "rJuTocMMrRUOfPPyn5asAA==", "MlWIf6XJNNvODAgqHjvSiQ==", "WR3dIKFly9xCEMk84k5rxQ==", "7Uf8no0Fsk/ElZeane4wgg==", "vOC1zuCcQ0TmahtB45vX0g==", "SSijqUSUSjVkCjzZu1rhKw==", "BaCX9XH+G4HXc5WFX+wGNw==", "xPLOWRZ3YCbIfN8rQDYjBw==", "XYzHNSVulvO1lCYgHIVVaQ==" };

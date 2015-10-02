@@ -20,11 +20,9 @@ namespace Inlumino_SHARED
             menu = new UIMenu();
             nametext = new UITextField(10, Color.White, Color.Black, "Enter Name Here");
             nametext.AllowedCharTypes = CharType.Lower | CharType.Upper;
-            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton]);
-            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton]);
+            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], savepressed);
+            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], backpressed);
 
-            savebtn.Pressed += savepressed;
-            backbtn.Pressed += backpressed;
             //menu.Add(nametext);
             menu.Add(savebtn);
             menu.Add(backbtn);
@@ -32,7 +30,7 @@ namespace Inlumino_SHARED
 
         private void backpressed(UIButton sender)
         {
-            Manager.StateManager.SwitchTo(GameState.EditMode);
+            Manager.StateManager.SwitchBack();
         }
 
         private async void savepressed(UIButton sender)

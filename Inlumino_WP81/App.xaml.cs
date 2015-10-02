@@ -1,4 +1,8 @@
-﻿using Windows.ApplicationModel;
+﻿using Facebook;
+using Facebook.Client;
+using Inlumino_SHARED;
+using System.Collections.Generic;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 
@@ -49,6 +53,25 @@ namespace Inlumino_WP81
 
             // Ensure the current window is active
             Window.Current.Activate();
+            Session.OnFacebookAuthenticationFinished += OnAuthFinished;
+        }
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+            LifecycleHelper.FacebookAuthenticationReceived(args as ProtocolActivatedEventArgs);
+        }
+        private void OnAuthFinished(AccessTokenData session)
+        {
+            if (session == null || session.AccessToken == null) return;
+            if (session.FacebookId == null)
+            {
+                FacebookClient fc = new FacebookClient(session.AccessToken);
+                var obj = fc.GetTaskAsync<IDictionary<string, object>>("me?fields=id").ConfigureAwait(false).GetAwaiter().GetResult();
+                object id;
+                if (!obj.TryGetValue("id", out id)) { Session.ActiveSession.Logout(); return; }
+                session.FacebookId = Session.ActiveSession.CurrentAccessTokenData.FacebookId = (string)id;
+            }
+            Common.FBLoggedIn(session.FacebookId, session.AccessToken, session.Expires);
         }
 
         /// <summary>

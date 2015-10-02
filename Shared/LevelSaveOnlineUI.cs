@@ -20,11 +20,8 @@ namespace Inlumino_SHARED
             menu = new UIMenu();
             nametext = new UITextField(10, Color.White, Color.Black, "Enter Name Here");
             nametext.AllowedCharTypes = CharType.Lower | CharType.Upper;
-            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton]);
-            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton]);
-
-            savebtn.Pressed += savepressed;
-            backbtn.Pressed += backpressed;
+            savebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.SaveButton], savepressed);
+            backbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.BackButton], backpressed);
 
             //menu.Add(nametext);
             menu.Add(savebtn);
@@ -33,17 +30,15 @@ namespace Inlumino_SHARED
 
         private void backpressed(UIButton sender)
         {
-            Manager.StateManager.SwitchTo(GameState.SelectLevel, null, PackageType.User);
+            Manager.StateManager.SwitchBack();
         }
 
         private async void savepressed(UIButton sender)
         {
             savebtn.Visible = false;
+
             if (ParseUser.CurrentUser == null)
-            {
-                int? r = await MessageBox.Show("Hello", "You are not logged in. Would you like to setup your account?", new string[] { "Take me there", "Remind me later" });
-                if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);
-            }
+                await MessageBox.Show("Hello", "Please connect your facebook account to continue.", new string[] { "Ok" });
             else
             {
                 LevelData data = DataHandler.GetLevelData(levelname);
@@ -139,7 +134,7 @@ namespace Inlumino_SHARED
         }
 
         public void Draw(SpriteBatch batch)
-        {            
+        {
             menu.Draw(batch);
             nametext.Draw(batch);
         }

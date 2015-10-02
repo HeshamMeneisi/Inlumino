@@ -12,7 +12,7 @@ namespace Inlumino_SHARED
         protected UIButton playButton, editorButton, optionsButton;
         protected UIMenu mainmenu;
         internal MainMenu()
-        {            
+        {
             mainmenu = new UIMenu();
 
             playButton = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.PlayBtn]);
@@ -21,11 +21,13 @@ namespace Inlumino_SHARED
 
             playButton.Pressed += playpressed;
             editorButton.Pressed += editpressed;
-            optionsButton.Pressed += optionspressed;
 
             mainmenu.Add(playButton);
             mainmenu.Add(editorButton);
-            mainmenu.Add(optionsButton);            
+#if DEBUG // Options is only available for debugging right now
+            optionsButton.Pressed += optionspressed;
+            mainmenu.Add(optionsButton);
+#endif
         }
 
         private void SetupMenu()
@@ -78,7 +80,7 @@ namespace Inlumino_SHARED
         }
         bool suppressmessage = false, first = true;
         public void OnActivated(params object[] args)
-        {                        
+        {
             SetupMenu();
             if (args.Length > 0)
                 Manager.SyncData();
@@ -90,9 +92,8 @@ namespace Inlumino_SHARED
         {
             if (!suppressmessage && ParseUser.CurrentUser == null)
             {
-                int? r = await MessageBox.Show("Hello", "It looks like you are not syncing your data online. Would you like to setup your account?", new string[] { "Take me there", "Remind me later" });
                 suppressmessage = true;
-                if (r == 0) Manager.StateManager.SwitchTo(GameState.Options);                
+                await MessageBox.Show("Hello", "Did you know you could connect your facebook account and share your own levels with friends? Try it!", new string[] { "Ok" });
             }
             /*
             else if (first && !Manager.Connected)

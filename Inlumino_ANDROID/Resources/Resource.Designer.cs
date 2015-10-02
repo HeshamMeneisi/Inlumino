@@ -305,8 +305,8 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f08000c
 			public const int automatic = 2131230732;
 			
-			// aapt resource value: 0x7f08001c
-			public const int backBtn = 2131230748;
+			// aapt resource value: 0x7f08001d
+			public const int backBtn = 2131230749;
 			
 			// aapt resource value: 0x7f080006
 			public const int bottom = 2131230726;
@@ -344,8 +344,8 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f08000d
 			public const int display_always = 2131230733;
 			
-			// aapt resource value: 0x7f08001a
-			public const int greeting = 2131230746;
+			// aapt resource value: 0x7f08001b
+			public const int greeting = 2131230747;
 			
 			// aapt resource value: 0x7f080007
 			public const int inline = 2131230727;
@@ -356,11 +356,14 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f08000a
 			public const int left = 2131230730;
 			
+			// aapt resource value: 0x7f08001a
+			public const int loginBtn = 2131230746;
+			
 			// aapt resource value: 0x7f080019
 			public const int main_ui_container = 2131230745;
 			
-			// aapt resource value: 0x7f08001d
-			public const int messenger_send_button = 2131230749;
+			// aapt resource value: 0x7f08001e
+			public const int messenger_send_button = 2131230750;
 			
 			// aapt resource value: 0x7f08000e
 			public const int never_display = 2131230734;
@@ -374,8 +377,8 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f080001
 			public const int page = 2131230721;
 			
-			// aapt resource value: 0x7f08001b
-			public const int profilePicture = 2131230747;
+			// aapt resource value: 0x7f08001c
+			public const int profilePicture = 2131230748;
 			
 			// aapt resource value: 0x7f08000b
 			public const int right = 2131230731;

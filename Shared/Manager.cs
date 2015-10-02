@@ -24,6 +24,9 @@ namespace Inlumino_SHARED
         static Settings settings;
         static UserData userdata;
         const int timeout = 5000;
+#if ANDROID
+        static FBButton fboverlay;
+#endif
         //static EncryptionProvider crypto = new EncryptionProvider();
         static bool initd = false;
         const string settingsfile = "GameSettings.xml";
@@ -68,6 +71,7 @@ namespace Inlumino_SHARED
                 }
                 catch (Exception e)
                 {
+                    syncingdata = false;
                     connected = false;
                     Debug.WriteLine("Sync failed. Error:"+e.Message);
                     return e;
@@ -75,6 +79,7 @@ namespace Inlumino_SHARED
             }
             SaveUserDataLocal();
             syncingdata = false;
+            connected = true;
             Debug.WriteLine("Sync finished successfully.");
             return null;
         }
@@ -162,6 +167,7 @@ namespace Inlumino_SHARED
             selector = new LevelSelector();
             packselector = new PackageSelector();
             levelsavetocloud = new LevelSaveOnlineUI();
+            fboverlay = new FBButton();
 
             stateManager.AddGameState(GameState.MainMenu, menu);
             stateManager.AddGameState(GameState.SelectLevel, selector);
@@ -205,12 +211,19 @@ namespace Inlumino_SHARED
                 }
             }
             VirtualKeyboard.HandleEvent(e);
+#if ANDROID
+            fboverlay.HandleEvent(e);
+#endif
             stateManager.CurrentGameState.HandleEvent(e);
         }
         internal static void Draw(SpriteBatch spriteBatch)
         {
             if (!initd) return;
             stateManager.Draw(spriteBatch);
+#if ANDROID
+            fboverlay.Draw(spriteBatch);
+#endif
+            // Should stay last (Topmost)
             VirtualKeyboard.Draw(spriteBatch);
         }
         internal static void Update(GameTime time)
@@ -218,6 +231,9 @@ namespace Inlumino_SHARED
             if (!initd) return;
             stateManager.Update(time);
             SoundManager.Update(time);
+#if ANDROID
+            fboverlay.Update(time);
+#endif
             VirtualKeyboard.Update(time);
         }
 

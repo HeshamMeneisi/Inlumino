@@ -63,7 +63,7 @@ namespace Inlumino_ANDROID
             FacebookSdk.SdkInitialize(this.ApplicationContext);
 
             callbackManager = CallbackManagerFactory.Create();
-
+            
             var loginCallback = new FacebookCallback<LoginResult>
             {
                 HandleSuccess = loginResult =>
@@ -150,6 +150,8 @@ namespace Inlumino_ANDROID
             SetContentView(Resource.Layout.main);
             if (!fbinit)
             {
+                var loginbtn = FindViewById<LoginButton>(Resource.Id.loginBtn);
+                loginbtn.SetReadPermissions("email");
                 fbinit = true;
                 profileTracker = new CustomProfileTracker
                 {

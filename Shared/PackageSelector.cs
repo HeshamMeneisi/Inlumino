@@ -51,6 +51,13 @@ namespace Inlumino_SHARED
             packages.HandleEvent(e);
             if (e is OrientationChangedEvent || e is DisplaySizeChangedEvent)
                 SetupHud();
+            else
+            {
+                if (InputManager.isKeyDown(Keys.Right))
+                    packages.SlideRight();
+                if (InputManager.isKeyDown(Keys.Left))
+                    packages.SlideLeft();
+            }
         }
 
         public void Update(GameTime time)

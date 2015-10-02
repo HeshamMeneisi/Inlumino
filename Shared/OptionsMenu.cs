@@ -26,7 +26,6 @@ namespace Inlumino_SHARED
             password = new UITextField(12, Color.White, Color.Black, ParseUser.CurrentUser == null ? "Passphrase(Max 10)" : "Logged in!");
             fbbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.FBBtn], fbpressed);
             password.IsPassword = true;
-
 #if ANDROID
             loginmenu.Add(fbbtn);
 #endif

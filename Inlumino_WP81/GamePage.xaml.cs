@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using MonoGame.Framework;
 using Inlumino_SHARED;
+using Facebook.Client;
+using Windows.ApplicationModel.Activation;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkID=390556
 
 namespace Inlumino_WP81
@@ -31,7 +33,14 @@ namespace Inlumino_WP81
 
         public GamePage(string launchArguments)
         {
+            this.InitializeComponent();
             _game = XamlGame<Game>.Create(launchArguments, Window.Current.CoreWindow, this);
+            Manager.StateManager.StateChanged += gamestatechanged;
         }
+
+        private void gamestatechanged(GameState newstate)
+        {
+            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.OnStage || newstate == GameState.EditMode) ? Visibility.Collapsed : Visibility.Visible;
+        }        
     }
 }

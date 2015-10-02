@@ -1,4 +1,5 @@
-﻿using Facebook.Client;
+﻿using Facebook;
+using Facebook.Client;
 using Inlumino_SHARED;
 using System;
 using System.Collections.Generic;
@@ -35,7 +36,6 @@ namespace Inlumino_UAP
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
-        bool fbinitd = false;
         Frame rootFrame;
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
@@ -82,6 +82,11 @@ namespace Inlumino_UAP
             Window.Current.Activate();
             Session.OnFacebookAuthenticationFinished += OnFacebookAuthenticationFinished;
         }
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+            LifecycleHelper.FacebookAuthenticationReceived(args as ProtocolActivatedEventArgs);
+        }
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -108,7 +113,16 @@ namespace Inlumino_UAP
         }
         private void OnFacebookAuthenticationFinished(AccessTokenData session)
         {
-            Common.FBLoggedIn(session.FacebookId, session.AccessToken, session.Expires);            
+            if (session == null || session.AccessToken == null) return;
+            if (session.FacebookId == null)
+            {
+                FacebookClient fc = new FacebookClient(session.AccessToken);
+                var obj = fc.GetTaskAsync<IDictionary<string, object>>("me?fields=id").ConfigureAwait(false).GetAwaiter().GetResult();
+                object id;
+                if (!obj.TryGetValue("id", out id)) { Session.ActiveSession.Logout(); return; }
+                session.FacebookId = Session.ActiveSession.CurrentAccessTokenData.FacebookId = (string)id;
+            }
+            Common.FBLoggedIn(session.FacebookId, session.AccessToken, session.Expires);
         }
     }
 }

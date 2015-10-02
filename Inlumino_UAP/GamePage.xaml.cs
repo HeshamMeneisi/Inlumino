@@ -23,7 +23,7 @@ namespace Inlumino_UAP
     /// </summary>
     public sealed partial class GamePage : Page
     {
-		readonly Game _game;
+        readonly Game _game;
 
 		public GamePage()
         {
@@ -32,6 +32,11 @@ namespace Inlumino_UAP
 			// Create the game.
 			var launchArguments = string.Empty;
             _game = MonoGame.Framework.XamlGame<Game>.Create(launchArguments, Window.Current.CoreWindow, swapChainPanel);
+            Manager.StateManager.StateChanged += gamestatechanged;            
         }
-    }
+        internal void gamestatechanged(GameState newstate)
+        {
+            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.OnStage || newstate == GameState.EditMode) ? Visibility.Collapsed : Visibility.Visible;
+        }
+    }    
 }
