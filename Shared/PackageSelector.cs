@@ -27,11 +27,20 @@ namespace Inlumino_SHARED
             Manager.StateManager.SwitchTo(GameState.MainMenu);
         }
 
-        protected virtual void mlcellpressed(UIButton sender)
+        protected async void mlcellpressed(UIButton sender)
         {
             PackageType name = (PackageType)(sender as UICell).Tag;
-            if (name == PackageType.None)
-            { MessageBox.Show("Locked", "Finish other packages to unlock this package!", new string[] { "Ok" }); return; }
+            if (Common.IsPackageLocked(name))
+            {
+#if ANDROID
+                int? r = await MessageBox.Show("Locked", "Finish other packages to unlock this package. Or help us spread the word on facebook and unlock now!", new string[] { "Ok", "Unlock Now!" });
+                if (r == 1)
+                    await Common.UnlockWithFacebook(name);
+#else
+                MessageBox.Show("Locked", "Finish other packages to unlock this package!", new string[] { "Ok" });
+#endif
+                return;
+            }
             mem = packages.SnapTarget;
             Manager.StateManager.SwitchTo(GameState.SelectLevel, null, name);
         }
@@ -77,11 +86,10 @@ namespace Inlumino_SHARED
             List<UICell> ulcells = new List<UICell>();
             cells.Clear();
             foreach (PackageType pack in Common.Packages.Keys)
-            {
-                bool locked = !(pack == PackageType.User || pack == PackageType.Online || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
-                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], locked ? PackageType.None : pack, "", Color.White, new TextureID(() => DataHandler.GetPackageThumb(pack), pack.ToString(), 0, -1, -1), 0.1f);
+            {                
+                UICell cell = new UICell(DataHandler.UIObjectsTextureMap[UIObjectType.Frame], pack, "", Color.White, new TextureID(() => DataHandler.GetPackageThumb(pack), pack.ToString(), 0, -1, -1), 0.1f);
                 cell.Pressed += mlcellpressed;
-                if (locked) cell.AttachSibling(new UIVisibleObject(new TextureID[] { DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0] }));
+                if (Common.IsPackageLocked(pack)) cell.AttachSibling(new UIVisibleObject(new TextureID[] { DataHandler.UIObjectsTextureMap[UIObjectType.Lock][0] }));
                 cell.FitSiblings();
                 cells.Add(cell);
             }

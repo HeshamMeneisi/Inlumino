@@ -167,7 +167,9 @@ namespace Inlumino_SHARED
             selector = new LevelSelector();
             packselector = new PackageSelector();
             levelsavetocloud = new LevelSaveOnlineUI();
+#if ANDROID
             fboverlay = new FBButton();
+#endif
 
             stateManager.AddGameState(GameState.MainMenu, menu);
             stateManager.AddGameState(GameState.SelectLevel, selector);

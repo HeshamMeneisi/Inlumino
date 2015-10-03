@@ -24,6 +24,44 @@ namespace Inlumino_SHARED
         internal static string[] OnlinePackage = new string[] { };
         internal static string[] BeachPackage = new string[] { "$BA", "$BB", "$BC", "$BD", "$BE", "$BF", "$BG", "$BH", "$BI", "$BJ", "$BK", "$BL", "$BM", "$BN", "$BO", "$BP", "$BQ", "$BR", "$BS", "$BT", "$BU", "$BV", "$BW", "$BX", "$BY" };
         internal static string[] SpacePackage = new string[] { "$SZA", "$SZB", "$SZC", "$SZD", "$SZE", "$SZF", "$SZG", "$SZH", "$SZI", "$SZJ", "$SZK", "$SZL", "$SZM", "$SZN", "$SZO", "$SZP", "$SZQ", "$SZR", "$SZS", "$SZT", "$SZU", "$SZV", "$SZW", "$SZX", "$SZY" };
+
+        public delegate void HandleFBLogin();
+        public static event HandleFBLogin HandleFB;
+        public delegate void PostLinkToFacebook(PostEventArgs e);
+        public static event PostLinkToFacebook HandlePostLinkFB;
+        internal static async Task UnlockWithFacebook(PackageType name)
+        {
+            if (ParseUser.CurrentUser == null || !ParseFacebookUtils.IsLinked(ParseUser.CurrentUser))
+            {
+                await MessageBox.Show("Ops", "It seems like you are not logged in or your session has timed out. Please login.", new string[] { "Ok" });
+                return;
+            }
+            PostEventArgs e = new PostEventArgs(new PostInfo(
+            "Inlumino",
+            ParseUser.CurrentUser.Username + " just unlocked the " + name.ToString() + " package in Inlumino!\nPlay Inlumino now on Android or Windows, it's free!",
+            await GetPromotionalLink()));
+            e.PostInfo.Tag = name;
+            HandlePostLinkFB(e);
+        }
+
+        private static async Task<string> GetPromotionalLink()
+        {
+            ParseConfig config = null;
+            try
+            {
+                config = await ParseConfig.GetAsync();
+            }
+            catch (Exception e)
+            {
+                config = ParseConfig.CurrentConfig;
+            }
+            string link = "";
+#if ANDROID
+            config.TryGetValue("ANDROID_promotionlink", out link);
+#endif
+            return link;
+        }
+
         internal static Dictionary<PackageType, string[]> Packages = new Dictionary<PackageType, string[]>
         {
             {PackageType.Beach,BeachPackage },
@@ -31,11 +69,14 @@ namespace Inlumino_SHARED
             {PackageType.User,UserPackage },
             {PackageType.Online,OnlinePackage }
         };
-        public delegate void HandleFBLogin();
-        public static event HandleFBLogin HandleFB;
         internal static void HandleFacebookPressed()
         {
             HandleFB();
+        }
+
+        internal static bool IsPackageLocked(PackageType pack)
+        {
+            return !(pack == PackageType.User || pack == PackageType.Online || (Manager.UserData.PackageAvailability.ContainsKey(pack) && Manager.UserData.PackageAvailability[pack]));
         }
 
         internal static Dictionary<PackageType, string[]> H = new Dictionary<PackageType, string[]>
@@ -59,6 +100,24 @@ namespace Inlumino_SHARED
                 return "Unknown";
 #endif
             }
+        }
+
+        internal static async Task NotifyPostFinished(PostInfo postInfo)
+        {
+            if (postInfo.Tag is PackageType)
+            {
+                if (postInfo.Posted)
+                {
+                    PackageType name = (PackageType)postInfo.Tag;
+                    Manager.UserData.MakeAvailable(name);
+                    Manager.SaveUserDataLocal();
+                    await MessageBox.Show("Congrats", "You have unlocked the " + name.ToString() + " package!", new string[] { "Ok" });
+                    Manager.StateManager.SwitchTo(GameState.MainMenu);
+                }
+                else
+                    await MessageBox.Show("Ops", "Something went wrong, please try again later.", new string[] { "Ok" });
+            }
+
         }
 
         private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 8; i++) yield return new TextureID(PrimaryTexture._Aux.ToString(), i); }
@@ -111,7 +170,7 @@ namespace Inlumino_SHARED
                 t.ConfigureAwait(false).GetAwaiter().GetResult();
 #elif WP81 || WINDOWS_UAP
                 FacebookClient fc = new FacebookClient(token);
-                var obj = fc.GetTaskAsync<IDictionary<string, object>>("me?fields=id").ConfigureAwait(false).GetAwaiter().GetResult();
+                var obj = fc.GetTaskAsync<IDictionary<string, object>>("me?fields=name,email").ConfigureAwait(false).GetAwaiter().GetResult();
                 object n, e;
                 if (obj.TryGetValue("name", out n))
                     name = n.ToString();
@@ -239,7 +298,7 @@ namespace Inlumino_SHARED
         }
         private static void GameFinished(PackageType package)
         {
-            if (package == PackageType.Beach)
+            if (package == PackageType.Beach && IsPackageLocked(PackageType.Space))
             {
                 Manager.UserData.MakeAvailable(PackageType.Space);
                 Manager.SaveUserDataLocal();
@@ -326,6 +385,17 @@ namespace Inlumino_SHARED
         }
     }
 #endif
+
+    public class PostEventArgs
+    {
+        public bool Handled = false;
+
+        public PostInfo PostInfo { get; set; }
+
+        public PostEventArgs(PostInfo info)
+        { PostInfo = info; }
+    }
+
     static class CommonData
     {
         internal static string[] SPH = new string[] { "8PvAJQUx6J33knnHVaSecA==", "GK+t2sBr4zNwtCUgffFXCw==", "x8tdDAc3r5uCdzp18/EMrQ==", "9QZditpqmYdWC5ChozR5uQ==", "tiifEN0A+FZATZTLdzvRsA==", "0455fMlYN5hUkKZsr1etLQ==", "0ujO099GHYURU2Hgll6i/A==", "ndGBHDg7tu16LuG/FTQqVw==", "2eUQpjOQTCT//PN3qJJPmg==", "36K5WA+iX8gByEJzouQ/jw==", "rSDd5miYZKuhpZV1Kw1Oqw==", "kbb1nQ/loM1ENPzw0QZWXQ==", "Sm0IDwyVkStm0Mj9+IUqkA==", "8xqQRMlwfUi0QVCG7MV+1Q==", "YJvu3yJaJWrTBAgMtx4AmA==", "9oGHYqXnEVCRrKouIu4bVg==", "rJuTocMMrRUOfPPyn5asAA==", "MlWIf6XJNNvODAgqHjvSiQ==", "WR3dIKFly9xCEMk84k5rxQ==", "7Uf8no0Fsk/ElZeane4wgg==", "vOC1zuCcQ0TmahtB45vX0g==", "SSijqUSUSjVkCjzZu1rhKw==", "BaCX9XH+G4HXc5WFX+wGNw==", "xPLOWRZ3YCbIfN8rQDYjBw==", "XYzHNSVulvO1lCYgHIVVaQ==" };

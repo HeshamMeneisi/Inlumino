@@ -8,7 +8,7 @@ namespace Inlumino_SHARED
 {
     class UIMenu : UIVisibleObject
     {
-        protected List<UIVisibleObject> children;
+        new protected List<UIVisibleObject> children;
 
         internal override Vector2 Size { get { return new Vector2(Width, Height); } }
 
@@ -118,10 +118,14 @@ namespace Inlumino_SHARED
         internal override void Draw(SpriteBatch batch, Camera cam = null)
         {
             if (!visible)
-                return;            
-            foreach(var obj in children.OrderBy(t => t.Layer)) obj.Draw(batch);
+                return;
+            foreach (var obj in children) obj.Draw(batch);
         }
-
+        internal override void NotifyLayerShuffle()
+        {
+            base.NotifyLayerShuffle();
+            children.Sort((a, b) => a.Layer.CompareTo(b.Layer));
+        }
         internal override void Clear()
         {
             base.Clear();

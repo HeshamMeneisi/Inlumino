@@ -95,7 +95,12 @@ namespace Inlumino_SHARED
         internal virtual int Layer
         {
             get { return layer; }
-            set { layer = value; }
+            set { layer = value; Parent.NotifyLayerShuffle(); }
+        }
+
+        internal virtual void NotifyLayerShuffle()
+        {
+            
         }
 
         internal virtual UIObject Parent

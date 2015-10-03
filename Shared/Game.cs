@@ -174,11 +174,10 @@ namespace Inlumino_SHARED
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            /*if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                Exit();*/
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed && !Manager.StateManager.SwitchBack())
+                Exit();
 
             // TODO: Add your update logic here
-
             InputManager.Update(gameTime);
             Manager.Update(gameTime);
             base.Update(gameTime);

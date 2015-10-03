@@ -63,14 +63,18 @@ namespace Inlumino_ANDROID
             FacebookSdk.SdkInitialize(this.ApplicationContext);
 
             callbackManager = CallbackManagerFactory.Create();
-            
+
             var loginCallback = new FacebookCallback<LoginResult>
             {
                 HandleSuccess = loginResult =>
                 {
                     HandlePendingAction();
                     UpdateUI();
-                    Common.FBLoggedIn(Profile.CurrentProfile.Id,AccessToken.CurrentAccessToken.Token,Common.JavaDateToDateTime(AccessToken.CurrentAccessToken.Expires));                    
+                    try
+                    {
+                        Common.FBLoggedIn(Profile.CurrentProfile.Id, AccessToken.CurrentAccessToken.Token, Common.JavaDateToDateTime(AccessToken.CurrentAccessToken.Expires));
+                    }
+                    catch (Exception ex) { System.Diagnostics.Debug.WriteLine("Failed to login with facebook." + ex.Message); }
                 },
                 HandleCancel = () =>
                 {
@@ -103,29 +107,34 @@ namespace Inlumino_ANDROID
             {
                 HandleSuccess = shareResult =>
                 {
-                    Console.WriteLine("HelloFacebook: Success!");
-
                     if (shareResult.PostId != null)
                     {
-                        var title = Parent.GetString(Resource.String.error);
-                        var id = shareResult.PostId;
-                        var alertMsg = Parent.GetString(Resource.String.successfully_posted_post, id);
-
-                        ShowAlert(title, alertMsg);
+                        if (pending.Count > 0)
+                        {
+                            PostInfo info = pending.Pop();
+                            info.Posted = true;
+                            Common.NotifyPostFinished(info);
+                        }
                     }
                 },
                 HandleCancel = () =>
                 {
-                    Console.WriteLine("HelloFacebook: Canceled");
+                    if (pending.Count > 0)
+                        pending.Pop();
                 },
                 HandleError = shareError =>
                 {
-                    Console.WriteLine("HelloFacebook: Error: {0}", shareError);
-
+                    /*
                     var title = Parent.GetString(Resource.String.error);
                     var alertMsg = shareError.Message;
 
-                    ShowAlert(title, alertMsg);
+                    ShowAlert(title, alertMsg);*/
+                    if (pending.Count > 0)
+                    {
+                        PostInfo info = pending.Pop();
+                        info.Posted = false;
+                        Common.NotifyPostFinished(info);
+                    }
                 }
             };
 
@@ -142,7 +151,14 @@ namespace Inlumino_ANDROID
             SetContentView((View)g.Services.GetService(typeof(View)));
             g.Run();
             Common.HandleFB += SwitchToFBPage;
+            Common.HandlePostLinkFB += PostLink;
         }
+
+        private void PostLink(PostEventArgs e)
+        {
+            PerformPublish(PendingAction.POST_STATUS_UPDATE, canPresentShareDialog, e.PostInfo);
+        }
+
         Game g;
         bool fbinit = false;
         public void SwitchToFBPage()
@@ -270,7 +286,7 @@ namespace Inlumino_ANDROID
                 greeting.Text = null;
             }
         }
-
+        Stack<PostInfo> pending = new Stack<PostInfo>();
         private void HandlePendingAction()
         {
             PendingAction previouslyPendingAction = pendingAction;
@@ -284,20 +300,21 @@ namespace Inlumino_ANDROID
                     PostPhoto();
                     break;
                 case PendingAction.POST_STATUS_UPDATE:
-                    PostStatusUpdate();
+                    if (pending != null)
+                        PostStatusUpdate(pending.Peek());
                     break;
             }
         }
 
 
-        void PostStatusUpdate()
+        void PostStatusUpdate(PostInfo info)
         {
             var profile = Profile.CurrentProfile;
 
             var linkContent = new ShareLinkContent.Builder()
-                .SetContentTitle("Hello Facebook")
-                .SetContentDescription("The 'Hello Facebook' sample showcases simple Facebook integration")
-                .SetContentUrl(Android.Net.Uri.Parse("http://developer.facebook.com/docs/android"))
+                .SetContentTitle(info.Title)
+                .SetContentDescription(info.Description)
+                .SetContentUrl(Android.Net.Uri.Parse(info.Link))
                 .JavaCast<ShareLinkContent.Builder>()
                 .Build();
 
@@ -335,12 +352,12 @@ namespace Inlumino_ANDROID
             return accessToken != null && accessToken.Permissions.Contains("publish_actions");
         }
 
-        void PerformPublish(PendingAction action, bool allowNoToken)
+        void PerformPublish(PendingAction action, bool allowNoToken, PostInfo info)
         {
             var accessToken = AccessToken.CurrentAccessToken;
-
             if (accessToken != null)
             {
+                pending.Push(info);
                 pendingAction = action;
                 if (HasPublishPermission())
                 {
@@ -359,6 +376,11 @@ namespace Inlumino_ANDROID
                 pendingAction = action;
                 HandlePendingAction();
             }
+        }
+        public override void OnBackPressed()
+        {
+            if (!Manager.StateManager.SwitchBack())
+                base.OnBackPressed();
         }
 
         class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object

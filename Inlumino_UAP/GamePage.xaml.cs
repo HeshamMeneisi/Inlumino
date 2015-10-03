@@ -1,18 +1,9 @@
-﻿using Inlumino_SHARED;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using System;
+using Inlumino_SHARED;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -25,18 +16,25 @@ namespace Inlumino_UAP
     {
         readonly Game _game;
 
-		public GamePage()
+        public GamePage()
         {
             this.InitializeComponent();
 
-			// Create the game.
-			var launchArguments = string.Empty;
+            // Create the game.
+            var launchArguments = string.Empty;
             _game = MonoGame.Framework.XamlGame<Game>.Create(launchArguments, Window.Current.CoreWindow, swapChainPanel);
-            Manager.StateManager.StateChanged += gamestatechanged;            
+            Manager.StateManager.StateChanged += gamestatechanged;
+            //SystemNavigationManager.GetForCurrentView().BackRequested += backpressed; This is handled in Game.Update()
         }
+
+        private void backpressed(object sender, BackRequestedEventArgs e)
+        {
+            e.Handled = Manager.StateManager.SwitchBack();
+        }
+
         internal void gamestatechanged(GameState newstate)
         {
-            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.OnStage || newstate == GameState.EditMode) ? Visibility.Collapsed : Visibility.Visible;
+            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.MainMenu || newstate == GameState.PackageSelector || newstate == GameState.SelectLevel) ? Visibility.Visible : Visibility.Collapsed;
         }
-    }    
+    }
 }
