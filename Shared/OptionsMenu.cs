@@ -61,16 +61,16 @@ namespace Inlumino_SHARED
                 {
                     await ParseUser.LogInAsync(email.Text, password.Text);
                     // Login was successful.
-                    await MessageBox.Show("Login successful!", "Welcome back " + email.Text.Split('@')[0] + "!", new string[] { "OK" });
+                    await AlertHandler.ShowMessage("Login successful!", "Welcome back " + email.Text.Split('@')[0] + "!", new string[] { "OK" });
                 }
                 catch (Exception e)
                 {
                     // The login failed. Check the error to see why.
-                    int? r = await MessageBox.Show("Login Failed", e.Message, new string[] { "OK", "Forgot password" });
+                    int? r = await AlertHandler.ShowMessage("Login Failed", e.Message, new string[] { "OK", "Forgot password" });
                     if (r == 1)
                     {
                         await ParseUser.RequestPasswordResetAsync(email.Text);
-                        await MessageBox.Show("Password reset", "You have been sent a password reset email.", new string[] { "OK" });
+                        await AlertHandler.ShowMessage("Password reset", "You have been sent a password reset email.", new string[] { "OK" });
                     }
                     goto dontquit;
                 }
@@ -79,7 +79,7 @@ namespace Inlumino_SHARED
             {
                 if (password.Text.Length < 6)
                 {
-                    await MessageBox.Show("Password too weak", "Please choose a password 6-12 letters long.", new string[] { "OK" });
+                    await AlertHandler.ShowMessage("Password too weak", "Please choose a password 6-12 letters long.", new string[] { "OK" });
                     goto dontquit;
                 }
                 var user = new ParseUser()
@@ -101,12 +101,12 @@ namespace Inlumino_SHARED
                 try
                 {
                     await user.SignUpAsync();
-                    await MessageBox.Show("Signed Up!", "Please check your mail for confirmation code.", new string[] { "OK" });
+                    await AlertHandler.ShowMessage("Signed Up!", "Please check your mail for confirmation code.", new string[] { "OK" });
                 }
                 catch (Exception e)
                 {
                     // The signup failed. Check the error to see why.
-                    await MessageBox.Show("Error", e.Message, new string[] { "OK" });
+                    await AlertHandler.ShowMessage("Error", e.Message, new string[] { "OK" });
                     goto dontquit;
                 }
             }
@@ -122,7 +122,7 @@ namespace Inlumino_SHARED
             email.Size = password.Size = new Vector2(Screen.Width, v);
             loginmenu.ArrangeInForm(Orientation.Portrait);
             savebtn.setSizeRelative(0.15f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
-            savebtn.Position = new Vector2((Screen.Width - savebtn.Size.X) / 2, password.BoundingBox.Bottom);
+            savebtn.Position = new Vector2((Screen.Width - savebtn.Width) / 2, loginmenu.BoundingBox.Bottom);
         }
         public void Draw(SpriteBatch batch)
         {            

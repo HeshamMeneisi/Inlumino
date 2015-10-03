@@ -18,7 +18,7 @@ namespace Inlumino_SHARED
         static UITextField target;
         static Vector2 priorpos;
         static int priolayer = 0;
-
+        static internal Action<bool> VisibilityChanged;
         internal static void Show(UITextField targetfield = null, Func<Keys, bool> filter = null, float x = 0, float y = 0)
         {
             if (target == targetfield) return;
@@ -30,7 +30,13 @@ namespace Inlumino_SHARED
             priorpos = target.Position;
             SimulateKeyDownToManager = target == null;
             SetupHud();
+            OnVisibilityChanged(true);
+        }        
+        private static void OnVisibilityChanged(bool v)
+        {
+            if (VisibilityChanged != null) VisibilityChanged(v);
         }
+
         private static void SetupHud()
         {
             keyboard = new UIMenu("VK");
@@ -103,6 +109,8 @@ namespace Inlumino_SHARED
             get { return keyboard == null ? null : keyboard.BoundingBox; }
         }
 
+        public static bool IsVisible { get { return keyboard != null; } }
+
         private static void keypressed(UIButton sender)
         {
             Keys k = (Keys)(sender as UICell).Tag;
@@ -123,6 +131,7 @@ namespace Inlumino_SHARED
         {
             if (target != null) { target.NotifyVKExit(); target.Position = priorpos; target.Layer = priolayer; target = null; }
             keyboard = null;
+            OnVisibilityChanged(false);
         }
 
         private static void OnKeyPressed(Keys k)

@@ -30,11 +30,17 @@ namespace Inlumino_WP81
             _game = XamlGame<Game>.Create(launchArguments, Window.Current.CoreWindow, this);
             Manager.StateManager.StateChanged += gamestatechanged;
             // HardwareButtons.BackPressed += backpressed; This is handled in Game.Update()
+            VirtualKeyboard.VisibilityChanged += vkvisib;
+        }
+
+        private void vkvisib(bool obj)
+        {
+            gamestatechanged(Manager.StateManager.State);
         }
 
         private void gamestatechanged(GameState newstate)
         {
-            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.MainMenu || newstate == GameState.PackageSelector || newstate == GameState.SelectLevel) ? Visibility.Visible : Visibility.Collapsed;
+            (this.FindName("loginButton") as Facebook.Client.Controls.LoginButton).Visibility = (newstate == GameState.OnStage || newstate == GameState.EditMode || VirtualKeyboard.IsVisible ? Visibility.Collapsed : Visibility.Visible);
         }
     }
 }

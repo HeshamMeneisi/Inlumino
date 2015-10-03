@@ -107,24 +107,25 @@ namespace Inlumino_SHARED
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
 #if DEBUG
-            //UnlockAll();
+            UnlockAll();
             //CheckSolved();
             //ScreenShotAll();
 #endif
         }
 #if DEBUG
+        /// <summary>
+        /// Debugging function
+        /// </summary>
+        /// <returns></returns>
         private async Task CheckSolved()
         {
-            if (Debugger.IsAttached)
+            foreach (string name in DataHandler.getSavedLevelNames())
             {
-                foreach (string name in DataHandler.getSavedLevelNames())
-                {
-                    Stage temp = Common.CreateLevel(name, PackageType.User);
-                    temp.SetSourceStatus(true);
-                    if (!temp.CheckWin())
-                        if (await MessageBox.Show("WARNING", "Level not solved: " + name, new string[] { "Ok", "Stop" }) == 1) return;
+                Stage temp = Common.CreateLevel(name, PackageType.User);
+                temp.SetSourceStatus(true);
+                if (!temp.CheckWin())
+                    if (await AlertHandler.ShowMessage("WARNING", "Level not solved: " + name, new string[] { "Ok", "Stop" }) == 1) return;
 
-                }
             }
         }
 
@@ -133,14 +134,11 @@ namespace Inlumino_SHARED
         /// </summary>
         private void UnlockAll()
         {
-            if (Debugger.IsAttached)
+            foreach (PackageType pack in Common.Packages.Keys)
             {
-                foreach (PackageType pack in Common.Packages.Keys)
-                {
-                    Manager.UserData.MakeAvailable(pack);
-                    foreach (string s in Common.Packages[pack])
-                        Common.SetScore(pack, s, 3);
-                }
+                Manager.UserData.MakeAvailable(pack);
+                foreach (string s in Common.Packages[pack])
+                    Common.SetScore(pack, s, 3);
             }
         }
         /// <summary>
@@ -148,13 +146,10 @@ namespace Inlumino_SHARED
         /// </summary>
         private void ScreenShotAll()
         {
-            if (Debugger.IsAttached)
+            foreach (string name in DataHandler.getSavedLevelNames())
             {
-                foreach (string name in DataHandler.getSavedLevelNames())
-                {
-                    Stage temp = Common.CreateLevel(name, PackageType.User);
-                    DataHandler.SaveStage(temp, name);
-                }
+                Stage temp = Common.CreateLevel(name, PackageType.User);
+                DataHandler.SaveStage(temp, name);
             }
         }
 #endif

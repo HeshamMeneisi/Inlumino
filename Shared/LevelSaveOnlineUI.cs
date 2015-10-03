@@ -38,14 +38,14 @@ namespace Inlumino_SHARED
             savebtn.Visible = false;
 
             if (ParseUser.CurrentUser == null)
-                await MessageBox.Show("Hello", "Please connect your facebook account to continue.", new string[] { "Ok" });
+                await AlertHandler.ShowMessage("Hello", "Please connect your facebook account to continue.", new string[] { "Ok" });
             else
             {
                 LevelData data = DataHandler.GetLevelData(levelname);
                 string hash = SecurityProvider.GetMD5Hash(data.Data);
                 if (Common.IsMainLevel(hash))
                 {
-                    await MessageBox.Show("Oh oh!", "You can't share a level that already exists in an official package.", new string[] { "OK" });
+                    await AlertHandler.ShowMessage("Oh oh!", "You can't share a level that already exists in an official package.", new string[] { "OK" });
                     return;
                 }
                 Texture2D thumb = DataHandler.GetLevelThumb(levelname);
@@ -62,7 +62,7 @@ namespace Inlumino_SHARED
 
                 if (obj != null && !obj.ACL.PublicWriteAccess && !obj.ACL.GetWriteAccess(ParseUser.CurrentUser))
                 {
-                    int? r = await MessageBox.Show("Error", "The same level (Design) already exists in the database and you don't have access to it. Would you like to go to it now?", new string[] { "Ok", "No, thanks" });
+                    int? r = await AlertHandler.ShowMessage("Error", "The same level (Design) already exists in the database and you don't have access to it. Would you like to go to it now?", new string[] { "Ok", "No, thanks" });
                     if (r == 0)
                         Manager.Play(hash, PackageType.Online);
                     return;
@@ -109,11 +109,27 @@ namespace Inlumino_SHARED
                     }
                     await obj.SaveAsync();
                     if (created)
-                        await MessageBox.Show("Saved", "Level saved with ID: \n" + hash, new string[] { "Ok" });
+                    {
+                        string levels = "";
+                        ParseUser.CurrentUser["levels"] = ParseUser.CurrentUser.TryGetValue<string>("levels", out levels);
+                        ParseUser.CurrentUser["levels"] = (levels + "," + obj.ObjectId).Trim(',');
+                        try
+                        {
+                            await ParseUser.CurrentUser.SaveAsync();
+                        }
+                        catch { }
+                        int? r = await AlertHandler.ShowMessage("Saved", "Level saved with ID: \n$" + obj.ObjectId, new string[] { "Ok", "Share!" });
+                        if (r == 1)
+                            Common.ShareLevel(obj);
+                    }
                     else
-                        await MessageBox.Show("Saved", "Level " + name + " updated!", new string[] { "Ok" });
+                    {
+                        int? r = await AlertHandler.ShowMessage("Saved", "Level " + name + " updated!", new string[] { "Ok", "Share!" });
+                        if (r == 1)
+                            Common.ShareLevel(obj);
+                    }
                 }
-                catch (Exception ex) { await MessageBox.Show("Error", "Failed to save level.\n" + ex.Message, new string[] { "Ok" }); }
+                catch (Exception ex) { await AlertHandler.ShowMessage("Error", "Failed to save level.\n" + ex.Message, new string[] { "Ok" }); }
                 backpressed(backbtn);
             }
         }

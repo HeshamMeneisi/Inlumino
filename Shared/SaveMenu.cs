@@ -37,12 +37,12 @@ namespace Inlumino_SHARED
         {
             if (nametext.Text.Length == 0)
             {
-                await MessageBox.Show("Warning", "Please enter at least 1 character in the name field.", new string[] { "OK" });
+                await AlertHandler.ShowMessage("Warning", "Please enter at least 1 character in the name field.", new string[] { "OK" });
                 return;
             }
             if (DataHandler.LevelExists(nametext.Text))
             {
-                int? r = await MessageBox.Show("Warning", "Level \"" + nametext.Text + "\" already exists.", new string[] { "Cancel", "Overwrite", });
+                int? r = await AlertHandler.ShowMessage("Warning", "Level \"" + nametext.Text + "\" already exists.", new string[] { "Cancel", "Overwrite", });
                 if (r == 0 || r == null)
                     return;
             }

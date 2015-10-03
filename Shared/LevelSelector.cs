@@ -31,8 +31,8 @@ namespace Inlumino_SHARED
             sharebtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.ShareBtn], sharepressed);
             nextbtn = new UIButton(DataHandler.UIObjectsTextureMap[UIObjectType.Next], nextpressed);
             loading = new UITextField(10, Color.White, Color.Black, "Loading...");
-            searchquery = new UITextField(10, Color.Black, Color.White, "Search...");
-            searchquery.AllowedCharTypes = CharType.Lower | CharType.Upper;
+            searchquery = new UITextField(16, Color.Black, Color.White, "Search...");
+            searchquery.AllowedCharTypes = CharType.Lower | CharType.Upper | CharType.Num | CharType.Symb;
             loading.Text = "Loading...";
             loading.ScaleToText();
             searchquery.SelectedChanged += searchselect;
@@ -61,7 +61,7 @@ namespace Inlumino_SHARED
             if (mainlevels.SnapTarget != null)
             {
                 string name = mainlevels.SnapTarget.Tag.ToString();
-                int? r = await MessageBox.Show("Deleting", "Are you sure you want to delete this level? \n" + name + " will be deleted from local storage.", new string[] { "No", "Yes" });
+                int? r = await AlertHandler.ShowMessage("Deleting", "Are you sure you want to delete this level? \n" + name + " will be deleted from local storage.", new string[] { "No", "Yes" });
                 if (r == 1)
                 {
                     DataHandler.DeleteStage(name);
@@ -85,7 +85,7 @@ namespace Inlumino_SHARED
             string name = (string)(sender as UICell).Tag;
             if (name == "$$L$$")
             {
-                MessageBox.Show("Locked", "Solve more levels to unlock this level!", new string[] { "Ok" });
+                AlertHandler.ShowMessage("Locked", "Solve more levels to unlock this level!", new string[] { "Ok" });
                 return;
             }
             Manager.Play(name, package);
@@ -149,9 +149,11 @@ namespace Inlumino_SHARED
                 if (package == PackageType.Online)
                 {
                 reqeury:
+                    var s = searchquery.Text;
                     var query =
-                        (searchquery.Text == "" ? ParseObject.GetQuery("LevelData")
-                        : (from level in ParseObject.GetQuery("LevelData") where level.Get<string>("namelc").Contains(searchquery.Text) select level))
+                        (s == "" ? ParseObject.GetQuery("LevelData")
+                        : s.StartsWith("$") ? (from level in ParseObject.GetQuery("LevelData") where level.ObjectId == s.Substring(1) select level)
+                        : (from level in ParseObject.GetQuery("LevelData") where level.Get<string>("namelc").Contains(s) select level))
                         .OrderByDescending("played").Skip(onlinelevelpos * levelsperscreen).Limit(levelsperscreen);
 
                     var objects = await query.FindAsync();
@@ -241,8 +243,11 @@ namespace Inlumino_SHARED
         public void OnActivated(params object[] args)
         {
             onlinelevelpos = 0;
-            package = (PackageType)args[0];
-            Common.MatchTheme(package);
+            if (args.Length > 0)
+            {
+                package = (PackageType)args[0];
+                Common.MatchTheme(package);
+            }
             mainlevels = null;
             deletebtn.Visible = sharebtn.Visible = package == PackageType.User;
             nextbtn.Visible = package == PackageType.Online;

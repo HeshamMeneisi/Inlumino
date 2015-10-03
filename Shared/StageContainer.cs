@@ -225,7 +225,7 @@ namespace Inlumino_SHARED
         private void SaveLevel()
         {
             if (CurrentLevel == null) return;
-            if (!verified) { MessageBox.Show("Proof of concept", "Please solve the level in play mode then switch to edit mode and try again.", new string[] { "OK" }); return; }
+            if (!verified) { AlertHandler.ShowMessage("Proof of concept", "Please solve the level in play mode then switch to edit mode and try again.", new string[] { "OK" }); return; }
             if (!editing) ToggleMode();
             CurrentLevel.DisableGrid();
             Manager.StateManager.SwitchTo(GameState.SaveLevel, null, CurrentLevel, IsCurrentMain ? "" : cln);
@@ -353,7 +353,7 @@ namespace Inlumino_SHARED
                 Common.SpreadAuxiliaries(CurrentLevel, 0.1f);
             }
             else
-                MessageBox.Show("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
+                AlertHandler.ShowMessage("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
             loading = false;
             interacted = true;
         }

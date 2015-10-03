@@ -84,24 +84,12 @@ namespace Inlumino_SHARED
             SetupMenu();
             if (args.Length > 0)
                 Manager.SyncData();
-            Task t = new Task(() => CheckOnline());
-            t.Start();
-        }
-
-        private async Task CheckOnline()
-        {
-            if (!suppressmessage && ParseUser.CurrentUser == null)
+            if (!suppressmessage)
             {
                 suppressmessage = true;
-                await MessageBox.Show("Hello", "Did you know you could connect your facebook account and share your own levels with friends? Try it!", new string[] { "Ok" });
+                if (ParseUser.CurrentUser == null)
+                    AlertHandler.ShowMessage("Hello", "Did you know you could connect your facebook account and share your own levels with friends? Try it!", new string[] { "Ok" });
             }
-            /*
-            else if (first && !Manager.Connected)
-            {                
-                if (ParseUser.CurrentUser != null)
-                    await MessageBox.Show("ERROR", "Failed to sync your data to the cloud.", new string[] { "OK" });
-            }
-            first = false;*/
         }
     }
 }

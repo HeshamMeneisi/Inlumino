@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Parse;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,14 +31,19 @@ namespace Inlumino_SHARED
         protected async void mlcellpressed(UIButton sender)
         {
             PackageType name = (PackageType)(sender as UICell).Tag;
+            if(name == PackageType.Online && ParseUser.CurrentUser == null)
+            {
+                AlertHandler.ShowMessage("Ops", "You are not logged in or your session has expired. Please login or relogin to use online features.", new string[] { "Ok" });
+                return;
+            }
             if (Common.IsPackageLocked(name))
             {
 #if ANDROID
-                int? r = await MessageBox.Show("Locked", "Finish other packages to unlock this package. Or help us spread the word on facebook and unlock now!", new string[] { "Ok", "Unlock Now!" });
+                int? r = await AlertHandler.ShowMessage("Locked", "Finish other packages to unlock this package. Or help us spread the word on facebook and unlock now!", new string[] { "Ok", "Unlock Now!" });
                 if (r == 1)
                     await Common.UnlockWithFacebook(name);
 #else
-                MessageBox.Show("Locked", "Finish other packages to unlock this package!", new string[] { "Ok" });
+                AlertHandler.ShowMessage("Locked", "Finish other packages to unlock this package!", new string[] { "Ok" });
 #endif
                 return;
             }

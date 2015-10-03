@@ -51,7 +51,7 @@ namespace Inlumino_SHARED
         internal virtual Vector2 GlobalPosition
         {
             get
-            {                
+            {
                 if (parent != null)
                     return parent.GlobalPosition + this.Position;
                 else
@@ -89,24 +89,26 @@ namespace Inlumino_SHARED
 
         internal virtual void HandleEvent(WorldEvent e)
         {
-                        
+
         }
 
         internal virtual int Layer
         {
             get { return layer; }
-            set { layer = value; Parent.NotifyLayerShuffle(); }
+            set { layer = value; if (Parent != null) Parent.NotifyLayerShuffle(); }
         }
 
         internal virtual void NotifyLayerShuffle()
         {
-            
+
         }
 
         internal virtual UIObject Parent
         {
             get { return parent; }
-            set { parent = value;
+            set
+            {
+                parent = value;
                 foreach (UIObject obj in siblings) obj.parent = parent;
             }
         }
@@ -133,7 +135,7 @@ namespace Inlumino_SHARED
 }
 enum UIObjectType
 {
-    PlayBtn,EditModeBtn,OptionsBtn,
+    PlayBtn, EditModeBtn, OptionsBtn,
     Cell,
     MenuButton,
     ResetButton,

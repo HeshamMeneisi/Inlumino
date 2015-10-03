@@ -33,7 +33,7 @@ namespace Inlumino_SHARED
         {
             if (ParseUser.CurrentUser == null || !ParseFacebookUtils.IsLinked(ParseUser.CurrentUser))
             {
-                await MessageBox.Show("Ops", "It seems like you are not logged in or your session has timed out. Please login.", new string[] { "Ok" });
+                await AlertHandler.ShowMessage("Ops", "It seems like you are not logged in or your session has expired. Please login or relogin.", new string[] { "Ok" });
                 return;
             }
             PostEventArgs e = new PostEventArgs(new PostInfo(
@@ -104,20 +104,23 @@ namespace Inlumino_SHARED
 
         internal static async Task NotifyPostFinished(PostInfo postInfo)
         {
-            if (postInfo.Tag is PackageType)
+            if (postInfo.Posted)
             {
-                if (postInfo.Posted)
+                if (postInfo.Tag is PackageType)
                 {
                     PackageType name = (PackageType)postInfo.Tag;
                     Manager.UserData.MakeAvailable(name);
                     Manager.SaveUserDataLocal();
-                    await MessageBox.Show("Congrats", "You have unlocked the " + name.ToString() + " package!", new string[] { "Ok" });
+                    await AlertHandler.ShowMessage("Congrats", "You have unlocked the " + name.ToString() + " package!", new string[] { "Ok" });
                     Manager.StateManager.SwitchTo(GameState.MainMenu);
                 }
-                else
-                    await MessageBox.Show("Ops", "Something went wrong, please try again later.", new string[] { "Ok" });
+                else if (postInfo.Tag is ParseObject)
+                {
+                    await AlertHandler.ShowMessage("Shared!", "Your level has been shared!", new string[] { "Ok" });
+                }
             }
-
+            else
+                await AlertHandler.ShowMessage("Ops", "Something went wrong, please try again later.", new string[] { "Ok" });
         }
 
         private static IEnumerable<TextureID> GetAux() { for (int i = 0; i < 8; i++) yield return new TextureID(PrimaryTexture._Aux.ToString(), i); }
@@ -128,6 +131,21 @@ namespace Inlumino_SHARED
                 foreach (string h in v)
                     if (h.Equals(hash)) return true;
             return false;
+        }
+
+        internal static async Task ShareLevel(ParseObject obj)
+        {
+            if (ParseUser.CurrentUser == null || !ParseFacebookUtils.IsLinked(ParseUser.CurrentUser))
+            {
+                await AlertHandler.ShowMessage("Ops", "It seems like you are not logged in or your session has expired. Please login or relogin.", new string[] { "Ok" });
+                return;
+            }
+            PostEventArgs e = new PostEventArgs(new PostInfo(
+            "Inlumino",
+            ParseUser.CurrentUser.Username + " just created a new level named \"" + obj.Get<string>("name") + "\"\nPlay it directly by searching this code: $" + obj.ObjectId,
+            await GetPromotionalLink()));
+            e.PostInfo.Tag = obj;
+            HandlePostLinkFB(e);
         }
 
         internal static void PulseTile(Tile target, bool charge, Direction side, ILightSource source)
@@ -302,11 +320,11 @@ namespace Inlumino_SHARED
             {
                 Manager.UserData.MakeAvailable(PackageType.Space);
                 Manager.SaveUserDataLocal();
-                MessageBox.Show("Congratulations!", "You have unlocked the Space package!", new string[] { "OK" });
+                AlertHandler.ShowMessage("Congratulations!", "You have unlocked the Space package!", new string[] { "OK" });
             }
             else
             {
-                MessageBox.Show("Congratulations!", "You finisehd the space package! Check for updates soon for more!", new string[] { "OK" });
+                AlertHandler.ShowMessage("Congratulations!", "You finisehd the space package! Check for updates soon for more!", new string[] { "OK" });
             }
 
             Manager.StateManager.SwitchTo(GameState.MainMenu);

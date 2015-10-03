@@ -9,6 +9,7 @@
     <Import_RootNamespace>Inlumino_SHARED</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AlertHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Base32Converter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Block.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Camera.cs" />

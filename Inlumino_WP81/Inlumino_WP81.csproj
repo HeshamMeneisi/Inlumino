@@ -7,7 +7,7 @@
     <ProjectGuid>{AC1DF8F5-48B4-44F9-A6E3-0F71D061321C}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hesham2</RootNamespace>
+    <RootNamespace>Inlumino_WP81</RootNamespace>
     <AssemblyName>Inlumino_WP81</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
