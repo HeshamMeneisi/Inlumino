@@ -457,8 +457,8 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f040011
 			public const int Hello = 2130968593;
 			
-			// aapt resource value: 0x7f040022
-			public const int app_id = 2130968610;
+			// aapt resource value: 0x7f040021
+			public const int app_id = 2130968609;
 			
 			// aapt resource value: 0x7f040013
 			public const int app_name = 2130968595;
@@ -517,8 +517,8 @@ namespace Inlumino_ANDROID
 			// aapt resource value: 0x7f04001b
 			public const int error = 2130968603;
 			
-			// aapt resource value: 0x7f040023
-			public const int exception = 2130968611;
+			// aapt resource value: 0x7f040022
+			public const int exception = 2130968610;
 			
 			// aapt resource value: 0x7f040014
 			public const int facebook_app_name = 2130968596;
@@ -543,9 +543,6 @@ namespace Inlumino_ANDROID
 			
 			// aapt resource value: 0x7f04001d
 			public const int photo_post = 2130968605;
-			
-			// aapt resource value: 0x7f040021
-			public const int pick_seattle_place = 2130968609;
 			
 			// aapt resource value: 0x7f04001c
 			public const int status_update = 2130968604;

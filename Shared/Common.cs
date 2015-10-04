@@ -29,18 +29,20 @@ namespace Inlumino_SHARED
         public static event HandleFBLogin HandleFB;
         public delegate void PostLinkToFacebook(PostEventArgs e);
         public static event PostLinkToFacebook HandlePostLinkFB;
-        internal static async Task UnlockWithFacebook(PackageType name)
+        internal static async Task UnlockWithFacebook(PackageType pack)
         {
             if (ParseUser.CurrentUser == null || !ParseFacebookUtils.IsLinked(ParseUser.CurrentUser))
             {
                 await AlertHandler.ShowMessage("Ops", "It seems like you are not logged in or your session has expired. Please login or relogin.", new string[] { "Ok" });
                 return;
             }
+            string name = "";
+            ParseUser.CurrentUser.TryGetValue<string>("name", out name);
             PostEventArgs e = new PostEventArgs(new PostInfo(
             "Inlumino",
-            ParseUser.CurrentUser.Username + " just unlocked the " + name.ToString() + " package in Inlumino!\nPlay Inlumino now on Android or Windows, it's free!",
+            name + " just unlocked the " + pack.ToString() + " package in Inlumino!\nPlay Inlumino now on Android or Windows, it's free!",
             await GetPromotionalLink()));
-            e.PostInfo.Tag = name;
+            e.PostInfo.Tag = pack;
             HandlePostLinkFB(e);
         }
 
@@ -140,9 +142,11 @@ namespace Inlumino_SHARED
                 await AlertHandler.ShowMessage("Ops", "It seems like you are not logged in or your session has expired. Please login or relogin.", new string[] { "Ok" });
                 return;
             }
+            string name = "";
+            ParseUser.CurrentUser.TryGetValue<string>("name", out name);
             PostEventArgs e = new PostEventArgs(new PostInfo(
             "Inlumino",
-            ParseUser.CurrentUser.Username + " just created a new level named \"" + obj.Get<string>("name") + "\"\nPlay it directly by searching this code: $" + obj.ObjectId,
+            name + " just created a new level named \"" + obj.Get<string>("name") + "\"\nPlay it directly by searching this code: $" + obj.ObjectId,
             await GetPromotionalLink()));
             e.PostInfo.Tag = obj;
             HandlePostLinkFB(e);
@@ -195,12 +199,13 @@ namespace Inlumino_SHARED
                 if (obj.TryGetValue("email", out e))
                     email = e.ToString();
 #endif
+                ParseUser.CurrentUser["username"] = id;
                 if (email != "")
                     ParseUser.CurrentUser["email"] = email;
                 if (name != "")
-                    ParseUser.CurrentUser["username"] = name;
+                    ParseUser.CurrentUser["name"] = name;
                 if (ParseUser.CurrentUser.IsNew)
-                    ParseUser.CurrentUser["signupsys"] = CurrentSystem;
+                    ParseUser.CurrentUser["signupsys"] = CurrentSystem;                
                 ParseUser.CurrentUser.SaveAsync();
             }
             catch (Exception ex)

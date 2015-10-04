@@ -107,7 +107,7 @@ namespace Inlumino_SHARED
             graphics.SupportedOrientations = DisplayOrientation.Portrait | DisplayOrientation.PortraitDown | DisplayOrientation.LandscapeLeft | DisplayOrientation.LandscapeRight;
 #endif
 #if DEBUG
-            UnlockAll();
+            //UnlockAll();
             //CheckSolved();
             //ScreenShotAll();
 #endif

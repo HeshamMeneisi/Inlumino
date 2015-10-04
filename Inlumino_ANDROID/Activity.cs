@@ -16,6 +16,7 @@ using Xamarin.Facebook.Share.Model;
 using Xamarin.Facebook.Share;
 using Xamarin.Facebook.Login;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 [assembly: Permission(Name = Android.Manifest.Permission.Internet)]
 [assembly: Permission(Name = Android.Manifest.Permission.WriteExternalStorage)]
@@ -80,9 +81,9 @@ namespace Inlumino_ANDROID
                 {
                     if (pendingAction != PendingAction.NONE)
                     {
-                        ShowAlert(
+                        AlertHandler.ShowMessage(
                             GetString(Resource.String.cancelled),
-                            GetString(Resource.String.permission_not_granted));
+                            GetString(Resource.String.permission_not_granted),new string[] { "Ok" });
                         pendingAction = PendingAction.NONE;
                     }
                     UpdateUI();
@@ -92,9 +93,9 @@ namespace Inlumino_ANDROID
                     if (pendingAction != PendingAction.NONE
                         && loginError is FacebookAuthorizationException)
                     {
-                        ShowAlert(
+                        AlertHandler.ShowMessage(
                             GetString(Resource.String.cancelled),
-                            GetString(Resource.String.permission_not_granted));
+                            GetString(Resource.String.permission_not_granted), new string[] { "Ok" });
                         pendingAction = PendingAction.NONE;
                     }
                     UpdateUI();
@@ -208,14 +209,16 @@ namespace Inlumino_ANDROID
         }
         private void HandleAndroidException(object sender, RaiseThrowableEventArgs e)
         {
-            if (System.Diagnostics.Debugger.IsAttached)
-            {
-                throw new Exception(e.Exception.Message + "\n" + e.Exception.StackTrace);
-            }
-            else
+#if DEBUG
+            throw new Exception(e.Exception.Message + "\n" + e.Exception.StackTrace);
+#else
+            AlertHandler.ShowMessage("Sorry", "Something went wrong with your last request.", new string[] { "Ok" });
+            try
             {
                 DataHandler.SaveData<string>(e.Exception.Message + "\n" + e.Exception.StackTrace, "log_" + this.Handle);
             }
+            catch { }
+#endif            
         }
 
 
@@ -352,7 +355,7 @@ namespace Inlumino_ANDROID
             return accessToken != null && accessToken.Permissions.Contains("publish_actions");
         }
 
-        void PerformPublish(PendingAction action, bool allowNoToken, PostInfo info)
+        async Task PerformPublish(PendingAction action, bool allowNoToken, PostInfo info)
         {
             var accessToken = AccessToken.CurrentAccessToken;
             if (accessToken != null)

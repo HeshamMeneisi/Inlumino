@@ -16,7 +16,17 @@ namespace Inlumino_WP81
         readonly Game _game;
         public GamePage()
         {
+            Application.Current.UnhandledException += HandleException;
             this.InitializeComponent();
+        }
+
+        private void HandleException(object sender, UnhandledExceptionEventArgs e)
+        {
+#if DEBUG
+            throw new Exception(e.Exception.Message + "\n" + e.Exception.StackTrace);
+#else
+            AlertHandler.ShowMessage("Sorry", "Something went wrong with your last request.", new string[] { "Ok" });
+#endif
         }
 
         private void backpressed(object sender, BackPressedEventArgs e)

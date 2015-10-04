@@ -10,6 +10,7 @@ namespace Inlumino_SHARED
     {
         public ThemeType CurrentTheme = ThemeType.Beach; //Default
         public float SFXVolume = 1;
-        public float MusicVolume = 1;        
+        public float MusicVolume = 1;
+        public bool First = true;
     }
 }

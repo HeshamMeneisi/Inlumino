@@ -9,7 +9,7 @@ namespace Inlumino_SHARED
 {
     static class AlertHandler
     {
-        static Stack<MessageInfo> pending = new Stack<MessageInfo>();
+        static Queue<MessageInfo> pending = new Queue<MessageInfo>();
         static public async Task<int?> ShowMessage(string title, string text, string[] buttons)
         {
             int? ret = null;
@@ -21,7 +21,7 @@ namespace Inlumino_SHARED
                   {
                       result.SetResult(res);
                   };
-                pending.Push(info);
+                pending.Enqueue(info);
                 ret = await result.Task;
             }
             else
@@ -33,7 +33,7 @@ namespace Inlumino_SHARED
         {
             if (pending.Count > 0 && !MessageBox.IsVisible)
             {
-                MessageInfo info = pending.Pop();
+                MessageInfo info = pending.Dequeue();
                 info.OnCompleted(await MessageBox.Show(info.Title, info.Text, info.Buttons));
             }
         }

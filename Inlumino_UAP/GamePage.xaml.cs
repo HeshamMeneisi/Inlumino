@@ -18,6 +18,7 @@ namespace Inlumino_UAP
 
         public GamePage()
         {
+            Application.Current.UnhandledException += HandleException;
             this.InitializeComponent();
 
             // Create the game.
@@ -26,6 +27,15 @@ namespace Inlumino_UAP
             Manager.StateManager.StateChanged += gamestatechanged;
             //SystemNavigationManager.GetForCurrentView().BackRequested += backpressed; This is handled in Game.Update()
             VirtualKeyboard.VisibilityChanged += vkvisib;
+        }
+
+        private void HandleException(object sender, UnhandledExceptionEventArgs e)
+        {
+#if DEBUG
+            throw new Exception(e.Exception.Message + "\n" + e.Exception.StackTrace);
+#else
+            AlertHandler.ShowMessage("Sorry", "Something went wrong with your last request.", new string[] { "Ok" });
+#endif
         }
 
         private void vkvisib(bool obj)

@@ -356,6 +356,17 @@ namespace Inlumino_SHARED
                 AlertHandler.ShowMessage("Error", "The requested level was not found.\nGame might be corrupted or the cache was cleared while the game was running.", new string[] { "OK" });
             loading = false;
             interacted = true;
+            if(Manager.GameSettings.First)
+            {
+                AlertHandler.ShowMessage("Tutorial", "Tap an object to rotate it.",new string[] { "Next" });
+                AlertHandler.ShowMessage("Tutorial", "Different objects redirect light in different ways.", new string[] { "Next" });
+                AlertHandler.ShowMessage("Tutorial", "As you advance new objects will be introduced. Experiment with them!", new string[] { "Next" });
+                AlertHandler.ShowMessage("Tutorial", "Your goal is to light up all the crystals.", new string[] { "Next" });
+                AlertHandler.ShowMessage("Tutorial", "Your moves count determines how many stars you get. You need at least one to advance.", new string[] { "Next" });
+                AlertHandler.ShowMessage("Tutorial", "Good Luck!", new string[] { "Start" });
+                Manager.GameSettings.First = false;
+                Manager.SaveSettings();
+            }
         }
 
         private int ShuffleLevel()
