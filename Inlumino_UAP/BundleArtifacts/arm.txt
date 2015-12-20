@@ -1,0 +1,4 @@
+MainPackage=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\bin\WindowsUAP\ARM\Release\Inlumino_UAP_1.2.7.0_ARM.appx
+SymbolPackage=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\AppPackages\Inlumino_UAP_1.2.7.0\Inlumino_UAP_1.2.7.0_ARM.appxsym
+ResourcePack=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\bin\WindowsUAP\ARM\Release\Inlumino_UAP_1.2.7.0_scale-100.appx
+ResourcePack=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\bin\WindowsUAP\ARM\Release\Inlumino_UAP_1.2.7.0_scale-400.appx

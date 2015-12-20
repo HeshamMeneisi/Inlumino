@@ -1,0 +1,2 @@
+MainPackage=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\bin\WindowsUAP\x64\Release\Upload\Inlumino_UAP_1.2.7.0_x64.appx
+SymbolPackage=D:\Tech\WorkArea\Inlumino\Inlumino_UAP\AppPackages\Inlumino_UAP_1.2.7.0\Inlumino_UAP_1.2.7.0_x64.appxsym

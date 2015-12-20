@@ -14,6 +14,7 @@ namespace Inlumino_SHARED
 
         private void SetPos()
         {
+            setSizeRelative(0.2f, Screen.Mode);
             Position = new Vector2(Screen.Width - Width, Screen.Height - Height);
         }
 
