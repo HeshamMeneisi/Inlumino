@@ -161,7 +161,7 @@ namespace Inlumino_SHARED
             {UIObjectType.Border,new TextureID[] {new TextureID(UIKey,24,2,1)} },
             {UIObjectType.TopLog,new TextureID[] {new TextureID(UIKey,30,2,1),new TextureID(UIKey,28,2,1)} },
             {UIObjectType.ShareBtn,new TextureID[] {new TextureID(UIKey,32,1,1)} },
-            {UIObjectType.Ropes,new TextureID[] {new TextureID(UIKey,34,2,1)} },            
+            {UIObjectType.Ropes,new TextureID[] {new TextureID(UIKey,34,2,1)} },
             {UIObjectType.Frame,new TextureID[] {new TextureID(UIKey,36,2,2)} },
             {UIObjectType.FBBtn,new TextureID[] {new TextureID(UIKey,44,2,1)} }
         };
@@ -182,7 +182,7 @@ namespace Inlumino_SHARED
                 if (f.Name.StartsWith("S_")) yield return f.Name.Split('.')[0].Split('_')[1];
 #else
             foreach (string s in savegameStorage.GetFileNames())
-                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];            
+                if (s.StartsWith("S_")) yield return s.Split('.')[0].Split('_')[1];
 #endif
         }
         static string getDataFileName(string stagename)
@@ -208,12 +208,13 @@ namespace Inlumino_SHARED
 
             Texture2D img = GenerateLevelThumb(currentLevel);
             img.SaveAsJpeg(s, img.Width, img.Height);
-#if ANDROID
+#if ANDROID && DEBUG
             saveExternal(s, "temp/Inlumino/" + getThumbFileName(name));
 #endif
             s.Dispose();
-
+#if !DISABLEONLINE
             ParseAnalytics.TrackEventAsync("UserSaveLevel", new Dictionary<string, string> { { "name", name } });
+#endif
         }
         internal static void DeleteStage(string name)
         {
@@ -347,7 +348,7 @@ namespace Inlumino_SHARED
 #endif
                 return Common.Texture2DFromBytes(data);
             }
-            catch(Exception e) { Debug.WriteLine(e.Message); }
+            catch (Exception e) { Debug.WriteLine(e.Message); }
             return GenerateLevelThumb(current);
         }
         internal static void LoadTextures()
@@ -402,7 +403,7 @@ namespace Inlumino_SHARED
         }
         internal static void SaveData<T>(T data, string file)
         {
-#if WP81    
+#if WP81
             StorageFile f;
             int tries = 0;
             Stream str;
@@ -428,7 +429,7 @@ namespace Inlumino_SHARED
             string path = "Unkown";
             XmlSerializer serializer = new XmlSerializer(typeof(T));
             serializer.Serialize(str, data);
-#if ANDROID
+#if ANDROID && DEBUG
             path = "temp/Inlumino/" + file;
             saveExternal(str, path);
 #endif

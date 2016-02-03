@@ -87,8 +87,10 @@ namespace Inlumino_SHARED
             if (!suppressmessage)
             {
                 suppressmessage = true;
+#if !DISABLEONLINE
                 if (ParseUser.CurrentUser == null)
                     AlertHandler.ShowMessage("Hello", "Did you know you could connect your facebook account and share your own levels with friends? Try it!", new string[] { "Ok" });
+#endif
             }
         }
     }

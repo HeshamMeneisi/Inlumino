@@ -45,6 +45,9 @@ namespace Inlumino_SHARED
         internal static bool IsIdle { get { return !syncingdata; } }
         internal static async Task<Exception> SyncData()
         {
+#if DISABLEONLINE
+            return null;
+#endif
             if (!IsIdle) return null;
             Debug.WriteLine("Sync started.");
             syncingdata = true;
@@ -73,7 +76,7 @@ namespace Inlumino_SHARED
                 {
                     syncingdata = false;
                     connected = false;
-                    Debug.WriteLine("Sync failed. Error:"+e.Message);
+                    Debug.WriteLine("Sync failed. Error:" + e.Message);
                     return e;
                 }
             }
@@ -138,8 +141,12 @@ namespace Inlumino_SHARED
 
         internal static void HandleShareReq(string v)
         {
+#if !DISABLEONLINE
             if (v != null)
                 stateManager.SwitchTo(GameState.SaveLevelCloud, null, v);
+#else
+            AlertHandler.ShowMessage("Coming soon", "This feature is not available at the moment.", new string[] { "Ok" });
+#endif
         }
 
         internal static StateManager StateManager { get { return stateManager; } }
@@ -204,16 +211,16 @@ namespace Inlumino_SHARED
         {
             if (!initd) return;
             // Debugging commands
-            if(Debugger.IsAttached && e is KeyDownEvent)
+            if (Debugger.IsAttached && e is KeyDownEvent)
             {
-                if((e as KeyDownEvent).Key == Keys.OemTilde)
+                if ((e as KeyDownEvent).Key == Keys.OemTilde)
                 {
                     DataHandler.Textures.Clear();
                     Manager.RandomAccessContentManager.Dispose();
                 }
             }
             VirtualKeyboard.HandleEvent(e);
-#if ANDROID
+#if ANDROID && !DISABLEONLINE
             fboverlay.HandleEvent(e);
 #endif
             stateManager.CurrentGameState.HandleEvent(e);
@@ -222,7 +229,7 @@ namespace Inlumino_SHARED
         {
             if (!initd) return;
             stateManager.Draw(spriteBatch);
-#if ANDROID
+#if ANDROID && !DISABLEONLINE
             fboverlay.Draw(spriteBatch);
 #endif
             // Should stay last (Topmost)
@@ -233,7 +240,7 @@ namespace Inlumino_SHARED
             if (!initd) return;
             stateManager.Update(time);
             SoundManager.Update(time);
-#if ANDROID
+#if ANDROID && !DISABLEONLINE
             fboverlay.Update(time);
 #endif
             VirtualKeyboard.Update(time);

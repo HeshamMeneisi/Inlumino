@@ -18,11 +18,12 @@ namespace Inlumino_SHARED
         SpriteBatch spriteBatch;
         public Game()
         {
+#if !DISABLEONLINE
             ParseClient.Initialize("XxT2BsMH9JlhdvG8tITFXCVrq5Qur8piPOJKQodU", "b4tHTzoZPlnY174EankGG20zRM5RVNesjaFBrFaz");
             ParseFacebookUtils.Initialize("906591706062304");
 
             ParseAnalytics.TrackAppOpenedAsync();
-
+#endif
             //ParseInstallation.CurrentInstallation.AddUniqueToList("channels", "main");
             //ParseInstallation.CurrentInstallation.SaveAsync();          
 

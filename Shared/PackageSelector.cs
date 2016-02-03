@@ -38,7 +38,7 @@ namespace Inlumino_SHARED
             }
             if (Common.IsPackageLocked(name))
             {
-#if ANDROID
+#if ANDROID && !DISABLEONLINE
                 int? r = await AlertHandler.ShowMessage("Locked", "Finish other packages to unlock this package. Or help us spread the word on facebook and unlock now!", new string[] { "Ok", "Unlock Now!" });
                 if (r == 1)
                     await Common.UnlockWithFacebook(name);
@@ -89,7 +89,7 @@ namespace Inlumino_SHARED
         {
             genmenu.setAllSizeRelative(0.2f * (Screen.Mode == Orientation.Portrait ? 2 : 1), Screen.Mode);
             genmenu.ArrangeInForm(Common.ReverseOrientation(Screen.Mode));
-            List<UICell> ulcells = new List<UICell>();
+            //List<UICell> ulcells = new List<UICell>();
             cells.Clear();
             foreach (PackageType pack in Common.Packages.Keys)
             {                

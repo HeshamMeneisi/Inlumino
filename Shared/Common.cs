@@ -68,8 +68,11 @@ namespace Inlumino_SHARED
         {
             {PackageType.Beach,BeachPackage },
             {PackageType.Space,SpacePackage },
-            {PackageType.User,UserPackage },
+            {PackageType.User,UserPackage }
+#if !DISABLEONLINE
+            ,
             {PackageType.Online,OnlinePackage }
+#endif
         };
         internal static void HandleFacebookPressed()
         {
@@ -205,7 +208,7 @@ namespace Inlumino_SHARED
                 if (name != "")
                     ParseUser.CurrentUser["name"] = name;
                 if (ParseUser.CurrentUser.IsNew)
-                    ParseUser.CurrentUser["signupsys"] = CurrentSystem;                
+                    ParseUser.CurrentUser["signupsys"] = CurrentSystem;
                 ParseUser.CurrentUser.SaveAsync();
             }
             catch (Exception ex)
@@ -325,16 +328,17 @@ namespace Inlumino_SHARED
             {
                 Manager.UserData.MakeAvailable(PackageType.Space);
                 Manager.SaveUserDataLocal();
-                AlertHandler.ShowMessage("Congratulations!", "You have unlocked the Space package!", new string[] { "OK" });
+                AlertHandler.ShowMessage("Congratulations!", "You have unlocked the Space package! If you like the game consider rating us on the store :)", new string[] { "OK" });
             }
             else
             {
-                AlertHandler.ShowMessage("Congratulations!", "You finisehd the space package! Check for updates soon for more!", new string[] { "OK" });
+                AlertHandler.ShowMessage("Congratulations!", "You finisehd the space package! Check for updates soon for more!\nIf you liked the game consider rating us on the store :)", new string[] { "OK" });
             }
 
             Manager.StateManager.SwitchTo(GameState.MainMenu);
-
+#if !DISABLEONLINE
             ParseAnalytics.TrackEventAsync("PackFinished", new Dictionary<string, string> { { "name", package.ToString() } });
+#endif
         }
 
         internal static void SpreadAuxiliaries(Stage currentLevel, float v)
